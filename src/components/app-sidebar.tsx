@@ -18,37 +18,37 @@ import { usePathname } from "next/navigation"
 const items = [
   {
     title: "Home",
-    url: "/home",
+    url: "/dashboard/company/home",
     icon: Home,
   },
   {
     title: "Profile",
-    url: "/profile",
+    url: "/dashboard/company/profile",
     icon: UserRound,
   },
   {
     title: "Stores",
-    url: "/store",
+    url: "/dashboard/company/stores",
     icon: Store,
   },
   {
     title: "Workers",
-    url: "/worker",
+    url: "/dashboard/company/workers",
     icon: HardHat,
   },
   {
     title: "Products",
-    url: "/product",
+    url: "/dashboard/company/products",
     icon: Box,
   },
   {
     title: "Financials",
-    url: "/financial",
+    url: "/dashboard/company/financials",
     icon: DollarSign,
   },
   {
     title: "Reports",
-    url: "/report",
+    url: "/dashboard/company/reports",
     icon: FileText ,
   },
 ]
@@ -65,7 +65,7 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url} className={pathname === "/dashboard/company" + item.url ? "bg-blue-900 text-white" : "" }>
+                    <Link href={item.url} className={pathname === item.url ? "bg-blue-700 text-white hover:bg-blue-800 hover:text-white" : "" }>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>
