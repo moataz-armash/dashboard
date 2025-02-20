@@ -120,15 +120,20 @@ const AddressForm = () => {
   };
 
   return (
-    <Card className="p-6 rounded-lg shadow-md w-full max-w-2xl mx-auto">
+    <Card className="p-6 rounded-lg shadow-md w-full max-w-6xl mx-auto">
       <h2 className="text-xl font-semibold mb-4">Add Address</h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Label>Search Address</Label>
-        <Input
-          type="text"
-          placeholder="Type to search an address..."
-          onChange={(e) => fetchAddressSuggestions(e.target.value)}
-        />
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4 grid grid-cols-2 gap-6"
+      >
+        <div className="col-span-2">
+          <Label>Search Address</Label>
+          <Input
+            type="text"
+            placeholder="Type to search an address..."
+            onChange={(e) => fetchAddressSuggestions(e.target.value)}
+          />
+        </div>
         {addressSuggestions.length > 0 && (
           <div className="border border-gray-300 p-2 bg-white shadow-md max-h-40 overflow-y-auto">
             {addressSuggestions.map((addr, index) => (
@@ -142,38 +147,43 @@ const AddressForm = () => {
             ))}
           </div>
         )}
-
-        {/* Manual Address Fields */}
-        <Label>Country</Label>
-        <Input {...register("countryName")} />
-        <Label>State</Label>
-        <Input {...register("state")} />
-        <Label>County</Label>
-        <Input {...register("county")} />
-        <Label>District</Label>
-        <Input {...register("district")} />
-        <Label>Street</Label>
-        <Input {...register("street")} />
-        <Label>House Number</Label>
-        <Input {...register("houseNumber")} />
-        <Label>Postal Code</Label>
-        <Input {...register("postalCode")} />
+        <div>
+          {/* Manual Address Fields */}
+          <Label>Country</Label>
+          <Input {...register("countryName")} />
+          <Label>State</Label>
+          <Input {...register("state")} />
+          <Label>County</Label>
+          <Input {...register("county")} />
+        </div>
+        <div>
+          <Label>District</Label>
+          <Input {...register("district")} />
+          <Label>Street</Label>
+          <Input {...register("street")} />
+          <Label>House Number</Label>
+          <Input {...register("houseNumber")} />
+          <Label>Postal Code</Label>
+          <Input {...register("postalCode")} />
+        </div>
 
         {/* OpenStreetMap (Free Alternative) */}
-        <Label>Pin Location</Label>
-        <MapContainer
-          center={mapCenter}
-          zoom={14}
-          style={{ width: "100%", height: "300px" }}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <LocationMarker />
-        </MapContainer>
+        <div className="col-span-2">
+          <Label>Pin Location</Label>
+          <MapContainer
+            center={mapCenter}
+            zoom={14}
+            style={{ width: "100%", height: "300px" }}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <LocationMarker />
+          </MapContainer>
 
-        {/* Submit Button */}
-        <Button type="submit" className="w-full">
-          Submit Address
-        </Button>
+          {/* Submit Button */}
+          <Button type="submit" className="w-full">
+            Submit Address
+          </Button>
+        </div>
       </form>
     </Card>
   );
