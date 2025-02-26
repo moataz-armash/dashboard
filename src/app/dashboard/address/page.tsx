@@ -1,16 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  useMapEvents,
+  Popup,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet-defaulticon-compatibility";
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
+
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { addressInfo, Iaddress, Idata } from "./type";
+import createAddressInfo from "./api";
 
 // 📌 Address validation schema
 const addressSchema = z.object({
@@ -59,7 +71,7 @@ const AddressForm = () => {
   };
 
   // 📌 Handle Address Selection from Autocomplete
-  const handleAddressSelect = (address: any) => {
+  const handleAddressSelect = (address: Iaddress) => {
     const { lat, lon, address: addr } = address;
 
     setValue("latitude", parseFloat(lat));
@@ -79,8 +91,9 @@ const AddressForm = () => {
 
   // 📌 Handle Map Click to Select Address
   function LocationMarker() {
+    const [tempData, setTempData] = useState("");
     const map = useMapEvents({
-      click(e) {
+      click(e: { latlng: { lat: number; lng: number } }) {
         const { lat, lng } = e.latlng;
         setValue("latitude", lat);
         setValue("longitude", lng);
@@ -93,6 +106,7 @@ const AddressForm = () => {
           })
           .then(({ data }) => {
             if (data.address) {
+              setTempData(data.address.country || "");
               setValue("countryName", data.address.country || "");
               setValue("state", data.address.state || "");
               setValue("county", data.address.county || "");
@@ -111,11 +125,43 @@ const AddressForm = () => {
       },
     });
 
-    return mapCenter ? <Marker position={mapCenter} /> : null;
+    useEffect(() => {
+      console.log("Updated tempData:", tempData); // 🔹 Logs new country name after update
+    }, [tempData]);
+
+    return mapCenter ? (
+      <Marker position={mapCenter}>
+        <Popup>
+          <span>{tempData || "fetching..."}</span>
+        </Popup>
+      </Marker>
+    ) : null;
   }
 
-  const onSubmit = (data: any) => {
-    console.log("Submitted Address Data:", data);
+  const onSubmit = (data: addressInfo) => {
+    createAddressInfo({
+      countryName: data.countryName,
+      state: data.state,
+      county: data.county,
+      district: data.district,
+      street: data.street,
+      houseNumber: data.houseNumber,
+      postalCode: data.postalCode,
+      addressDetails: " ",
+      addressTags: [""],
+    });
+
+    console.log("Submitted Address Data:", {
+      countryNmae: data.countryName,
+      state: data.state,
+      county: data.county,
+      district: data.district,
+      street: data.street,
+      houseNumber: data.houseNumber,
+      postalCode: data.postalCode,
+      addressDetails: "",
+      addressTags: [""],
+    });
     console.log("success");
   };
 
@@ -166,17 +212,22 @@ const AddressForm = () => {
           <Label>Postal Code</Label>
           <Input {...register("postalCode")} />
         </div>
-
         {/* OpenStreetMap (Free Alternative) */}
         <div className="col-span-2">
           <Label>Pin Location</Label>
           <MapContainer
             center={mapCenter}
-            zoom={14}
-            style={{ width: "100%", height: "300px" }}
+            zoom={6}
+            scrollWheelZoom={true}
+            style={{ height: "300px", width: "100%" }}
           >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+            />
             <LocationMarker />
+
+            <ChangeCenter position={mapCenter} />
           </MapContainer>
 
           {/* Submit Button */}
@@ -188,5 +239,11 @@ const AddressForm = () => {
     </Card>
   );
 };
+
+function ChangeCenter({ position }) {
+  const map = useMap();
+  map.setView(position);
+  return null;
+}
 
 export default AddressForm;
