@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { addressInfo, Iaddress, Idata } from "./type";
+import { addressInfo, Iaddress } from "./type";
 import createAddressInfo from "./api";
 
 // 📌 Address validation schema
