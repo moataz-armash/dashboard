@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import React from "react";
+import { registerNewUser } from "@/utils/api";
 
 const formSchema = z
   .object({
@@ -29,7 +30,14 @@ const RegisterPage = () => {
     password: string;
     confirmPassword: string;
   }) => {
-    console.log("Form Submitted", data);
+    const { confirmPassword, ...registerData } = data;
+
+    try {
+      registerNewUser(registerData);
+      console.log("user registered successfully");
+    } catch (error) {
+      throw new Error(`error happened while register ${error}`);
+    }
   };
 
   return (

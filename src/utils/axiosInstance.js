@@ -1,14 +1,20 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8092",
-  timeout: 10000, // 10 seconds timeout
-  headers: {
-    "Content-Type": "application/json",
-  },
-  httpsAgent: new (require("https").Agent)({ rejectUnauthorized: false }),
-});
+const getAxiosInstance = (port) => {
+  return axios.create({
+    baseURL:
+      process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS ||
+      `http://localhost:${port}`,
+    timeout: 10000, // 10 seconds timeout
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    httpsAgent: new (require("https").Agent)({ rejectUnauthorized: false }),
+  });
+};
 
+const axiosInstance = getAxiosInstance();
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -31,4 +37,5 @@ axiosInstance.interceptors.response.use(
   }
 );
 
+export { getAxiosInstance };
 export default axiosInstance;
