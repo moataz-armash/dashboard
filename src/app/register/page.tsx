@@ -34,6 +34,7 @@ const RegisterPage = () => {
 
     try {
       registerNewUser(registerData);
+
       console.log("user registered successfully");
     } catch (error) {
       throw new Error(`error happened while register ${error}`);
