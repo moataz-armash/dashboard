@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+// import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -9,7 +9,7 @@ const LoginPage = () => {
     <div className="h-screen flex justify-center items-center">
       <div className="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
         <div className="px-6 py-4">
-          <div className="flex justify-center mx-auto">
+          {/* <div className="flex justify-center mx-auto">
             <Image
               className="w-auto h-7 sm:h-8"
               src="https://merakiui.com/images/logo.svg"
@@ -17,7 +17,7 @@ const LoginPage = () => {
               height={100}
               alt="logo"
             />
-          </div>
+          </div> */}
 
           <h3 className="mt-3 text-xl font-medium text-center text-gray-600 dark:text-gray-200">
             Welcome Back

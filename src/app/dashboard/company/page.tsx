@@ -1,4 +1,10 @@
+import { useAuth } from "@/context/AuthContext";
 import { redirect } from "next/navigation";
 export default function CompanyDashboard() {
-  redirect("/dashboard/company/home");
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) {
+    redirect("/dashboard/company/home");
+  } else {
+    return;
   }
+}

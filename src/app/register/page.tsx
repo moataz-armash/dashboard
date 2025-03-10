@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import React from "react";
 import { registerNewUser } from "@/utils/api";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
@@ -24,6 +26,9 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(formSchema) });
 
+  const { login } = useAuth();
+  const router = useRouter();
+
   const onSubmit = (data: {
     username: string;
     email: string;
@@ -34,8 +39,8 @@ const RegisterPage = () => {
 
     try {
       registerNewUser(registerData);
-
-      console.log("user registered successfully");
+      login();
+      router.push("/verify-email");
     } catch (error) {
       throw new Error(`error happened while register ${error}`);
     }
