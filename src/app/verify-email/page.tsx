@@ -7,17 +7,17 @@ import React, { useEffect } from "react";
 const VerifyEmailPage = () => {
   const userInfo = JSON.parse(localStorage?.getItem("userInfo") as string);
 
-  const { email } = userInfo.worker;
-  const { verificationToken } = userInfo;
+  const { username, email } = userInfo.worker;
+  const { verificationToken: token } = userInfo;
 
   const router = useRouter();
 
   useEffect(() => {
-    console.log(email, verificationToken);
+    console.log(username, token);
     const timer = setTimeout(() => {
       try {
-        verifyEmail(verificationToken);
-        router.push("/login");
+        verifyEmail({ token, username });
+        router.replace("/login");
       } catch (error) {
         throw new Error(`error happened while register ${error}`);
       }

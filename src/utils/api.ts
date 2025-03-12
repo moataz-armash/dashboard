@@ -56,12 +56,16 @@ export const createCompany = async (companyData: {
 
 export const verifyEmail = async (registerData: {
   token: string;
+  username: string;
 }): Promise<Record<string, string>> => {
   try {
+    console.log(registerData);
     const axiosCompany = getAxiosInstance(
       process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY
     );
-    const res = await axiosCompany.post(`/auth/verify-email`, registerData);
+    const res = await axiosCompany.post(
+      `/auth/verify-email?token=${registerData.token}&username=${registerData.username}`
+    );
     // localStorage.setItem("token", res.data.data.verificationToken);
     return res.data;
   } catch (error) {
