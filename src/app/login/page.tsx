@@ -2,7 +2,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { loginUser } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";

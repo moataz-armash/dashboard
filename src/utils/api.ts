@@ -66,7 +66,7 @@ export const verifyEmail = async (registerData: {
     const res = await axiosCompany.post(
       `/auth/verify-email?token=${registerData.token}&username=${registerData.username}`
     );
-    // localStorage.setItem("token", res.data.data.verificationToken);
+    localStorage.setItem("token", res.data.data.verificationToken);
     return res.data;
   } catch (error) {
     throw new Error(`Error while register new user ${error}`);
