@@ -1,5 +1,5 @@
 "use client";
-import { forgetPassword } from "@/utils/api";
+import { resetPassword } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -7,11 +7,18 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const formSchema = z.object({
-  email: z.string().email("Invalid email format"),
-});
+const formSchema = z
+  .object({
+    // email: z.string().email("Invalid email format"),
+    newPassword: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
-const ForgetPasswordPage = () => {
+const ResetPasswordPage = () => {
   const {
     register,
     handleSubmit,
@@ -19,12 +26,14 @@ const ForgetPasswordPage = () => {
   } = useForm({ resolver: zodResolver(formSchema) });
   const router = useRouter();
 
-  const onSubmit = (data: { email: string }) => {
+  const onSubmit = (data: { newPassword: string; confirmPassword: string }) => {
     try {
-      forgetPassword(data.email);
-      localStorage.setItem("userEmail", data.email);
+      const email = localStorage.getItem("userEmail") ?? "";
+      const resetToken = localStorage.getItem("resetToken") ?? "";
+      console.log(data, email, resetToken);
+      resetPassword({ ...data, email, resetToken });
       //   login();
-      router.push("/reset-password");
+      router.push("/login");
     } catch (error) {
       throw new Error(`error happened while register ${error}`);
     }
@@ -58,37 +67,55 @@ const ForgetPasswordPage = () => {
               <div className="grid gap-y-4">
                 <div>
                   <label
-                    htmlFor="email"
+                    htmlFor="newPassword"
                     className="block text-sm font-bold ml-1 mb-2 dark:text-white"
                   >
-                    Email
+                    New Password
                   </label>
                   <div className="relative">
                     <input
-                      type="email"
-                      id="email"
+                      type="password"
+                      id="newPassword"
                       className="py-3 px-4 block w-full border-2 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm"
                       required
-                      aria-describedby="username-error"
-                      {...register("email")}
+                      aria-describedby="newPassword-error"
+                      {...register("newPassword")}
                     />
-                    {errors.email && (
-                      <p className="text-red-500">{errors.email.message}</p>
+                    {errors.newPassword && (
+                      <p className="text-red-500">
+                        {errors.newPassword?.message}
+                      </p>
                     )}
                   </div>
-                  <p
-                    className="hidden text-xs text-red-600 mt-2"
-                    id="email-error"
+                </div>
+                <div>
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm font-bold ml-1 mb-2 dark:text-white"
                   >
-                    Please include a valid email address so we can get back to
-                    you
-                  </p>
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="password"
+                      id="confirmPassword"
+                      className="py-3 px-4 block w-full border-2 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                      required
+                      aria-describedby="confirmPassword-error"
+                      {...register("confirmPassword")}
+                    />
+                    {errors.confirmPassword && (
+                      <p className="text-red-500">
+                        {errors.confirmPassword?.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <button
                   type="submit"
                   className="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
                 >
-                  Continue
+                  Reset Password
                 </button>
               </div>
             </form>
@@ -99,4 +126,4 @@ const ForgetPasswordPage = () => {
   );
 };
 
-export default ForgetPasswordPage;
+export default ResetPasswordPage;
