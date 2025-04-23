@@ -1,5 +1,5 @@
 "use client"
-import {  Home, UserRound, Store, HardHat,Box,DollarSign ,FileText, CloudCog  } from "lucide-react"
+import {  Home, UserRound, Store, HardHat,Box,DollarSign ,FileText  } from "lucide-react"
 
 import {
   Sidebar,

@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const getAxiosInstance = (port) => {
+const getAxiosInstance = (apiUrl) => {
   return axios.create({
     baseURL:
-      process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS ||
-      `http://localhost:${port}`,
+      apiUrl ||
+      `http://localhost:8091`,
     timeout: 10000, // 10 seconds timeout
     headers: {
       "Content-Type": "application/json",

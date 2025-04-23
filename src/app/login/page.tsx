@@ -2,9 +2,10 @@
 import { useAuth } from "@/context/AuthContext";
 import { loginUser } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
+import LogRocket from "logrocket";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -21,17 +22,25 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: zodResolver(formSchema) });
+  const [error, setError] = useState<string>("");
 
   const router = useRouter();
 
-  const onSubmit = (data: {
+  const onSubmit = async (data: {
     username: string;
     email: string;
     password: string;
   }) => {
     try {
-      loginUser(data);
+      const res = await loginUser(data);
+      //  console.log(res.message)
+      setError(` ${res.message}`);
       login();
+
+      LogRocket.identify(data.username, {
+        name: data.username,
+        email: data.email,
+      });
       router.push("/register-company");
     } catch (error) {
       throw new Error(`error happened while register ${error}`);
@@ -114,6 +123,7 @@ const LoginPage = () => {
                 Sign In
               </button>
             </div>
+            {error && <p className="text-red-500 text-center mt-2">{error}</p>}
           </form>
         </div>
 

@@ -43,7 +43,7 @@ const RegisterCompanyPage = () => {
                 data-name="Layer 1"
                 xmlns="http://www.w3.org/2000/svg"
                 width="100%"
-                height="auto"
+                height="100%"
                 viewBox="0 0 744.84799 747.07702"
               >
                 <path

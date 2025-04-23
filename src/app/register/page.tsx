@@ -1,50 +1,40 @@
 "use client";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import React from "react";
-import { registerNewUser } from "@/utils/api";
-import { useAuth } from "@/context/AuthContext";
+
+import { useActionState, useEffect } from "react";
+import { registerUser } from "./actions";
+import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-const formSchema = z
-  .object({
-    username: z.string().min(4, "Username must be at least 4 charachters"),
-    email: z.string().email("Invalid email format"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+const initialState = {
+  error: {},
+  username: "",
+  email: "",
+  success: false,
+  message: "",
+};
 
-const RegisterPage = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ resolver: zodResolver(formSchema) });
-
-  const { login } = useAuth();
+export default function RegisterPage() {
+  const [state, formAction, pending] = useActionState(
+    registerUser,
+    initialState
+  );
   const router = useRouter();
 
-  const onSubmit = (data: {
-    username: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }) => {
-    const { confirmPassword, ...registerData } = data;
+  useEffect(() => {
+    if (state?.success) {
+      toast.success(
+        JSON.parse(state?.data?.value)?.message || "Registration successful!"
+      );
 
-    try {
-      registerNewUser(registerData);
-      login();
-      router.push("/verify-email");
-    } catch (error) {
-      throw new Error(`error happened while register ${error}`);
+      const token = JSON.parse(state?.data?.value)?.data?.token;
+      const email = JSON.parse(state?.data?.value)?.data?.email
+      router.push(`/verify-email?token=${token}&email=${email}`);
+    } else if (state?.message) {
+      toast.error(state?.message);
+    } else if (state?.errors && Object.keys(state.errors).length > 0) {
+      toast.error("Please fix the highlighted errors.");
     }
-  };
+  }, [state, router]);
 
   return (
     <div>
@@ -54,7 +44,7 @@ const RegisterPage = () => {
         </h1>
         <form
           className="w-full max-w-sm mx-auto bg-white p-8 rounded-md shadow-md"
-          onSubmit={handleSubmit(onSubmit)}
+          action={formAction}
         >
           <div className="mb-4">
             <label
@@ -66,13 +56,15 @@ const RegisterPage = () => {
             <input
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
               type="text"
-              {...register("username")}
               id="username"
               name="username"
+              defaultValue={state?.username}
               placeholder="mo3taz"
             />
-            {errors.username && (
-              <p className="text-red-500">{errors.username.message}</p>
+            {state?.errors?.username && (
+              <p className="text-red-500 text-sm">
+                {state.errors.username._errors?.[0]}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -85,13 +77,15 @@ const RegisterPage = () => {
             <input
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
               type="email"
-              {...register("email")}
               id="email"
               name="email"
+              defaultValue={state?.email}
               placeholder="moataz@example.com"
             />
-            {errors.email && (
-              <p className="text-red-500">{errors.email.message}</p>
+            {state?.errors?.email && (
+              <p className="text-red-500 text-sm">
+                {state.errors.email._errors?.[0]}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -104,13 +98,14 @@ const RegisterPage = () => {
             <input
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
               type="password"
-              {...register("password")}
               id="password"
               name="password"
               placeholder="********"
             />
-            {errors.password && (
-              <p className="text-red-500">{errors.password.message}</p>
+            {state?.errors?.password && (
+              <p className="text-red-500 text-sm">
+                {state.errors.password._errors?.[0]}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -123,25 +118,25 @@ const RegisterPage = () => {
             <input
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
               type="password"
-              {...register("confirmPassword")}
               id="confirmPassword"
               name="confirmPassword"
               placeholder="********"
             />
-            {errors.confirmPassword && (
-              <p className="text-red-500">{errors.confirmPassword.message}</p>
+            {state?.errors?.confirmPassword && (
+              <p className="text-red-500 text-sm">
+                {state.errors.confirmPassword._errors?.[0]}
+              </p>
             )}
           </div>
           <button
             className="w-full bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300"
             type="submit"
+            disabled={pending}
           >
-            Register
+            Register {pending && "... "}
           </button>
         </form>
       </div>
     </div>
   );
-};
-
-export default RegisterPage;
+}
