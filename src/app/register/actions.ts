@@ -49,7 +49,6 @@ export async function registerUser(prevState: any, formData: FormData) {
       body: JSON.stringify(parsed.data),
     }
   );
- 
 
   if (!res.ok) {
     const errorJson = await res.json(); // assuming your API sends a JSON response with `message`

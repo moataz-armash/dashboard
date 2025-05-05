@@ -1,52 +1,36 @@
 "use client";
-import { useAuth } from "@/context/AuthContext";
-import { loginUser } from "@/utils/api";
-import { zodResolver } from "@hookform/resolvers/zod";
-import LogRocket from "logrocket";
+
 import Link from "next/link";
+import { useActionState, useEffect } from "react";
+import { loginUser } from "./actions";
+import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useAuth } from "@/context/AuthContext";
 
-const formSchema = z.object({
-  username: z.string().min(4, "Username must be at least 4 charachters"),
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
+const initialState = {
+  errors: {},
+  identifier: "",
+  success: false,
+  message: "",
+};
 
-const LoginPage = () => {
-  const { login } = useAuth();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ resolver: zodResolver(formSchema) });
-  const [error, setError] = useState<string>("");
-
+export default function LoginPage() {
+  const [state, formAction, pending] = useActionState(loginUser, initialState);
   const router = useRouter();
+  const { login, isAuthenticated } = useAuth();
 
-  const onSubmit = async (data: {
-    username: string;
-    email: string;
-    password: string;
-  }) => {
-    try {
-      const res = await loginUser(data);
-      //  console.log(res.message)
-      setError(` ${res.message}`);
+  useEffect(() => {
+    if (state?.success) {
+      toast.success(state?.data?.message || "Login Success");
+      // token=${state?.data?.data?.token}
+      router.push(`/register-company`);
       login();
-
-      LogRocket.identify(data.username, {
-        name: data.username,
-        email: data.email,
-      });
-      router.push("/register-company");
-    } catch (error) {
-      throw new Error(`error happened while register ${error}`);
+    } else if (state?.message) {
+      toast.error(state?.message);
+    } else if (state.errors && Object.keys(state.errors).length > 0) {
+      toast.error("Please fix the highlighted errors");
     }
-  };
-
+  }, [state, router, login, isAuthenticated]);
   return (
     <div className="h-screen flex justify-center items-center">
       <div className="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
@@ -69,29 +53,20 @@ const LoginPage = () => {
             Login or create account
           </p>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form action={formAction}>
             <div className="w-full mt-4">
               <input
                 className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
-                type="username"
-                placeholder="Username"
-                aria-label="Username"
-                {...register("username")}
+                type="text"
+                placeholder="Username or Email"
+                aria-label="identifier"
+                name="identifier"
+                defaultValue={state?.identifier}
               />
-              {errors.username && (
-                <p className="text-red-500">{errors.username.message}</p>
-              )}
-            </div>
-            <div className="w-full mt-4">
-              <input
-                className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
-                type="email"
-                placeholder="Email Address"
-                aria-label="Email Address"
-                {...register("email")}
-              />
-              {errors.email && (
-                <p className="text-red-500">{errors.email.message}</p>
+              {state?.errors?.identifier && (
+                <p className="text-red-500 text-sm">
+                  {state.errors.identifier._errors?.[0]}
+                </p>
               )}
             </div>
 
@@ -99,12 +74,14 @@ const LoginPage = () => {
               <input
                 className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
                 type="password"
+                name="password"
                 placeholder="Password"
                 aria-label="Password"
-                {...register("password")}
               />
-              {errors.password && (
-                <p className="text-red-500">{errors.password.message}</p>
+              {state?.errors?.password && (
+                <p className="text-red-500 text-sm">
+                  {state.errors.password._errors?.[0]}
+                </p>
               )}
             </div>
 
@@ -119,11 +96,11 @@ const LoginPage = () => {
               <button
                 className="px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
                 type="submit"
+                disabled={pending}
               >
-                Sign In
+                Sign In {pending && <span>...</span>}
               </button>
             </div>
-            {error && <p className="text-red-500 text-center mt-2">{error}</p>}
           </form>
         </div>
 
@@ -142,6 +119,4 @@ const LoginPage = () => {
       </div>
     </div>
   );
-};
-
-export default LoginPage;
+}

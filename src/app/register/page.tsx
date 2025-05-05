@@ -27,7 +27,7 @@ export default function RegisterPage() {
       );
 
       const token = JSON.parse(state?.data?.value)?.data?.token;
-      const email = JSON.parse(state?.data?.value)?.data?.email
+      const email = JSON.parse(state?.data?.value)?.data?.email;
       router.push(`/verify-email?token=${token}&email=${email}`);
     } else if (state?.message) {
       toast.error(state?.message);
@@ -61,7 +61,7 @@ export default function RegisterPage() {
               defaultValue={state?.username}
               placeholder="mo3taz"
             />
-            {state?.errors?.username && (
+            {state.errors?.username && (
               <p className="text-red-500 text-sm">
                 {state.errors.username._errors?.[0]}
               </p>

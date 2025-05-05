@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ListFilter, Plus } from "lucide-react";
+
 import {
   Table,
   TableHeader,
@@ -17,6 +19,8 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { createStore } from "./actions";
+import { DialogWindow } from "./dialog-window";
 
 interface Product {
   id: number;
@@ -64,118 +68,94 @@ const StoreCards = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4 p-4">
-      <Card className="p-4 rounded-2xl shadow-md w-full">
-        <h2 className="text-xl font-semibold mb-4">Stores</h2>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {stores.map((store) => (
-              <TableRow
-                key={store.id}
-                onClick={() => setSelectedStore(store)}
-                className="cursor-pointer"
-              >
-                <TableCell>{store.name}</TableCell>
-                <TableCell>{store.location}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleOpenDialog("edit")}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    className="ml-2"
-                    onClick={() => handleOpenDialog("delete")}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
+    <>
+      <div className="grid grid-cols-1 gap-4 p-4">
+        <div className="flex justify-between items-center p-4">
+          <input
+            type="text"
+            placeholder="Type the name of store..."
+            className="border border-gray-300 rounded-md px-3 py-2 w-[30%]"
+          />
+
+          <div className="flex space-x-4">
+            <Button variant="outline" className="font-medium">
+              {" "}
+              <ListFilter /> Filter{" "}
+            </Button>
+
+            <DialogWindow
+              icon={<Plus />}
+              title="Add Store"
+              className="bg-brand-500 hover:bg-brand-600"
+              method={createStore}
+            />
+          </div>
+        </div>
+        <Card className="p-4 rounded-2xl shadow-md w-full">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
-      <Card className="p-4 rounded-2xl shadow-md w-full">
-        {selectedStore ? (
-          <>
-            <h2 className="text-xl font-semibold mb-4">
-              Products in{" "}
-              <span className="text-blue-500"> {selectedStore.name}</span>
-            </h2>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Actions</TableHead>
+            </TableHeader>
+            <TableBody>
+              {stores.map((store) => (
+                <TableRow
+                  key={store.id}
+                  onClick={() => setSelectedStore(store)}
+                  className="cursor-pointer"
+                >
+                  <TableCell>{store.name}</TableCell>
+                  <TableCell>{store.location}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outline"
+                      onClick={() => handleOpenDialog("edit")}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      className="ml-2"
+                      onClick={() => handleOpenDialog("delete")}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {selectedStore.products.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.quantity}</TableCell>
-                    <TableCell>${product.price}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                        onClick={() => handleOpenDialog("edit")}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        className="ml-2"
-                        onClick={() => handleOpenDialog("delete")}
-                      >
-                        Delete
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </>
-        ) : (
-          <p className="text-center">Select a store to view its products</p>
-        )}
-      </Card>
-      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {dialogType === "edit" ? "Edit Item" : "Confirm Deletion"}
-            </DialogTitle>
-          </DialogHeader>
-          <p>
-            {dialogType === "edit"
-              ? "Modify the details of this item."
-              : "Are you sure you want to delete this item?"}
-          </p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenDialog(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant={dialogType === "delete" ? "destructive" : "default"}
-              onClick={() => setOpenDialog(false)}
-            >
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {dialogType === "edit" ? "Edit Item" : "Confirm Deletion"}
+              </DialogTitle>
+            </DialogHeader>
+            <p>
+              {dialogType === "edit"
+                ? "Modify the details of this item."
+                : "Are you sure you want to delete this item?"}
+            </p>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setOpenDialog(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant={dialogType === "delete" ? "destructive" : "default"}
+                onClick={() => setOpenDialog(false)}
+              >
+                Confirm
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </>
   );
 };
 

@@ -9,6 +9,8 @@ import {
   TrendingDown,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const stats = [
   //   { icon: Briefcase, label: "Companies", value: 10, color: "text-blue-600 bg-blue-100" },
