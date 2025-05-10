@@ -8,8 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import InputForm from "../../../../components/ui/input-form";
+import toast from "react-hot-toast";
 
 interface DialogWindowProps {
   icon: React.ReactNode;
@@ -49,15 +50,30 @@ export function DialogWindow({
   method,
 }: DialogWindowProps) {
   const [state, formAction, pending] = useActionState(method, initialState);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (state?.success) {
+      toast.success(state?.data?.message || "Store Created Successfully");
+      setOpen(false);
+      setTimeout(() => {
+        document.location.reload();
+      }, 1500);
+    } else if (state?.message) {
+      toast.error(state?.message);
+    } else if (state.errors && Object.keys(state.errors).length > 0) {
+      toast.error("Please fix the highlighted errors");
+    }
+  }, [state]);
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant={variant} className={className}>
           {icon} {title}
         </Button>
       </DialogTrigger>
-      <form action={formAction}>
-        <DialogContent className="sm:max-w-[425px] lg:max-w-4xl">
+      <DialogContent className="sm:max-w-[425px] lg:max-w-4xl">
+        <form action={formAction}>
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
@@ -72,7 +88,7 @@ export function DialogWindow({
             <InputForm title="Description" name="description" state={state} />
             <InputForm title="Phone Number" name="phoneNumber" state={state} />
             <InputForm title="Website" name="website" state={state} />
-            {/* <InputForm title="Status" name="status" state={state}/> */}
+            <InputForm title="Status" name="status" state={state} />
             <InputForm title="Address Id" name="addressId" state={state} />
           </div>
           <DialogFooter>
@@ -80,8 +96,8 @@ export function DialogWindow({
               Save changes {pending && " ..."}
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

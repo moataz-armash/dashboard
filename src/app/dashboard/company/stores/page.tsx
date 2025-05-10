@@ -1,162 +1,111 @@
-"use client";
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ListFilter, Plus } from "lucide-react";
+"use server";
 
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { createStore } from "./actions";
-import { DialogWindow } from "./dialog-window";
+import { cookies } from "next/headers";
+import { z } from "zod";
+import StoreCards from "./store-component";
+import { redirect } from "next/navigation";
 
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-}
+const CreateStoreSchema = z.object({
+  name: z.string().min(2, "Name is required").trim(),
+  storeCode: z.string().min(2, "Store code is required").trim(),
+  description: z.string().optional(),
+  email: z.string().email("Invalid email format").trim(),
+  phoneNumber: z.string().min(10, "Phone number is required").trim(),
+  website: z.string().url("Invalid website format").trim(),
+  socialMedia: z.record(z.string(), z.string()).optional(),
+  status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "DELETED"]),
+  addressId: z.string().min(1, "Address ID is required"),
+});
 
-interface Store {
-  id: number;
-  name: string;
-  location: string;
-  products: Product[];
-}
-
-const stores: Store[] = [
-  {
-    id: 1,
-    name: "Tech Store",
-    location: "Downtown",
-    products: [
-      { id: 1, name: "Laptop", price: 1200, quantity: 5 },
-      { id: 2, name: "Mouse", price: 50, quantity: 20 },
-    ],
-  },
-  {
-    id: 2,
-    name: "Home Essentials",
-    location: "Uptown",
-    products: [
-      { id: 3, name: "Vacuum Cleaner", price: 300, quantity: 8 },
-      { id: 4, name: "Toaster", price: 40, quantity: 15 },
-    ],
-  },
-];
-
-const StoreCards = () => {
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [dialogType, setDialogType] = useState<"edit" | "delete" | null>(null);
-
-  const handleOpenDialog = (type: "edit" | "delete") => {
-    setDialogType(type);
-    setOpenDialog(true);
+export async function createStore(prevState: any, formData: FormData) {
+  console.log("prevState", prevState);
+  const userCookies = await cookies();
+  const token = userCookies.get("token")?.value;
+  const raw = {
+    name: String(formData.get("name") || ""),
+    storeCode: String(formData.get("storeCode") || ""),
+    description: String(formData.get("description") || ""),
+    email: String(formData.get("email") || ""),
+    phoneNumber: String(formData.get("phoneNumber") || ""),
+    website: String(formData.get("website") || ""),
+    socialMedia: {},
+    status: String(formData.get("status") || "ACTIVE"), // Set the default status to "ACTIVE" if no value is se
+    addressId: String(formData.get("addressId") || ""),
   };
 
-  return (
-    <>
-      <div className="grid grid-cols-1 gap-4 p-4">
-        <div className="flex justify-between items-center p-4">
-          <input
-            type="text"
-            placeholder="Type the name of store..."
-            className="border border-gray-300 rounded-md px-3 py-2 w-[30%]"
-          />
+  const parsed = CreateStoreSchema.safeParse(raw);
 
-          <div className="flex space-x-4">
-            <Button variant="outline" className="font-medium">
-              {" "}
-              <ListFilter /> Filter{" "}
-            </Button>
+  console.log("token", token);
 
-            <DialogWindow
-              icon={<Plus />}
-              title="Add Store"
-              className="bg-brand-500 hover:bg-brand-600"
-              method={createStore}
-            />
-          </div>
-        </div>
-        <Card className="p-4 rounded-2xl shadow-md w-full">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {stores.map((store) => (
-                <TableRow
-                  key={store.id}
-                  onClick={() => setSelectedStore(store)}
-                  className="cursor-pointer"
-                >
-                  <TableCell>{store.name}</TableCell>
-                  <TableCell>{store.location}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      onClick={() => handleOpenDialog("edit")}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      className="ml-2"
-                      onClick={() => handleOpenDialog("delete")}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Card>
-        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {dialogType === "edit" ? "Edit Item" : "Confirm Deletion"}
-              </DialogTitle>
-            </DialogHeader>
-            <p>
-              {dialogType === "edit"
-                ? "Modify the details of this item."
-                : "Are you sure you want to delete this item?"}
-            </p>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setOpenDialog(false)}>
-                Cancel
-              </Button>
-              <Button
-                variant={dialogType === "delete" ? "destructive" : "default"}
-                onClick={() => setOpenDialog(false)}
-              >
-                Confirm
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </>
+  if (!parsed.success) {
+    return {
+      errors: parsed.error.format(),
+      name: formData.get("name"),
+      description: formData.get("description"),
+      storeCode: formData.get("storeCode"),
+      email: formData.get("email"),
+      phoneNumber: formData.get("phoneNumber"),
+      website: formData.get("website"),
+      addressId: formData.get("addressId"),
+      status: formData.get("status"),
+      success: false,
+    };
+  }
+
+  const apiFormData = new FormData();
+  apiFormData.append(
+    "createStoreRequest",
+    new Blob([JSON.stringify(parsed.data)], { type: "application/json" })
   );
-};
 
-export default StoreCards;
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/store/create`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: apiFormData,
+    }
+  );
+
+  if (!res.ok) {
+    const errorJson = await res.json(); // assuming your API sends a JSON response with `message`
+    return {
+      errors: {},
+      name: raw.name,
+      description: raw.description,
+      storeCode: raw.storeCode,
+      email: raw.email,
+      phoneNumber: raw.phoneNumber,
+      website: raw.website,
+      addressId: raw.addressId,
+      status: raw.status,
+      success: false,
+      message: errorJson.message || "Create Store failed",
+    };
+  }
+
+  return { data: await res.json(), success: true };
+}
+
+export default async function getStores() {
+  const userCookies = await cookies();
+  const token = userCookies.get("token")?.value;
+
+  if (!token) redirect("/login");
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/store/Stores`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    }
+  );
+  const data = await res.json();
+  return <StoreCards stores={data.data} />;
+}

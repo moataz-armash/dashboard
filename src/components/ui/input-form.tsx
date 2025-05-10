@@ -17,17 +17,16 @@ export default function InputForm({ state, title, name }: InputFormProps) {
         <Input
           className="col-span-3"
           type="text"
-         
           placeholder={title}
           aria-label={name}
           name={name}
           defaultValue={state[name]}
         />
-        {state?.errors[name] && (
-          <p className="text-red-500 text-sm">
+        {/* {state?.errors[name] && (
+          <p className="text-red-500 text-sm col-span-full text-right">
             {state.errors[name]._errors?.[0]}
           </p>
-        )}
+        )} */}
       </div>
     </>
   );

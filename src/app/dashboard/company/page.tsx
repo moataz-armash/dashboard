@@ -6,6 +6,6 @@ export default function CompanyDashboard() {
   if (isAuthenticated) {
     redirect("/dashboard/company/home");
   } else {
-    return;
+    redirect("/login");
   }
 }
