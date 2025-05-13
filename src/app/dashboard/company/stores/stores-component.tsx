@@ -1,5 +1,5 @@
 "use client";
-import { useActionState, useState } from "react";
+import {  useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ListFilter, Plus } from "lucide-react";
@@ -22,15 +22,12 @@ import {
 import { DialogWindow } from "./dialog-window";
 import { createStore } from "./page";
 import Badge from "@/components/ui/badge";
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-}
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
+import { useProfileStore } from "../profileStore";
 
 interface Store {
+  id: string;
   name: string;
   storeCode: string;
   description: string;
@@ -42,36 +39,23 @@ interface Store {
   addressId: string;
 }
 
-// const stores: Store[] = [
-//   {
-//     id: 1,
-//     name: "Tech Store",
-//     location: "Downtown",
-//     products: [
-//       { id: 1, name: "Laptop", price: 1200, quantity: 5 },
-//       { id: 2, name: "Mouse", price: 50, quantity: 20 },
-//     ],
-//   },
-//   {
-//     id: 2,
-//     name: "Home Essentials",
-//     location: "Uptown",
-//     products: [
-//       { id: 3, name: "Vacuum Cleaner", price: 300, quantity: 8 },
-//       { id: 4, name: "Toaster", price: 40, quantity: 15 },
-//     ],
-//   },
-// ];
-
-interface StoreCardsProps {
+interface StoresCardsProps {
   stores: Store[];
 }
 
-const StoreCards = ({ stores }: StoreCardsProps) => {
-  // const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+const StoresCards = ({ stores }: StoresCardsProps) => {
   const [search, setSearch] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogType, setDialogType] = useState<"edit" | "delete" | null>(null);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const router = useRouter();
+  const { profile } = useProfileStore();
+
+  const name = profile?.name || "Bim";
+  const profilePhoto = profile?.profilePhoto || "";
+  const profilePhotoUrl = profilePhoto
+    ? `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/image?in=${profilePhoto}`
+    : null;
 
   const handleOpenDialog = (type: "edit" | "delete") => {
     setDialogType(type);
@@ -84,12 +68,47 @@ const StoreCards = ({ stores }: StoreCardsProps) => {
 
   return (
     <>
+      <main className="flex-1">
+        <div className="w-full flex justify-between px-8">
+          <div className="flex space-x-2">
+            <div className="flex flex-col items-center pt-6">
+              <h1 className="text-xl font-bold text-left w-full">All Stores</h1>
+              <p className="text-[0.7rem] text-zinc-400">
+                Let's browse all your stores
+              </p>
+            </div>
+          </div>
+          {profile && (
+            <div className="flex gap-1 mt-5 items-center">
+              <Avatar>
+                {!isImageLoaded && (
+                  <div className="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full animate-pulse">
+                    <span className="text-[8px] text-gray-400">Loading...</span>
+                  </div>
+                )}
+                <AvatarImage
+                  src={`${profilePhotoUrl || "https://github.com/shadcn.pn"} `}
+                  alt="admin profile"
+                  style={isImageLoaded ? {} : { display: "none" }}
+                  onLoad={() => setIsImageLoaded(true)}
+                  onError={() => setIsImageLoaded(true)}
+                />
+                <AvatarFallback>{name}</AvatarFallback>
+              </Avatar>
+              <div className="ml-1 flex flex-col items-center">
+                <p className="font-bold text-sm text-left w-full">{name}</p>
+                <p className="text-xs text-zinc-400">Admin</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
       <div className="grid grid-cols-1 gap-4 p-4">
         <div className="flex justify-between items-center p-4">
           <input
             type="text"
             placeholder="Type the name of store..."
-            className="border border-gray-300 rounded-md px-3 py-2 w-[30%]"
+            className="border border-gray-300 rounded-md px-3 py-2 w-[30%] focus:outline-brand-400"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -123,9 +142,12 @@ const StoreCards = ({ stores }: StoreCardsProps) => {
               {filteredStores.length > 0 ? (
                 filteredStores.map((store) => (
                   <TableRow
-                    key={store.storeCode}
+                    key={store.id}
                     // onClick={() => setSelectedStore(store)}
                     className="cursor-pointer"
+                    onClick={() =>
+                      router.push(`/dashboard/company/stores/${store.id}`)
+                    }
                   >
                     <TableCell>{store.name}</TableCell>
                     <TableCell>{store.phoneNumber}</TableCell>
@@ -140,13 +162,6 @@ const StoreCards = ({ stores }: StoreCardsProps) => {
                       >
                         Edit
                       </Button>
-                      {/* <Button
-                      variant="destructive"
-                      className="ml-2"
-                      onClick={() => handleOpenDialog("delete")}
-                    >
-                      Delete
-                    </Button> */}
                     </TableCell>
                   </TableRow>
                 ))
@@ -195,4 +210,4 @@ const StoreCards = ({ stores }: StoreCardsProps) => {
   );
 };
 
-export default StoreCards;
+export default StoresCards;

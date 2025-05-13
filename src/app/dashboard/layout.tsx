@@ -17,57 +17,30 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/company/profile`,
+  const tokenRes = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/auth/is-token-expired?tkn=${token}`,
     {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       cache: "no-store",
     }
   );
 
-  const data = await res.json();
-  console.log(data.data.profilePhoto);
-  const { name, profilePhoto } = data.data;
-  const profilePhotoUrl = profilePhoto
-    ? `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/company/image?in=${profilePhoto}`
-    : null;
+  // console.log("tokenRes : ", tokenRes.bodyUsed);
+
+  if (tokenRes.bodyUsed) {
+    redirect("/login");
+  }
+
 
   return (
     <SidebarProvider>
       <AuthProvider>
         <AppSidebar />
         <main className="flex-1">
-          <div className="w-full flex justify-between">
-            <div className="flex space-x-2">
-              <SidebarTrigger />
-              <div className="flex flex-col items-center pt-6">
-                <h1 className="text-xl font-bold text-left w-full">All Stores</h1>
-                <p className="text-[0.7rem] text-zinc-400">Let's browse all your stores</p>
-              </div>
-            </div>
-            {profilePhotoUrl && (
-              <div className="flex gap-1 mt-5 mr-8 items-center">
-                <Avatar>
-                  <AvatarImage
-                    src={`${
-                      profilePhotoUrl || "https://github.com/shadcn.pn"
-                    } `}
-                    alt="admin profile"
-                  />
-                  <AvatarFallback>{name}</AvatarFallback>
-                </Avatar>
-                <div className="ml-1 flex flex-col items-center">
-                  <p className="font-bold text-sm text-left w-full">{name}</p>
-                  <p className="text-xs text-zinc-400">Admin</p>
-                </div>
-              </div>
-            )}
-          </div>
-
+          <SidebarTrigger />
           {children}
         </main>
       </AuthProvider>

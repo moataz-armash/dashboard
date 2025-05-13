@@ -1,8 +1,8 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextProps {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null;
   login: () => void;
   logout: () => void;
 }
@@ -10,16 +10,19 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    localStorage.getItem("isAuthenticated") === "false"
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const storedAuthState = localStorage.getItem("isAuthenticated");
+    setIsAuthenticated(storedAuthState === "true");
+  }, []);
 
   const login = () => {
-    setIsAuthenticated(true);
     localStorage.setItem("isAuthenticated", "true");
+    setIsAuthenticated(true);
   };
   const logout = () => {
-    localStorage.removeItem("isAuthenticated");
+    localStorage.setItem("isAuthenticated", "false");
     setIsAuthenticated(false);
   };
   return (

@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { z } from "zod";
-import StoresCards from "./stores-component";
+import StoreCard from "./store-component";
 import { redirect } from "next/navigation";
 
 const CreateStoreSchema = z.object({
@@ -18,6 +18,7 @@ const CreateStoreSchema = z.object({
 });
 
 export async function createStore(prevState: any, formData: FormData) {
+  console.log("prevState", prevState);
   const userCookies = await cookies();
   const token = userCookies.get("token")?.value;
   const raw = {
@@ -88,14 +89,25 @@ export async function createStore(prevState: any, formData: FormData) {
   return { data: await res.json(), success: true };
 }
 
-export default async function getStores() {
+interface PageParams {
+  params: {
+    storeId: string;
+  };
+}
+
+export default async function getStores({ params }: PageParams) {
+  const { storeId } = params;
+  console.log(storeId);
+  if (!storeId) {
+    redirect("/dashboard/company/stores"); // redirect to the home page if no storeId is provided in the url
+  }
   const userCookies = await cookies();
   const token = userCookies.get("token")?.value;
 
   if (!token) redirect("/login");
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/store/stores`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/store/${storeId}`,
     {
       method: "GET",
       headers: {
@@ -106,6 +118,6 @@ export default async function getStores() {
     }
   );
   const data = await res.json();
-
-  return <StoresCards stores={data.data} />;
+  console.log(data.data);
+  return <StoreCard store={data.data} />;
 }

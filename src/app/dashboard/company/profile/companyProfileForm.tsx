@@ -5,33 +5,25 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Image, { StaticImageData } from "next/image";
 import userProfile from "@/assets/userprofile.jpg";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import Spinner from "@/components/ui/spinner";
+import { CompanyProfile, useProfileStore } from "../profileStore";
+
+interface CompanyProfileFormProps {
+  initialProfileData: CompanyProfile | null;
+  token: string | null; // Token might be needed for client-side actions
+  serverFetchError?: string | null;
+}
 
 export default function CompanyProfileForm({
-  data,
+  initialProfileData,
   token,
-}: {
-  data: any;
-  token: string;
-}) {
-  const {
-    name,
-    email,
-    profilePhoto,
-    registrationNumber,
-    description,
-    phone,
-    website,
-    legalEntityType,
-    sector,
-    industry,
-    taxId,
-    currency,
-    enrollmentDate,
-  } = data;
-  const profilePhotoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/company/image?in=${profilePhoto}`;
+  serverFetchError,
+}: CompanyProfileFormProps) {
+  const { setProfile, profile } = useProfileStore();
+
+  const profilePhotoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/company/image?in=${initialProfileData?.profilePhoto}`;
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewImage, setPreviewImage] = useState<string | StaticImageData>(
@@ -118,6 +110,30 @@ export default function CompanyProfileForm({
     }
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    setProfile(initialProfileData);
+  }, [initialProfileData, setProfile]);
+
+  if (!initialProfileData) {
+    return <div>No profile data available.</div>;
+  }
+
+  const {
+    name,
+    email,
+    profilePhoto,
+    registrationNumber,
+    description,
+    phone,
+    website,
+    legalEntityType,
+    sector,
+    industry,
+    taxId,
+    currency,
+    enrollmentDate,
+  } = initialProfileData;
 
   return (
     <div>
