@@ -97,7 +97,6 @@ interface PageParams {
 
 export default async function getStores({ params }: PageParams) {
   const { storeId } = params;
-  console.log(storeId);
   if (!storeId) {
     redirect("/dashboard/company/stores"); // redirect to the home page if no storeId is provided in the url
   }
@@ -119,5 +118,5 @@ export default async function getStores({ params }: PageParams) {
   );
   const data = await res.json();
   console.log(data.data);
-  return <StoreCard store={data.data} />;
+  return <StoreCard store={data.data} token={token}/>;
 }

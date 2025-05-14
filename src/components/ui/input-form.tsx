@@ -6,6 +6,8 @@ interface InputFormProps {
   title: string;
   name: string;
   text?: string;
+  readOnly?: boolean;
+  defaultValue?: any;
 }
 
 export default function InputForm({
@@ -13,6 +15,8 @@ export default function InputForm({
   title,
   name,
   text,
+  readOnly = false,
+  defaultValue,
 }: InputFormProps) {
   return (
     <>
@@ -26,12 +30,15 @@ export default function InputForm({
           {title}
         </Label>
         <Input
-          className="col-span-3"
+          className={`${
+            readOnly && "bg-gray-100 cursor-not-allowed"
+          } col-span-3`}
           type="text"
           placeholder={title}
           aria-label={name}
           name={name}
-          defaultValue={state[name]}
+          defaultValue={state ? state[name] : defaultValue}
+          readOnly={readOnly || false}
         />
         {/* {state?.errors[name] && (
           <p className="text-red-500 text-sm col-span-full text-right">

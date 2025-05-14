@@ -9,6 +9,36 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import Spinner from "@/components/ui/spinner";
 import { CompanyProfile, useProfileStore } from "../profileStore";
+import {
+  SubmitEntityUpdate,
+  handleFileChange,
+  handleImageClick,
+} from "@/lib/helpers";
+
+const fields = [
+  "name",
+  "email",
+  "registrationNumber",
+  "description",
+  "phone",
+  "address",
+  "website",
+  "legalEntityType",
+  "sector",
+  "dateOfIncorporation",
+  "industry",
+  "taxId",
+  "currency",
+  "enrollmentDate",
+];
+
+const entityDefaults = {
+  socialMedia: {},
+  addressId: "",
+  dateOfIncorporation: new Date().toISOString(),
+};
+
+const endpoint: string = "/company/profile";
 
 interface CompanyProfileFormProps {
   initialProfileData: CompanyProfile | null;
@@ -21,9 +51,10 @@ export default function CompanyProfileForm({
   token,
   serverFetchError,
 }: CompanyProfileFormProps) {
-  const { setProfile, profile } = useProfileStore();
+  const { setProfile } = useProfileStore();
 
-  const profilePhotoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/company/image?in=${initialProfileData?.profilePhoto}`;
+  const profilePhotoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/image?in=${initialProfileData?.profilePhoto}`;
+  console.log(profilePhotoUrl);
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewImage, setPreviewImage] = useState<string | StaticImageData>(
@@ -31,84 +62,27 @@ export default function CompanyProfileForm({
   );
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleButtonClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setPreviewImage(previewUrl);
-      toast.success("Image uploaded successfully");
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
-    setIsLoading(true);
     e.preventDefault();
 
-    const form = formRef.current;
-    if (!form) return;
-
-    const formData = new FormData(form);
-
-    const updateCompanyRequest = {
-      name: String(formData.get("name")) || "",
-      email: String(formData.get("email")) || "",
-      registrationNumber: String(formData.get("registrationNumber")) || "",
-      description: String(formData.get("description")) || "",
-      phone: String(formData.get("phone")) || "",
-      website: String(formData.get("website")) || "",
-      legalEntityType: String(formData.get("legalEntityType")) || "",
-      sector: String(formData.get("sector")) || "",
-      industry: String(formData.get("industry")) || "",
-      taxId: String(formData.get("taxId")) || "",
-      currency: String(formData.get("currency")) || "",
-      enrollmentDate: String(formData.get("enrollmentDate")) || "",
-      dateOfIncorporation: new Date().toISOString(),
-      socialMedia: {},
-      addressId: "",
-    };
-
-    const profilePhoto = fileInputRef.current?.files?.[0];
-
-    const formDataToSend = new FormData();
-    if (profilePhoto) {
-      formDataToSend.append("profilePhoto", profilePhoto);
-    } else {
-      updateCompanyRequest.profilePhoto = profilePhotoUrl;
-    }
-    formDataToSend.append(
-      "updateCompanyRequest",
-      new Blob([JSON.stringify(updateCompanyRequest)], {
-        type: "application/json",
-      })
-    );
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/company/profile`,
-      {
-        method: "PUT",
-        body: formDataToSend,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    console.log(response);
-
-    if (!response.ok) {
-      console.error("Update failed");
-    }
-    if (response.ok) {
-      toast.success("Update successful");
-      setTimeout(() => {
-        document.location.reload();
-      }, 1500);
-    }
-    setIsLoading(false);
+    await SubmitEntityUpdate({
+      formRef,
+      fileInputRef,
+      fields,
+      entityDefaults,
+      endpoint,
+      token,
+      fileFallbackUrl: profilePhotoUrl,
+      setIsLoading,
+      onSuccess: () => {
+        toast.success("Company profile updated successful");
+        setTimeout(() => {
+          document.location.reload();
+        }, 1500);
+      },
+      onError: () => toast.error("Update failed"),
+      updateRequest: "updateCompanyRequest",
+    });
   };
 
   useEffect(() => {
@@ -155,7 +129,11 @@ export default function CompanyProfileForm({
 
             <div className="space-y-1">
               <h1 className="text-2xl font-bold">{name}</h1>
-              <Button type="button" size="sm" onClick={handleButtonClick}>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => handleImageClick(fileInputRef)}
+              >
                 Change photo
               </Button>
               <input
@@ -164,7 +142,7 @@ export default function CompanyProfileForm({
                 name="profilePhoto"
                 accept="image/*"
                 className="hidden"
-                onChange={handleFileChange}
+                onChange={(e) => handleFileChange(e, setPreviewImage)}
               />
             </div>
           </div>
