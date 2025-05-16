@@ -54,7 +54,6 @@ export default function CompanyProfileForm({
   const { setProfile } = useProfileStore();
 
   const profilePhotoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/image?in=${initialProfileData?.profilePhoto}`;
-  console.log(profilePhotoUrl);
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewImage, setPreviewImage] = useState<string | StaticImageData>(

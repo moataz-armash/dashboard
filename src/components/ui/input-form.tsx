@@ -8,6 +8,9 @@ interface InputFormProps {
   text?: string;
   readOnly?: boolean;
   defaultValue?: any;
+  index?: number;
+  totalItems?: number;
+  parentColumns?: number;
 }
 
 export default function InputForm({
@@ -17,10 +20,23 @@ export default function InputForm({
   text,
   readOnly = false,
   defaultValue,
+  index,
+  totalItems,
+  parentColumns = 2,
 }: InputFormProps) {
+  let columnSpanClass = "";
+  if (index !== undefined && totalItems !== undefined) {
+    const isLastItem = index === totalItems - 1;
+    const isOddNumberOfItems = totalItems % parentColumns !== 0;
+    if (isLastItem && isOddNumberOfItems) {
+      columnSpanClass = `col-span-${parentColumns}`;
+    } else {
+      columnSpanClass = "col-span-1";
+    }
+  }
   return (
     <>
-      <div className="grid grid-cols-4 items-center gap-4">
+      <div className={`grid grid-cols-4 items-center gap-4 ${columnSpanClass}`}>
         <Label
           htmlFor={name}
           className={`${
@@ -40,11 +56,11 @@ export default function InputForm({
           defaultValue={state ? state[name] : defaultValue}
           readOnly={readOnly || false}
         />
-        {/* {state?.errors[name] && (
+        {state?.errors?.[name]?._errors?.[0] && (
           <p className="text-red-500 text-sm col-span-full text-right">
-            {state.errors[name]._errors?.[0]}
+            {state.errors[name]._errors[0]}
           </p>
-        )} */}
+        )}
       </div>
     </>
   );

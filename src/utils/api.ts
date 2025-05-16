@@ -1,5 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { getAxiosInstance } from "./axiosInstance";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 // import { toast } from "react-hot-toast";
 
 export const registerNewUser = async (registerData: {
@@ -73,7 +75,7 @@ export const verifyEmail = async (
     const axiosCompany = getAxiosInstance(
       process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY
     );
-    console.log(axiosCompany)
+    console.log(axiosCompany);
     const res = await axios.post(`/auth/verify-email?token=${token}`);
     return res.data;
   } catch (error) {
@@ -123,4 +125,24 @@ export const resetPassword = async (data: {
   } catch (error) {
     throw new Error(`Error while register new user ${error}`);
   }
+};
+
+export const apiRequest = async (
+  endpoint: string,
+  token: string,
+  method: string = "GET"
+): Promise<any> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}${endpoint}`,
+    {
+      method: String(method),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  return res;
 };

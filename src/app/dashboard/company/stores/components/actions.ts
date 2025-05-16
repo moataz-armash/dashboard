@@ -1,10 +1,6 @@
 "use server";
-
 import { cookies } from "next/headers";
 import { z } from "zod";
-import StoreCard from "./store-component";
-import { redirect } from "next/navigation";
-import { apiRequest } from "@/utils/api";
 
 const CreateStoreSchema = z.object({
   name: z.string().min(2, "Name is required").trim(),
@@ -19,7 +15,6 @@ const CreateStoreSchema = z.object({
 });
 
 export async function createStore(prevState: any, formData: FormData) {
-  console.log("prevState", prevState);
   const userCookies = await cookies();
   const token = userCookies.get("token")?.value;
   const raw = {
@@ -35,8 +30,6 @@ export async function createStore(prevState: any, formData: FormData) {
   };
 
   const parsed = CreateStoreSchema.safeParse(raw);
-
-  console.log("token", token);
 
   if (!parsed.success) {
     return {
@@ -88,27 +81,4 @@ export async function createStore(prevState: any, formData: FormData) {
   }
 
   return { data: await res.json(), success: true };
-}
-
-interface PageParams {
-  params: {
-    storeId: string;
-  };
-}
-
-export default async function getStores({ params }: PageParams) {
-  const { storeId } = params;
-  if (!storeId) {
-    redirect("/dashboard/company/stores"); // redirect to the home page if no storeId is provided in the url
-  }
-  const userCookies = await cookies();
-  const token = userCookies.get("token")?.value;
-
-  if (!token) redirect("/login");
-
-  const res = await apiRequest(`/store/${storeId}`, token);
-
-  const data = await res.json();
-  console.log(data.data);
-  return <StoreCard store={data.data} token={token} />;
 }

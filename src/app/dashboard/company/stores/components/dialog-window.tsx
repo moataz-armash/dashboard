@@ -9,38 +9,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useActionState, useEffect, useState } from "react";
-import InputForm from "../../../../components/ui/input-form";
+import InputForm from "../../../../../components/ui/input-form";
 import toast from "react-hot-toast";
-
-interface DialogWindowProps {
-  icon: React.ReactNode;
-  title: string;
-  variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link"
-    | null
-    | undefined;
-  className?: string;
-  method: (prevState: any, formData: FormData) => Promise<any>;
-}
-
-const initialState = {
-  errors: {},
-  name: "",
-  email: "",
-  storeCode: "",
-  description: "",
-  phoneNumber: "",
-  website: "",
-  status: "",
-  addressId: "",
-  success: false,
-  message: "",
-};
+import UploadImage from "@/components/ui/upload-image";
+import { StaticImageData } from "next/image";
+import userProfile from "@/assets/userprofile.jpg";
+import { DialogWindowProps } from "./type";
 
 export function DialogWindow({
   icon,
@@ -48,9 +22,18 @@ export function DialogWindow({
   variant = "default",
   className,
   method,
+  fileInputRef,
+  fields,
+  initialState,
+  dialogTitle,
+  buttonTitle,
 }: DialogWindowProps) {
   const [state, formAction, pending] = useActionState(method, initialState);
   const [open, setOpen] = useState(false);
+
+  const [previewImage, setPreviewImage] = useState<string | StaticImageData>(
+    userProfile
+  );
 
   useEffect(() => {
     if (state?.success) {
@@ -65,31 +48,49 @@ export function DialogWindow({
       toast.error("Please fix the highlighted errors");
     }
   }, [state]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant={variant} className={className}>
-          {icon} {title}
+          {icon} {buttonTitle}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] lg:max-w-4xl">
         <form action={formAction}>
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
+            <DialogTitle>{dialogTitle}</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
+              Make changes to your {title} here. Click save when you&apos;re
               done.
             </DialogDescription>
           </DialogHeader>
+          {fileInputRef && (
+            <UploadImage
+              previewImage={previewImage}
+              setPreviewImage={setPreviewImage}
+              fileInputRef={fileInputRef}
+              nameOfInput="images"
+            />
+          )}
+          {state?.errors?.images?._errors?.[0] && (
+            <p className="text-red-500 text-sm col-span-full text-center">
+              {state.errors.images._errors[0]}
+            </p>
+          )}
+
           <div className="grid gap-4 py-4 grid-cols-2">
-            <InputForm title="Name" name="name" state={state} />
-            <InputForm title="Email" name="email" state={state} />
-            <InputForm title="Store Code" name="storeCode" state={state} />
-            <InputForm title="Description" name="description" state={state} />
-            <InputForm title="Phone Number" name="phoneNumber" state={state} />
-            <InputForm title="Website" name="website" state={state} />
-            <InputForm title="Status" name="status" state={state} />
-            <InputForm title="Address Id" name="addressId" state={state} />
+            {Object.values(fields).map((field, index, arr) => (
+              <InputForm
+                key={field.name}
+                title={field.title}
+                name={field.name}
+                state={state}
+                text="text-left"
+                index={index}
+                totalItems={arr.length}
+              />
+            ))}
           </div>
           <DialogFooter>
             <Button type="submit" disabled={pending}>
