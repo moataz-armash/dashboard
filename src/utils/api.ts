@@ -1,6 +1,5 @@
 import axios, { AxiosError } from "axios";
 import { getAxiosInstance } from "./axiosInstance";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 // import { toast } from "react-hot-toast";
 
@@ -93,7 +92,7 @@ export const forgetPassword = async (
     );
     const res = await axiosCompany.post(`/auth/forgot-password?email=${email}`);
     console.log(res.data);
-    localStorage.setItem("resetToken", res.data.data.resetToken);
+    localStorage.setItem("resetToken", res.data.data.token);
     return res.data;
   } catch (error) {
     throw new Error(`Error while register new user ${error}`);
@@ -112,7 +111,7 @@ export const resetPassword = async (data: {
       process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY
     );
     const { resetToken, email, newPassword, confirmPassword } = data;
-    const res = await axiosCompany.post(
+    const res = await axiosCompany.put(
       `/auth/reset-password?token=${resetToken}&email=${email}`,
       {
         newPassword,

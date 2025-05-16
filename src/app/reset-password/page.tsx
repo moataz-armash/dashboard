@@ -3,8 +3,9 @@ import { resetPassword } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { z } from "zod";
 
 const formSchema = z
@@ -32,8 +33,11 @@ const ResetPasswordPage = () => {
       const resetToken = localStorage.getItem("resetToken") ?? "";
       console.log(data, email, resetToken);
       resetPassword({ ...data, email, resetToken });
+      toast.success("Password reset successfully");
       //   login();
-      router.push("/login");
+      setTimeout(() => {
+        router.push("/login");
+      }, 1500);
     } catch (error) {
       throw new Error(`error happened while register ${error}`);
     }
