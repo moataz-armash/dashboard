@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const RegisterCompanySchema = z.object({
@@ -19,9 +18,6 @@ export async function registerCompany(prevState: any, formData: FormData) {
   };
   const userCookies = await cookies();
   const token = userCookies.get("token")?.value;
-  const companyId = userCookies.get("companyId")?.value;
-
-  if (!companyId) redirect("/login"); // redirect to login page if user is not logged in or companyId is not set in cookies
 
   const parsed = RegisterCompanySchema.safeParse(raw);
 
