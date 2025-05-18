@@ -40,14 +40,14 @@ const items = [
     icon: Store,
   },
   {
-    title: "Workers",
-    url: "/dashboard/company/workers",
-    icon: HardHat,
-  },
-  {
     title: "Products",
     url: "/dashboard/company/products",
     icon: Box,
+  },
+  {
+    title: "Workers",
+    url: "/dashboard/company/workers",
+    icon: HardHat,
   },
   {
     title: "Financials",

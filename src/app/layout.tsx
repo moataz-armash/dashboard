@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
-import {Toaster} from "react-hot-toast"
+import { Toaster } from "react-hot-toast";
 // import LogRocketProvider from "@/components/LogRocketProvider";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,12 +33,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${poppins.className} antialiased`}
       >
         {/* <LogRocketProvider> */}
 
-        <AuthProvider>{children} <Toaster position="top-center"/></AuthProvider>
-        
+        <AuthProvider>
+          {children} <Toaster position="top-center" />
+        </AuthProvider>
+
         {/* </LogRocketProvider> */}
       </body>
     </html>

@@ -34,7 +34,7 @@ export default function ProductsClient({ products }: ProductsClientProps) {
     product.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  console.log(products)
+  console.log(products);
 
   return (
     <div className="px-6 flex flex-col gap-4">
@@ -86,9 +86,9 @@ export default function ProductsClient({ products }: ProductsClientProps) {
                     key={product.id}
                     // onClick={() => setSelectedStore(store)}
                     className="cursor-pointer"
-                    // onClick={() =>
-                    //   router.push(`/dashboard/company/stores/${store.id}`)
-                    // }
+                    onClick={() =>
+                      router.push(`/dashboard/company/products/${product.id}`)
+                    }
                   >
                     <TableCell>{product?.images?.[0]}</TableCell>
                     <TableCell>{product.name}</TableCell>

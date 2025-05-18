@@ -21,16 +21,16 @@ const stats = [
     color: "text-blue-600 bg-blue-100",
   },
   {
-    icon: Users,
-    label: "Workers",
-    value: 120,
-    color: "text-yellow-600 bg-yellow-100",
-  },
-  {
     icon: Package,
     label: "Products",
     value: 350,
     color: "text-purple-600 bg-purple-100",
+  },
+  {
+    icon: Users,
+    label: "Workers",
+    value: 120,
+    color: "text-yellow-600 bg-yellow-100",
   },
   {
     icon: DollarSign,

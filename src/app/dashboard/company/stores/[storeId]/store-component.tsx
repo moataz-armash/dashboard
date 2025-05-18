@@ -8,6 +8,7 @@ import { useProfileStore } from "../../profileStore";
 
 import { getImage } from "@/lib/helpers";
 import StoreForm from "./store-form";
+import BackLink from "@/components/ui/back-link";
 
 interface Store {
   id: string;
@@ -45,15 +46,8 @@ const StoreCard = ({ store, token }: StoreCardProps) => {
     <>
       <main className="flex-1">
         <div className="flex justify-between items-center py-6 px-4">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/dashboard/company/stores"
-              className="border bg-card text-card-foreground p-2 rounded-2xl shadow-md cursor-pointer"
-            >
-              <ArrowLeft />
-            </Link>
-            <h1 className="text-xl font-bold text-left w-full">All Stores </h1>
-          </div>
+          <BackLink link="/dashboard/company/stores" title="All Stores" />
+
           <div className="flex-1 flex justify-center">
             <input
               type="text"
