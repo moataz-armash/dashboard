@@ -4,7 +4,7 @@ import BackLink from "@/components/ui/back-link";
 import { useProfileStore } from "../../profileStore";
 import { useRef, useState } from "react";
 import { getImage, handleFileChange, handleImageClick } from "@/lib/helpers";
-import { Product } from "../type";
+import { Product } from "../components/type";
 import Image, { StaticImageData } from "next/image";
 import { Upload } from "lucide-react";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { use, useRef, useState } from "react";
 import CompanyHeader from "@/components/ui/company-header";
 import { Button } from "@/components/ui/button";
 import { ListFilter, Plus } from "lucide-react";
@@ -16,29 +16,46 @@ import {
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
 import Badge from "@/components/ui/badge";
-import { Product, initialProductState } from "./type";
-import { productFields } from "./product-fields";
-import { createProduct } from "./actions";
+import { Product, initialProductState } from "./components/type";
+import { productFields } from "./components/product-fields";
+import { createProduct } from "./components/actions";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { getImage } from "@/lib/helpers";
+import Pagination from "@/components/ui/pagination";
 
 interface ProductsClientProps {
-  products: Product[];
+  productsPromise: Promise<any>;
+  currentPage: number;
 }
 
-export default function ProductsClient({ products }: ProductsClientProps) {
+export default function ProductsClient({
+  productsPromise,
+  currentPage,
+}: ProductsClientProps) {
   const [search, setSearch] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const res = use(productsPromise);
+  const products: Product[] = res?.data || [];
+
+  const totalPages = Math.ceil(res?.total / res?.size) || 1;
+
+  const handlePageChange = (newPage: number) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("page", String(newPage));
+    router.push(`?${searchParams.toString()}`);
+  };
+
+  console.log(products);
 
   const router = useRouter();
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );
-
-  console.log(products);
+  // console.log(products);
 
   return (
-    <div className="px-6 flex flex-col gap-4">
-      <CompanyHeader title="Products Managment" />
+    <>
       <div className="flex justify-between items-center py-2">
         <input
           type="text"
@@ -68,66 +85,76 @@ export default function ProductsClient({ products }: ProductsClientProps) {
         </div>
       </div>
       {products.length > 0 ? (
-        <Card className="p-4 rounded-2xl shadow-md w-full">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Image</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead>Created By</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
-                  <TableRow
-                    key={product.id}
-                    // onClick={() => setSelectedStore(store)}
-                    className="cursor-pointer"
-                    onClick={() =>
-                      router.push(`/dashboard/company/products/${product.id}`)
-                    }
-                  >
-                    <TableCell>{product?.images?.[0]}</TableCell>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.category}</TableCell>
-                    <TableCell>{product.size}</TableCell>
-                    <TableCell>
-                      {/* <Badge text={store.status} status={store.status} /> */}
-                      {product.createdBy}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                        // onClick={() => handleOpenDialog("edit")}
+        <>
+          <Card className="p-4 rounded-2xl shadow-md w-full">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Image</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Size</TableHead>
+                  <TableHead>Created By</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product) => (
+                    <TableRow
+                      key={product.id}
+                      className="cursor-pointer"
+                      onClick={() =>
+                        router.push(`/dashboard/company/products/${product.id}`)
+                      }
+                    >
+                      <TableCell>
+                        <Avatar>
+                          <AvatarImage
+                            src={
+                              `${getImage(product?.images?.[0])}` ||
+                              "https://github.com/shadcn.pn"
+                            }
+                            alt="admin profile"
+                          />
+                        </Avatar>
+                      </TableCell>
+                      <TableCell>{product.name}</TableCell>
+                      <TableCell>{product.category}</TableCell>
+                      <TableCell>{product.size}</TableCell>
+                      <TableCell>{product.createdBy}</TableCell>
+                      <TableCell>
+                        <Button variant="outline">Edit</Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5}>
+                      <div
+                        className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4"
+                        role="alert"
                       >
-                        Edit
-                      </Button>
+                        <p> This store not found Please try again </p>
+                      </div>
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5}>
-                    <div
-                      className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4"
-                      role="alert"
-                    >
-                      <p> This store not found Please try again </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </Card>
+                )}
+              </TableBody>
+            </Table>
+          </Card>
+          <div className="my-4 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </>
       ) : (
         <p className="text-yellow-500 w-full pl-1 font-medium">
           There is no Products, Add one Now!
         </p>
       )}
-    </div>
+    </>
   );
 }

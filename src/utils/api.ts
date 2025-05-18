@@ -130,7 +130,7 @@ export const apiRequest = async (
   endpoint: string,
   token: string,
   method: string = "GET"
-): Promise<any> => {
+) => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}${endpoint}`,
     {
@@ -142,6 +142,7 @@ export const apiRequest = async (
       cache: "no-store",
     }
   );
+  const data = await res.json()
 
-  return res;
+  return data;
 };

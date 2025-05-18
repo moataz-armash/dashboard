@@ -22,6 +22,6 @@ export default async function ProductDetailsPage({
 
   const res = await apiRequest(`/product/${productId}`, token);
 
-  const product = await res.json();
+  const product = res.data;
   return <ProductDetailsClient product={product.data} />;
 }

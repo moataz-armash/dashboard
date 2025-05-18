@@ -19,6 +19,7 @@ import Badge from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import CompanyHeader from "@/components/ui/company-header";
 import { initialStoreState, storeFields } from "./store-fields";
+import Pagination from "@/components/ui/pagination";
 
 interface Store {
   id: string;
@@ -34,12 +35,23 @@ interface Store {
 }
 
 interface StoresCardsProps {
-  stores: Store[];
+  data: any;
+  currentPage: number;
 }
 
-const StoresCards = ({ stores }: StoresCardsProps) => {
+const StoresCards = ({ data, currentPage }: StoresCardsProps) => {
   const [search, setSearch] = useState("");
   const router = useRouter();
+
+  const stores: Store[] = data?.data || [];
+
+  const totalPages = Math.ceil(data?.total / data?.size) || 1;
+
+  const handlePageChange = (newPage: number) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("page", String(newPage));
+    router.push(`?${searchParams.toString()}`);
+  };
 
   const filteredStores = stores.filter((store) =>
     store.name.toLowerCase().includes(search.toLowerCase())
@@ -81,53 +93,62 @@ const StoresCards = ({ stores }: StoresCardsProps) => {
             />
           </div>
         </div>
-        <Card className="p-4 rounded-2xl shadow-md w-full">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Phone Number</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredStores.length > 0 ? (
-                filteredStores.map((store) => (
-                  <TableRow
-                    key={store.id}
-                    className="cursor-pointer"
-                    onClick={() =>
-                      router.push(`/dashboard/company/stores/${store.id}`)
-                    }
-                  >
-                    <TableCell>{store.name}</TableCell>
-                    <TableCell>{store.phoneNumber}</TableCell>
-                    <TableCell>{store.email}</TableCell>
-                    <TableCell>
-                      <Badge text={store.status} status={store.status} />
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="outline">Edit</Button>
-                    </TableCell>
+        {filteredStores.length > 0 ? (
+          <>
+            <Card className="p-4 rounded-2xl shadow-md w-full">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Phone Number</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5}>
-                    <div
-                      className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4"
-                      role="alert"
+                </TableHeader>
+                <TableBody>
+                  {filteredStores.map((store) => (
+                    <TableRow
+                      key={store.id}
+                      className="cursor-pointer"
+                      onClick={() =>
+                        router.push(`/dashboard/company/stores/${store.id}`)
+                      }
                     >
-                      <p> This store not found Please try again </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </Card>
+                      <TableCell>{store.name}</TableCell>
+                      <TableCell>{store.phoneNumber}</TableCell>
+                      <TableCell>{store.email}</TableCell>
+                      <TableCell>
+                        <Badge text={store.status} status={store.status} />
+                      </TableCell>
+                      <TableCell>
+                        <Button variant="outline">Edit</Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
+            <div className="my-4 flex justify-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          </>
+        ) : (
+          <TableRow>
+            <TableCell colSpan={5}>
+              <div
+                className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4"
+                role="alert"
+              >
+                <p> This store not found Please try again </p>
+              </div>
+            </TableCell>
+          </TableRow>
+        )}
       </div>
     </>
   );

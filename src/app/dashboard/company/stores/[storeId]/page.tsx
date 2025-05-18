@@ -101,6 +101,7 @@ export default async function getStores({ params }: PageParams) {
   if (!storeId) {
     redirect("/dashboard/company/stores"); // redirect to the home page if no storeId is provided in the url
   }
+  
   const userCookies = await cookies();
   const token = userCookies.get("token")?.value;
 
@@ -108,7 +109,5 @@ export default async function getStores({ params }: PageParams) {
 
   const res = await apiRequest(`/store/${storeId}`, token);
 
-  const data = await res.json();
-  console.log(data.data);
-  return <StoreCard store={data.data} token={token} />;
+  return <StoreCard store={res.data} token={token} />;
 }

@@ -1,3 +1,4 @@
+"use client";
 import { useProfileStore } from "@/app/dashboard/company/profileStore";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import Spinner from "./spinner";

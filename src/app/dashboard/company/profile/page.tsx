@@ -14,8 +14,8 @@ export default async function CompanyProfilePage() {
   let serverFetchError: string | null = null;
 
   const res = await apiRequest("/company/profile", token);
-
-  if (!res.ok) {
+  console.log(res);
+  if (res.status !== "OK") {
     if (res.status === 401 || res.status === 403) {
       redirect("/login"); // Unauthorized or Forbidden
     }
@@ -29,8 +29,8 @@ export default async function CompanyProfilePage() {
       serverFetchError = `Failed to load profile (Status: ${res.status}, unable to parse error response)`;
     }
   } else {
-    const responseData = await res.json();
-    initialProfileData = responseData.data as CompanyProfile; // Assuming API returns { data: CompanyProfile }
+    initialProfileData = res.data as CompanyProfile; // Assuming API returns { data: CompanyProfile }
+    console.log(initialProfileData);
   }
 
   // Pass the fetched data (or null) and any error to the client component

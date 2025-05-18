@@ -5,14 +5,19 @@ import StoresCards from "./components/stores-component";
 import { redirect } from "next/navigation";
 import { apiRequest } from "@/utils/api";
 
-export default async function getStores() {
+interface Props {
+  searchParams: { page?: string };
+}
+
+export default async function getStores({ searchParams }: Props) {
   const userCookies = await cookies();
   const token = userCookies.get("token")?.value;
 
   if (!token) redirect("/login");
 
-  const res = await apiRequest("/store/stores", token);
-  const data = await res.json();
+  const page = Number(searchParams.page) || 0;
 
-  return <StoresCards stores={data.data} />;
+  const res = await apiRequest(`/store/stores?page=${page}&size=6`, token);
+
+  return <StoresCards data={res} currentPage={page}/>;
 }
