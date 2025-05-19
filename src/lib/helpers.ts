@@ -73,7 +73,6 @@ const SubmitEntityUpdate = async ({
 
     for (const field of fields) {
       entity[field] = String(formData.get(field)) || "";
-      console.log(entity[field]);
     }
 
     Object.assign(entity, entityDefaults);
@@ -83,6 +82,7 @@ const SubmitEntityUpdate = async ({
     const file = fileInputRef?.current?.files?.[0];
     if (file) {
       formDataToSend.append(fileFieldName, file);
+      // entity[fileFieldName] = [file.name];
     } else if (fileFallbackUrl) {
       entity[fileFieldName] = fileFallbackUrl;
     }
@@ -93,10 +93,6 @@ const SubmitEntityUpdate = async ({
         type: "application/json",
       })
     );
-
-    console.log(formDataToSend);
-
-    console.log(`${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}${endpoint}`);
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}${endpoint}`,
@@ -120,24 +116,6 @@ const SubmitEntityUpdate = async ({
   } finally {
     setIsLoading(false);
   }
-
-  //  {
-  //   name: String(formData.get("name")) || "",
-  //   email: String(formData.get("email")) || "",
-  //   registrationNumber: String(formData.get("registrationNumber")) || "",
-  //   description: String(formData.get("description")) || "",
-  //   phone: String(formData.get("phone")) || "",
-  //   website: String(formData.get("website")) || "",
-  //   legalEntityType: String(formData.get("legalEntityType")) || "",
-  //   sector: String(formData.get("sector")) || "",
-  //   industry: String(formData.get("industry")) || "",
-  //   taxId: String(formData.get("taxId")) || "",
-  //   currency: String(formData.get("currency")) || "",
-  //   enrollmentDate: String(formData.get("enrollmentDate")) || "",
-  //   dateOfIncorporation: new Date().toISOString(),
-  //   socialMedia: {},
-  //   addressId: "",
-  // };
 };
 
 export { handleFileChange, getImage, handleImageClick, SubmitEntityUpdate };
