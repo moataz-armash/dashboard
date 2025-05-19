@@ -11,6 +11,7 @@ import Spinner from "@/components/ui/spinner";
 import { CompanyProfile, useProfileStore } from "../profileStore";
 import {
   SubmitEntityUpdate,
+  getImage,
   handleFileChange,
   handleImageClick,
 } from "@/lib/helpers";
@@ -53,7 +54,9 @@ export default function CompanyProfileForm({
 }: CompanyProfileFormProps) {
   const { setProfile } = useProfileStore();
 
-  const profilePhotoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/image?in=${initialProfileData?.profilePhoto}`;
+  const profilePhotoUrl = `${getImage(
+    initialProfileData?.profilePhoto
+  )}&v=${Date.now()}`;
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewImage, setPreviewImage] = useState<string | StaticImageData>(
@@ -201,9 +204,7 @@ export default function CompanyProfileForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">
-                    Phone<span className="text-red-500">*</span>
-                  </Label>
+                  <Label htmlFor="phone">Phone</Label>
                   <Input
                     id="phone"
                     placeholder="e.g. +90 555 555 55 55"

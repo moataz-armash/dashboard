@@ -1,10 +1,7 @@
 import React from "react";
 import toast from "react-hot-toast";
-import { StaticImageData } from "next/image";
 
-type SetPreviewImage = React.Dispatch<
-  React.SetStateAction<string | StaticImageData>
->;
+type SetPreviewImage = React.Dispatch<React.SetStateAction<string | null>>;
 
 type setIsLoading = React.Dispatch<React.SetStateAction<boolean>>;
 
@@ -30,12 +27,13 @@ const handleFileChange = (
   const file = e.target.files?.[0];
   if (file) {
     const previewUrl = URL.createObjectURL(file);
+
     setPreviewImage(previewUrl);
     toast.success("Image uploaded successfully");
   }
 };
 
-const getImage = (photo: string | null) => {
+const getImage = (photo: string | null | undefined) => {
   const profilePhotoUrl = photo
     ? `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/image?in=${photo}`
     : null;
@@ -115,6 +113,9 @@ const SubmitEntityUpdate = async ({
     onError?.(err);
   } finally {
     setIsLoading(false);
+    setTimeout(() => {
+      document.location.reload();
+    }, 1500);
   }
 };
 

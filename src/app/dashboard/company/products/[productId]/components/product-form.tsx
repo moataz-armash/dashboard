@@ -1,17 +1,6 @@
-import {
-  PackageCheck,
-  Shapes,
-  ShoppingCart,
-  TicketPercent,
-  Upload,
-} from "lucide-react";
-import CardItem from "./card-item";
-import { Card } from "@/components/ui/card";
-import UploadImage from "@/components/ui/upload-image";
-import Spinner from "@/components/ui/spinner";
-import InputForm from "@/components/ui/input-form";
+import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import userProfile from "@/assets/userprofile.jpg";
 import {
@@ -65,9 +54,9 @@ export default function ProductForm({
     createdAt,
     createdBy,
   } = product;
-  const productPhotoUrl = getImage(images[0]);
-  const [previewImage, setPreviewImage] = useState<string | StaticImageData>(
-    productPhotoUrl || userProfile
+  const productPhotoUrl = `${getImage(images[0])}&v=${Date.now()}`;
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    productPhotoUrl || null
   );
 
   const hasImage = product?.images?.[0] || previewImage;
@@ -97,6 +86,14 @@ export default function ProductForm({
       updateRequest: "updateProductRequest",
     });
   };
+
+  useEffect(() => {
+    return () => {
+      if (previewImage?.startsWith("blob:")) {
+        URL.revokeObjectURL(previewImage);
+      }
+    };
+  }, [previewImage]);
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} encType="multipart/form-data">
@@ -167,7 +164,7 @@ export default function ProductForm({
               {hasImage ? (
                 <>
                   <Image
-                    src={previewImage}
+                    src={previewImage!}
                     alt={`${name} || Avatar`}
                     fill
                     style={{

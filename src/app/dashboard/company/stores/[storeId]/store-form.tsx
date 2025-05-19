@@ -10,12 +10,12 @@ import UploadImage from "@/components/ui/upload-image";
 import Spinner from "@/components/ui/spinner";
 import InputForm from "@/components/ui/input-form";
 import { Button } from "@/components/ui/button";
-import { useRef, useState } from "react";
-import { StaticImageData } from "next/image";
-import userProfile from "@/assets/userprofile.jpg";
+import { useEffect, useRef, useState } from "react";
 import { StoreCardProps } from "./store-component";
 import { SubmitEntityUpdate, getImage } from "@/lib/helpers";
 import toast from "react-hot-toast";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 const fields = [
   "name",
@@ -53,11 +53,11 @@ export default function StoreForm({ store, token }: StoreCardProps) {
     companyId,
     bankAccountId,
   } = store;
-  const storePhotoUrl = getImage(storePhoto);
-  const [previewImage, setPreviewImage] = useState<string | StaticImageData>(
-    storePhotoUrl || userProfile
-  );
+  const storePhotoUrl = `${getImage(store.profilePicture)}&v=${Date.now()}`;
 
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    storePhotoUrl || null
+  );
   const endpoint = `/store/${store.id}`;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,15 +74,20 @@ export default function StoreForm({ store, token }: StoreCardProps) {
       setIsLoading,
       onSuccess: () => {
         toast.success("Store profile updated successful");
-        setTimeout(() => {
-          document.location.reload();
-        }, 1500);
       },
       onError: () => toast.error("Update failed"),
       updateRequest: "updateStoreRequest",
     });
   };
-  
+
+  useEffect(() => {
+    return () => {
+      if (previewImage?.startsWith("blob:")) {
+        URL.revokeObjectURL(previewImage);
+      }
+    };
+  }, [previewImage]);
+
   return (
     <form ref={formRef} onSubmit={handleSubmit} encType="multipart/form-data">
       <div className="grid grid-cols-4 gap-4 px-4 py-2">
@@ -113,13 +118,14 @@ export default function StoreForm({ store, token }: StoreCardProps) {
       </div>
       <div className="grid grid-cols-4 px-4 py-2 grid-rows-2 gap-4">
         <Card className="col-span-1 row-span-full p-4 rounded-2xl shadow-md h-full flex items-center justify-center">
-          {previewImage ? (
+          {previewImage || storePhotoUrl ? (
             <UploadImage
               name={storeName}
               previewImage={previewImage}
               setPreviewImage={setPreviewImage}
               status={status}
               fileInputRef={fileInputRef}
+              nameOfInput="profilePhoto"
             />
           ) : (
             <Spinner className="h-24 w-24 text-gray-500" />
@@ -206,14 +212,27 @@ export default function StoreForm({ store, token }: StoreCardProps) {
                 text="text-left"
                 defaultValue={status}
               />
-              <InputForm
-                title="Address ID"
-                name="addressId"
-                state={null}
-                text="text-left"
-                readOnly={true}
-                defaultValue={addressId ? addressId : "No address"}
-              />
+              {addressId ? (
+                <InputForm
+                  title="Address ID"
+                  name="addressId"
+                  state={null}
+                  text="text-left"
+                  readOnly={true}
+                  defaultValue={addressId}
+                />
+              ) : (
+                <div
+                  className={`grid grid-cols-4 items-center gap-4 col-span-1`}
+                >
+                  <Link
+                    href="/dashboard/address"
+                    className="col-span-3 col-start-2 flex"
+                  >
+                    <Button variant="outline">Add Adress</Button>
+                  </Link>
+                </div>
+              )}
             </div>
             <div className="grid grid-cols-2">
               <InputForm
@@ -247,4 +266,45 @@ export default function StoreForm({ store, token }: StoreCardProps) {
       </div>
     </form>
   );
+}
+
+{
+  /* {previewImage || storePhotoUrl ? (
+            <>
+              <div className="flex flex-col gap-1 mt-5 items-center">
+                <div
+                  className="relative group hover:cursor-pointer w-24 h-24 flex items-center justify-center border-4 border-gray-700 rounded-full"
+                  onClick={handleImageClick}
+                >
+                  <Image
+                    key={previewImage}
+                    src={previewImage || storePhotoUrl}
+                    alt={`${storeName} || Avatar`}
+                    width={96}
+                    height={96}
+                    className="rounded-full"
+                    style={{ aspectRatio: "96/96", objectFit: "cover" }}
+                  />
+
+                  <div className="absolute inset-0 bg-gray-950 opacity-0 group-hover:opacity-40 rounded-full transition-opacity duration-200"></div>
+                  <Upload className="absolute inset-0 m-auto w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    name="profilePhoto"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </div>
+                {storeName && (
+                  <div className="ml-1 flex flex-col items-center">
+                    <p className="font-bold text-xl mt-3 text-left w-full">
+                      {storeName}
+                    </p>
+                    <p className="text-xs text-zinc-400">{status}</p>
+                  </div>
+                )}
+              </div>
+            </> */
 }

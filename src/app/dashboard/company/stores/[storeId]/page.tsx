@@ -97,11 +97,11 @@ interface PageParams {
 }
 
 export default async function getStores({ params }: PageParams) {
-  const { storeId } = params;
+  const { storeId } = await params;
   if (!storeId) {
     redirect("/dashboard/company/stores"); // redirect to the home page if no storeId is provided in the url
   }
-  
+
   const userCookies = await cookies();
   const token = userCookies.get("token")?.value;
 

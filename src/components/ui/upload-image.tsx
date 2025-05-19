@@ -1,15 +1,12 @@
 import { handleFileChange, handleImageClick } from "@/lib/helpers";
 import { Upload } from "lucide-react";
-import Image, { StaticImageData } from "next/image";
-import { useRef } from "react";
+import Image from "next/image";
 
 interface UploadImageProps {
   name?: string;
   status?: string;
-  previewImage: string | StaticImageData;
-  setPreviewImage: React.Dispatch<
-    React.SetStateAction<string | StaticImageData>
-  >;
+  previewImage: string | null;
+  setPreviewImage: React.Dispatch<React.SetStateAction<string | null>>;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
   nameOfInput: string;
 }
@@ -19,7 +16,7 @@ export default function UploadImage({
   previewImage,
   setPreviewImage,
   fileInputRef,
-  nameOfInput
+  nameOfInput,
 }: UploadImageProps) {
   return (
     <div className="flex flex-col gap-1 mt-5 items-center">
@@ -27,14 +24,18 @@ export default function UploadImage({
         className="relative group hover:cursor-pointer w-24 h-24 flex items-center justify-center border-4 border-gray-700 rounded-full"
         onClick={() => handleImageClick(fileInputRef)}
       >
-        <Image
-          src={previewImage}
-          alt={`${name} || Avatar`}
-          width={96}
-          height={96}
-          className="rounded-full"
-          style={{ aspectRatio: "96/96", objectFit: "cover" }}
-        />
+        {previewImage && (
+          <Image
+            key={previewImage}
+            src={previewImage}
+            alt={`${name} || Avatar`}
+            width={96}
+            height={96}
+            className="rounded-full"
+            style={{ aspectRatio: "96/96", objectFit: "cover" }}
+          />
+        )}
+
         <div className="absolute inset-0 bg-gray-950 opacity-0 group-hover:opacity-40 rounded-full transition-opacity duration-200"></div>
         <Upload className="absolute inset-0 m-auto w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
         <input
