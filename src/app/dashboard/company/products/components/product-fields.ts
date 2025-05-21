@@ -4,6 +4,6 @@ export const productFields = {
   brand: { title: "Brand", name: "brand" },
   category: { title: "Category", name: "category" },
   size: { title: "Size", name: "size" },
-  weight: { title: "Weight", name: "website" },
+  weight: { title: "Weight", name: "weight" },
   color: { title: "Color", name: "color" },
 };

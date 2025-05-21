@@ -129,20 +129,18 @@ export const resetPassword = async (data: {
 export const apiRequest = async (
   endpoint: string,
   token: string,
-  method: string = "GET"
+  method: string = "GET",
+  host: string = String(process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY)
 ) => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}${endpoint}`,
-    {
-      method: String(method),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
-    }
-  );
-  const data = await res.json()
+  const res = await fetch(`${host}${endpoint}`, {
+    method: String(method),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+  const data = await res.json();
 
   return data;
 };

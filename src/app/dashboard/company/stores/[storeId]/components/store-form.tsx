@@ -11,12 +11,15 @@ import Spinner from "@/components/ui/spinner";
 import InputForm from "@/components/ui/input-form";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
-import { StoreCardProps } from "./store-component";
+import { StoreCardProps } from "../store-component";
 import { SubmitEntityUpdate, getImage } from "@/lib/helpers";
 import toast from "react-hot-toast";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+
+const defaultStoreImg =
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGCoSdQ0NQ39Z9OJrVGVj8PJag4ikVUgYYzw&s";
 
 const fields = [
   "name",
@@ -54,7 +57,9 @@ export default function StoreForm({ store, token }: StoreCardProps) {
     companyId,
     bankAccountId,
   } = store;
-  const storePhotoUrl = `${getImage(store.profilePicture)}&v=${Date.now()}`;
+  const storePhotoUrl = store.profilePicture
+    ? `${getImage(store.profilePicture)}&v=${Date.now()}`
+    : defaultStoreImg;
 
   const [previewImage, setPreviewImage] = useState<string | null>(
     storePhotoUrl || null
@@ -89,36 +94,9 @@ export default function StoreForm({ store, token }: StoreCardProps) {
     };
   }, [previewImage]);
 
-  console.log(addressId);
-
   return (
     <form ref={formRef} onSubmit={handleSubmit} encType="multipart/form-data">
-      <div className="grid grid-cols-4 gap-4 px-4 py-2">
-        <CardItem
-          title="All Products"
-          number={120}
-          bgColor="bg-[#6366f1]"
-          icon={<ShoppingCart className="text-white" />}
-        />
-        <CardItem
-          title="Reorder Level"
-          number={15}
-          bgColor="bg-[#a855f7]"
-          icon={<PackageCheck className="text-white" />}
-        />
-        <CardItem
-          title="Products On Discount"
-          number={46}
-          bgColor="bg-[#14b8a6]"
-          icon={<TicketPercent className="text-white" />}
-        />
-        <CardItem
-          title="Categories"
-          number={24}
-          bgColor="bg-[#eab308]"
-          icon={<Shapes className="text-white" />}
-        />
-      </div>
+     
       <div className="grid grid-cols-4 px-4 py-2 grid-rows-2 gap-4">
         <Card className="col-span-1 row-span-full p-4 rounded-2xl shadow-md h-full flex items-center justify-center">
           {previewImage || storePhotoUrl ? (

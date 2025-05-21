@@ -16,7 +16,7 @@ export default function BackLink({
       >
         <ArrowLeft />
       </Link>
-      <h1 className="text-xl font-bold text-left w-full">{title} </h1>
+      <h1 className="text-xl font-semibold text-left w-full font-sans">{title} </h1>
     </div>
   );
 }

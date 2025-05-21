@@ -12,9 +12,10 @@ import { useActionState, useEffect, useState } from "react";
 import InputForm from "../../../../../components/ui/input-form";
 import toast from "react-hot-toast";
 import UploadImage from "@/components/ui/upload-image";
-import { StaticImageData } from "next/image";
-import userProfile from "@/assets/userprofile.jpg";
 import { DialogWindowProps } from "./type";
+
+const defaultUserImg =
+  "https://static-00.iconduck.com/assets.00/profile-circle-icon-256x256-cm91gqm2.png";
 
 export function DialogWindow({
   icon,
@@ -31,8 +32,8 @@ export function DialogWindow({
   const [state, formAction, pending] = useActionState(method, initialState);
   const [open, setOpen] = useState(false);
 
-  const [previewImage, setPreviewImage] = useState<string | StaticImageData>(
-    userProfile
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    defaultUserImg
   );
 
   useEffect(() => {

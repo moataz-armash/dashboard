@@ -49,8 +49,8 @@ export default function ProductForm({
     size,
     weight,
     images,
-    updateAt,
-    updateBy,
+    updatedAt,
+    updatedBy,
     createdAt,
     createdBy,
   } = product;
@@ -235,7 +235,7 @@ export default function ProductForm({
           <div className="flex flex-col gap-2">
             <Label>Updated At</Label>
             <InputProduct
-              defaultValue={product?.updatedAt}
+              defaultValue={updatedAt}
               name="updatedAt"
               inputMode="text"
               className="bg-gray-200 cursor-not-allowed"
@@ -245,7 +245,7 @@ export default function ProductForm({
           <div className="flex flex-col gap-2">
             <Label>Updated By</Label>
             <InputProduct
-              defaultValue={product?.updatedBy}
+              defaultValue={updatedBy}
               name="updatedBy"
               inputMode="text"
               className="bg-gray-200 cursor-not-allowed"

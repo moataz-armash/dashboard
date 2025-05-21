@@ -5,6 +5,7 @@ import { z } from "zod";
 import StoreCard from "./store-component";
 import { redirect } from "next/navigation";
 import { apiRequest } from "@/utils/api";
+import ProductsTable from "./components/products-table";
 
 const CreateStoreSchema = z.object({
   name: z.string().min(2, "Name is required").trim(),
@@ -107,7 +108,21 @@ export default async function getStores({ params }: PageParams) {
 
   if (!token) redirect("/login");
 
-  const res = await apiRequest(`/store/${storeId}`, token);
+  const resStore = await apiRequest(`/store/${storeId}`, token);
 
-  return <StoreCard store={res.data} token={token} />;
+  const resInventroy = await apiRequest(
+    `/inventory/get?strId=${storeId}`,
+    token,
+    "GET",
+    String(process.env.NEXT_PUBLIC_API_BASE_URL_INVENTORY)
+  );
+  console.log(resStore.data);
+  console.log(resInventroy.data);
+
+  return (
+    <>
+      <StoreCard store={resStore.data} token={token} />
+      <ProductsTable products={resInventroy.data} storeName={resStore.data.name}/>
+    </>
+  );
 }

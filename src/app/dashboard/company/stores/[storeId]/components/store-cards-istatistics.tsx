@@ -1,0 +1,38 @@
+import {
+  PackageCheck,
+  Shapes,
+  ShoppingCart,
+  TicketPercent,
+} from "lucide-react";
+import CardItem from "./card-item";
+
+export default function StoreCardsIstatistics() {
+  return (
+    <div className="grid grid-cols-4 gap-4 px-4 py-2">
+      <CardItem
+        title="All Products"
+        number={120}
+        bgColor="bg-[#6366f1]"
+        icon={<ShoppingCart className="text-white" />}
+      />
+      <CardItem
+        title="Reorder Level"
+        number={15}
+        bgColor="bg-[#a855f7]"
+        icon={<PackageCheck className="text-white" />}
+      />
+      <CardItem
+        title="Products On Discount"
+        number={46}
+        bgColor="bg-[#14b8a6]"
+        icon={<TicketPercent className="text-white" />}
+      />
+      <CardItem
+        title="Categories"
+        number={24}
+        bgColor="bg-[#eab308]"
+        icon={<Shapes className="text-white" />}
+      />
+    </div>
+  );
+}

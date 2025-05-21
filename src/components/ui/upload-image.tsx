@@ -28,7 +28,7 @@ export default function UploadImage({
           <Image
             key={previewImage}
             src={previewImage}
-            alt={`${name} || Avatar`}
+            alt={`${name}` || `Avatar`}
             width={96}
             height={96}
             className="rounded-full"

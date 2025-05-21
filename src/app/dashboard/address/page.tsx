@@ -16,6 +16,7 @@ import Spinner from "@/components/ui/spinner";
 import toast from "react-hot-toast";
 import BackLink from "@/components/ui/back-link";
 import { useSearchParams } from "next/navigation";
+import { MoveRight, SendHorizonal, Zap } from "lucide-react";
 
 // 📌 Address validation schema
 const addressSchema = z.object({
@@ -93,7 +94,7 @@ const AddressForm = () => {
     console.log("success");
   };
 
-  useEffect(() => {
+  const handleLocation = () => {
     if (!navigator.geolocation) {
       setMessage("Geolocation is not supported by your browser.");
       return;
@@ -132,7 +133,48 @@ const AddressForm = () => {
       }
     );
     setLoadingAddress(false);
-  }, [setValue, setAddressData]);
+  };
+
+  // useEffect(() => {
+  //   if (!navigator.geolocation) {
+  //     setMessage("Geolocation is not supported by your browser.");
+  //     return;
+  //   }
+
+  //   setLoadingAddress(true);
+  //   navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //       const { latitude, longitude } = position.coords;
+  //       console.log("User location:", latitude, longitude);
+
+  //       setAddressData({
+  //         lat: latitude,
+  //         lng: longitude,
+  //         addressDetails: "",
+  //         addressTags: [],
+  //       });
+
+  //       // Example: update state or form values
+  //       setValue("latitude", latitude);
+  //       setValue("longitude", longitude);
+  //       // setMapCenter({ lat: latitude, lng: longitude });
+  //     },
+  //     (error) => {
+  //       // console.error("Error getting location:", error);
+  //       setMessage(
+  //         "Could not get location. Please enable GPS, to get location dynamically"
+  //       );
+
+  //       return;
+  //       // alert("Could not get location. Please enable GPS.");
+  //     },
+  //     {
+  //       enableHighAccuracy: true, // use GPS if available
+  //       timeout: 10000,
+  //     }
+  //   );
+  //   setLoadingAddress(false);
+  // }, [setValue, setAddressData]);
 
   useEffect(() => {
     if (message) {
@@ -167,14 +209,22 @@ const AddressForm = () => {
       <Card className="p-6 mt-4 rounded-lg shadow-md w-[90%] max-w-6xl mx-auto">
         <div className="flex justify-between">
           <h2 className="text-xl font-semibold mb-4">Add Address</h2>
-          {message && (
+          {/* {message && (
             <p className="text-yellow-500 text-xs">{`${message} ,or you can use form below`}</p>
           )}
           {loadingAddress && (
             <p className="text-yellow-500">
               we trying to get your address now ....
             </p>
-          )}
+          )} */}
+
+          <Button
+            onClick={handleLocation}
+            className="bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-700"
+            disabled={loadingAddress}
+          >
+            fill form auto <Zap />
+          </Button>
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -215,7 +265,7 @@ const AddressForm = () => {
             type="submit"
             className="col-span-2 bg-brand-500 hover:bg-brand-600"
           >
-            Submit
+            Submit <MoveRight />
           </Button>
         </form>
       </Card>
