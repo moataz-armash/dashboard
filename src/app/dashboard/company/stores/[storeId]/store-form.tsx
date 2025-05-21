@@ -16,6 +16,7 @@ import { SubmitEntityUpdate, getImage } from "@/lib/helpers";
 import toast from "react-hot-toast";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
 
 const fields = [
   "name",
@@ -87,6 +88,8 @@ export default function StoreForm({ store, token }: StoreCardProps) {
       }
     };
   }, [previewImage]);
+
+  console.log(addressId);
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} encType="multipart/form-data">
@@ -212,27 +215,32 @@ export default function StoreForm({ store, token }: StoreCardProps) {
                 text="text-left"
                 defaultValue={status}
               />
-              {addressId ? (
-                <InputForm
-                  title="Address ID"
-                  name="addressId"
-                  state={null}
-                  text="text-left"
-                  readOnly={true}
-                  defaultValue={addressId}
-                />
-              ) : (
-                <div
-                  className={`grid grid-cols-4 items-center gap-4 col-span-1`}
+
+              <div className={`grid grid-cols-4 items-center gap-4 col-span-1`}>
+                <Label
+                  htmlFor="addressId"
+                  className={`text-left ml-2 text-xs font-semibold text-gray-500 mb-1`}
                 >
-                  <Link
-                    href="/dashboard/address"
-                    className="col-span-3 col-start-2 flex"
-                  >
-                    <Button variant="outline">Add Adress</Button>
-                  </Link>
-                </div>
-              )}
+                  Address ID
+                </Label>
+                <Input
+                  className={`col-span-2 bg-gray-100 cursor-not-allowed`}
+                  type="text"
+                  placeholder="Address Id"
+                  aria-label="addressId"
+                  name="addressId"
+                  defaultValue={addressId}
+                  readOnly={true}
+                />
+                <Link
+                  href={`/dashboard/address?storeId=${store.id}&storeName=${storeName}`}
+                  className="col-span-1 flex w-full"
+                >
+                  <Button variant="outline" className="w-full">{`${
+                    addressId === "" ? "Add Adress" : "Edit Adress"
+                  }`}</Button>
+                </Link>
+              </div>
             </div>
             <div className="grid grid-cols-2">
               <InputForm
