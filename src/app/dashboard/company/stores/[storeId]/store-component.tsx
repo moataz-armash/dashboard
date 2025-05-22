@@ -8,6 +8,7 @@ import { getImage } from "@/lib/helpers";
 import StoreForm from "./components/store-form";
 import BackLink from "@/components/ui/back-link";
 import StoreCardsIstatistics from "./components/store-cards-istatistics";
+import { Statistics } from "./components/type";
 
 interface Store {
   id: string;
@@ -29,9 +30,10 @@ interface Store {
 export interface StoreCardProps {
   store: Store;
   token: string;
+  statistics: Statistics;
 }
 
-const StoreCard = ({ store, token }: StoreCardProps) => {
+const StoreCard = ({ store, token, statistics }: StoreCardProps) => {
   const { profile } = useProfileStore();
 
   const [search, setSearch] = useState("");
@@ -71,7 +73,7 @@ const StoreCard = ({ store, token }: StoreCardProps) => {
           </div>
         </div>
       </main>
-      <StoreCardsIstatistics />
+      <StoreCardsIstatistics statistics={statistics} />
       {/* <StoreForm store={store} token={token} /> */}
     </>
   );

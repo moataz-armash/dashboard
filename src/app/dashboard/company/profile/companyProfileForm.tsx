@@ -54,14 +54,9 @@ export default function CompanyProfileForm({
 }: CompanyProfileFormProps) {
   const { setProfile } = useProfileStore();
 
-  const profilePhotoUrl = `${getImage(
-    initialProfileData?.profilePhoto
-  )}&v=${Date.now()}`;
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewImage, setPreviewImage] = useState<string | StaticImageData>(
-    profilePhotoUrl || userProfile
-  );
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,7 +69,7 @@ export default function CompanyProfileForm({
       entityDefaults,
       endpoint,
       token,
-      fileFallbackUrl: profilePhotoUrl,
+      fileFallbackUrl: previewImage,
       setIsLoading,
       onSuccess: () => {
         toast.success("Company profile updated successful");
@@ -90,6 +85,13 @@ export default function CompanyProfileForm({
   useEffect(() => {
     setProfile(initialProfileData);
   }, [initialProfileData, setProfile]);
+
+  useEffect(() => {
+    const photoUrl = `${getImage(
+      initialProfileData?.profilePhoto
+    )}&v=${Date.now()}`;
+    setPreviewImage(photoUrl);
+  }, [initialProfileData]);
 
   if (!initialProfileData) {
     return <div>No profile data available.</div>;
@@ -126,7 +128,7 @@ export default function CompanyProfileForm({
                 style={{ aspectRatio: "96/96", objectFit: "cover" }}
               />
             ) : (
-              <Spinner className="h-24 w-24 text-gray-500" />
+              <Spinner className="h-20 w-20 text-gray-500" />
             )}
 
             <div className="space-y-1">

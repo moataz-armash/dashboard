@@ -49,16 +49,16 @@ const items = [
     url: "/dashboard/company/workers",
     icon: HardHat,
   },
-  {
-    title: "Financials",
-    url: "/dashboard/company/financials",
-    icon: DollarSign,
-  },
-  {
-    title: "Reports",
-    url: "/dashboard/company/reports",
-    icon: FileText,
-  },
+  // {
+  //   title: "Financials",
+  //   url: "/dashboard/company/financials",
+  //   icon: DollarSign,
+  // },
+  // {
+  //   title: "Reports",
+  //   url: "/dashboard/company/reports",
+  //   icon: FileText,
+  // },
 ];
 
 export function AppSidebar() {

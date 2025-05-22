@@ -15,7 +15,16 @@ export interface InventoryProduct {
   updatedBy: string;
 }
 
+export interface Statistics {
+  allProducts: number;
+  inReorderLevel: number;
+  inStock: number;
+  outOfStock: number;
+  inDiscount: number;
+}
+
 export interface ProductsTableProps {
   products: InventoryProduct[];
-  storeName: string;    
+  storeName: string;
+  
 }

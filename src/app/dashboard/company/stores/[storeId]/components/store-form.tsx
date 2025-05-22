@@ -40,6 +40,7 @@ export default function StoreForm({ store, token }: StoreCardProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -57,13 +58,7 @@ export default function StoreForm({ store, token }: StoreCardProps) {
     companyId,
     bankAccountId,
   } = store;
-  const storePhotoUrl = store.profilePicture
-    ? `${getImage(store.profilePicture)}&v=${Date.now()}`
-    : defaultStoreImg;
 
-  const [previewImage, setPreviewImage] = useState<string | null>(
-    storePhotoUrl || null
-  );
   const endpoint = `/store/${store.id}`;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,7 +71,7 @@ export default function StoreForm({ store, token }: StoreCardProps) {
       entityDefaults,
       endpoint,
       token,
-      fileFallbackUrl: storePhotoUrl,
+      fileFallbackUrl: previewImage,
       setIsLoading,
       onSuccess: () => {
         toast.success("Store profile updated successful");
@@ -85,6 +80,13 @@ export default function StoreForm({ store, token }: StoreCardProps) {
       updateRequest: "updateStoreRequest",
     });
   };
+
+  useEffect(() => {
+    if (storePhoto) {
+      const storePhotoUrl = `${getImage(storePhoto)}&v=${Date.now()}`;
+      setPreviewImage(storePhotoUrl);
+    }
+  }, [setPreviewImage, storePhoto]);
 
   useEffect(() => {
     return () => {
@@ -96,10 +98,9 @@ export default function StoreForm({ store, token }: StoreCardProps) {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} encType="multipart/form-data">
-     
       <div className="grid grid-cols-4 px-4 py-2 grid-rows-2 gap-4">
         <Card className="col-span-1 row-span-full p-4 rounded-2xl shadow-md h-full flex items-center justify-center">
-          {previewImage || storePhotoUrl ? (
+          {previewImage ? (
             <UploadImage
               name={storeName}
               previewImage={previewImage}

@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import InputProduct from "./input-product";
 import DropdownProduct from "./dropDown-product";
 import { ProductCategories } from "./product-categories";
+import Spinner from "@/components/ui/spinner";
 
 const fields = [
   "name",
@@ -54,12 +55,9 @@ export default function ProductForm({
     createdAt,
     createdBy,
   } = product;
-  const productPhotoUrl = `${getImage(images[0])}&v=${Date.now()}`;
-  const [previewImage, setPreviewImage] = useState<string | null>(
-    productPhotoUrl || null
-  );
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  const hasImage = product?.images?.[0] || previewImage;
+  // const hasImage = product?.images?.[0] || previewImage;
 
   const endpoint = `/product/${product.id}`;
 
@@ -74,7 +72,7 @@ export default function ProductForm({
       endpoint,
       token,
       fileFieldName: "images",
-      fileFallbackUrl: productPhotoUrl,
+      fileFallbackUrl: previewImage,
       setIsLoading,
       onSuccess: () => {
         toast.success(`${product?.name} updated successful"`);
@@ -86,6 +84,13 @@ export default function ProductForm({
       updateRequest: "updateProductRequest",
     });
   };
+
+  useEffect(() => {
+    if (images[0]) {
+      const productImageUrl = `${getImage(images[0])}&v=${Date.now()}`;
+      setPreviewImage(productImageUrl);
+    }
+  }, [images, setPreviewImage]);
 
   useEffect(() => {
     return () => {
@@ -161,7 +166,7 @@ export default function ProductForm({
               className="relative group hover:cursor-pointer w-[90%] h-52 flex items-center justify-center bg-transparent rounded-lg"
               onClick={() => handleImageClick(fileInputRef)}
             >
-              {hasImage ? (
+              {previewImage ? (
                 <>
                   <Image
                     src={previewImage!}
@@ -185,18 +190,19 @@ export default function ProductForm({
                   />
                 </>
               ) : (
-                <>
-                  <div className="absolute inset-0 bg-gray-300 opacity-40 group-hover:opacity-40 group-hover:bg-gray-950 rounded-lg transition-opacity duration-200"></div>
-                  <Upload className="absolute inset-0 m-auto w-8 h-8 text-gray-500 opacity-100 group-hover:opacity-100 group-hover:text-white transition-opacity duration-200 pointer-events-none" />
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    name="images"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleFileChange(e, setPreviewImage)}
-                  />
-                </>
+                <Spinner className="w-24 h-24 text-bluebrand-500" />
+                // <>
+                //   <div className="absolute inset-0 bg-gray-300 opacity-40 group-hover:opacity-40 group-hover:bg-gray-950 rounded-lg transition-opacity duration-200"></div>
+                //   <Upload className="absolute inset-0 m-auto w-8 h-8 text-gray-500 opacity-100 group-hover:opacity-100 group-hover:text-white transition-opacity duration-200 pointer-events-none" />
+                //   <input
+                //     ref={fileInputRef}
+                //     type="file"
+                //     name="images"
+                //     accept="image/*"
+                //     className="hidden"
+                //     onChange={(e) => handleFileChange(e, setPreviewImage)}
+                //   />
+                // </>
               )}
             </div>
           </div>

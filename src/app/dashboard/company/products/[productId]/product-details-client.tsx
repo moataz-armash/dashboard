@@ -2,16 +2,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BackLink from "@/components/ui/back-link";
 import { useProfileStore } from "../../profileStore";
-import { useEffect, useRef, useState } from "react";
-import { getImage, handleFileChange, handleImageClick } from "@/lib/helpers";
+import { useState } from "react";
+import { getImage } from "@/lib/helpers";
 import { Product } from "../components/type";
-import Image, { StaticImageData } from "next/image";
-import { Upload } from "lucide-react";
-import InputForm from "@/components/ui/input-form";
-import { Label } from "@/components/ui/label";
-import InputProduct from "./components/input-product";
-import DropdownProduct from "./components/dropDown-product";
-import { ProductCategories } from "./components/product-categories";
 import ProductForm from "./components/product-form";
 
 export default function ProductDetailsClient({
@@ -25,18 +18,11 @@ export default function ProductDetailsClient({
 
   const [search, setSearch] = useState("");
 
-  const [previewImage, setPreviewImage] = useState<string | StaticImageData>(
-    product?.images?.[0]
-  );
   const profilePhoto = profile?.profilePhoto || "";
   const name = profile?.name || "";
 
-  useEffect(() => {
-    setPreviewImage(getImage(product?.images?.[0])!);
-  }, [setPreviewImage, product]);
-
   const profilePhotoUrl = getImage(profilePhoto);
-  const hasImage = product?.images?.[0] || previewImage;
+
   console.log(product);
   return (
     <>

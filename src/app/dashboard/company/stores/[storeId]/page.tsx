@@ -117,12 +117,16 @@ export default async function getStores({ params }: PageParams) {
     String(process.env.NEXT_PUBLIC_API_BASE_URL_INVENTORY)
   );
   console.log(resStore.data);
-  console.log(resInventroy.data);
+  console.log(resInventroy);
 
   return (
     <>
-      <StoreCard store={resStore.data} token={token} />
-      <ProductsTable products={resInventroy.data} storeName={resStore.data.name}/>
+      <StoreCard store={resStore.data} token={token}  statistics={resInventroy.statistics} />
+      <ProductsTable
+        products={resInventroy.data}
+        storeName={resStore.data.name}
+       
+      />
     </>
   );
 }
