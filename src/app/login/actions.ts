@@ -80,15 +80,14 @@ export async function loginUser(prevState: any, formData: FormData) {
     if (text) data = JSON.parse(text);
     const token = data?.data?.token;
     const companyId = data?.data?.companyId;
+    console.log("companyId: ", companyId);
 
-    if (companyId) {
-      cookies().set("companyId", companyId, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-      });
-    }
+    cookies().set("companyId", companyId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
 
     if (token) {
       cookies().set("token", token, {

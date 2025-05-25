@@ -13,9 +13,7 @@ import InputForm from "../../../../../components/ui/input-form";
 import toast from "react-hot-toast";
 import UploadImage from "@/components/ui/upload-image";
 import { DialogWindowProps } from "./type";
-
-const defaultUserImg =
-  "https://static-00.iconduck.com/assets.00/profile-circle-icon-256x256-cm91gqm2.png";
+import { defaultUserImg } from "@/lib/constants";
 
 export function DialogWindow({
   icon,

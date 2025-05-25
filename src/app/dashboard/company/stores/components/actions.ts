@@ -11,7 +11,6 @@ const CreateStoreSchema = z.object({
   website: z.string().url("Invalid website format").trim(),
   socialMedia: z.record(z.string(), z.string()).optional(),
   status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "DELETED"]),
-  addressId: z.string().min(1, "Address ID is required"),
 });
 
 export async function createStore(prevState: any, formData: FormData) {
@@ -26,7 +25,7 @@ export async function createStore(prevState: any, formData: FormData) {
     website: String(formData.get("website") || ""),
     socialMedia: {},
     status: String(formData.get("status") || "ACTIVE"), // Set the default status to "ACTIVE" if no value is se
-    addressId: String(formData.get("addressId") || ""),
+    addressId: null,
   };
 
   const parsed = CreateStoreSchema.safeParse(raw);
@@ -40,7 +39,6 @@ export async function createStore(prevState: any, formData: FormData) {
       email: formData.get("email"),
       phoneNumber: formData.get("phoneNumber"),
       website: formData.get("website"),
-      addressId: formData.get("addressId"),
       status: formData.get("status"),
       success: false,
     };

@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,15 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { addressInfo } from "./type";
+import { AddressInfo } from "./type";
 import createAddressInfo from "./api";
-import { useCallback, useEffect, useState } from "react";
-import CreateAddressByCoordinate, { addressData } from "./actions";
+import CreateAddressByCoordinate, { AddressData } from "./actions";
 import Spinner from "@/components/ui/spinner";
 import toast from "react-hot-toast";
 import BackLink from "@/components/ui/back-link";
 import { useSearchParams } from "next/navigation";
-import { MoveRight, SendHorizonal, Zap } from "lucide-react";
+import { MoveRight, Zap } from "lucide-react";
 
 // 📌 Address validation schema
 const addressSchema = z.object({
@@ -31,24 +32,12 @@ const addressSchema = z.object({
   longitude: z.number(),
 });
 
-interface AddressInfo {
-  countryName: string;
-  state: string;
-  county: string;
-  district: string;
-  street: string;
-  houseNumber: string;
-  postalCode: string;
-  addressDetails: string;
-  addressTags: string[];
-}
-
 const AddressForm = () => {
   const searchParams = useSearchParams();
   const storeId = searchParams.get("storeId") || "";
   const storeName = searchParams.get("storeName") || "";
   const [message, setMessage] = useState<string | null>(null);
-  const [addressData, setAddressData] = useState<addressData | null>(null);
+  const [addressData, setAddressData] = useState<AddressData | null>(null);
   const [addressInfo, setAddressInfo] = useState<AddressInfo | null>(null);
   //
   const [loadingAddress, setLoadingAddress] = useState(false);
@@ -67,7 +56,7 @@ const AddressForm = () => {
     },
   });
 
-  const onSubmit = (data: addressInfo) => {
+  const onSubmit = (data: AddressInfo) => {
     createAddressInfo({
       countryName: data.countryName,
       state: data.state,

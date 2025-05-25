@@ -3,8 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import Image, { StaticImageData } from "next/image";
-import userProfile from "@/assets/userprofile.jpg";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import Spinner from "@/components/ui/spinner";
@@ -15,6 +14,7 @@ import {
   handleFileChange,
   handleImageClick,
 } from "@/lib/helpers";
+import { defaultUserImg } from "@/lib/constants";
 
 const fields = [
   "name",
@@ -50,14 +50,16 @@ interface CompanyProfileFormProps {
 export default function CompanyProfileForm({
   initialProfileData,
   token,
-  serverFetchError,
 }: CompanyProfileFormProps) {
   const { setProfile } = useProfileStore();
 
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    defaultUserImg || null
+  );
   const [isLoading, setIsLoading] = useState(false);
+  const [imageIsLoading, setImageIsLoading] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,10 +89,12 @@ export default function CompanyProfileForm({
   }, [initialProfileData, setProfile]);
 
   useEffect(() => {
-    const photoUrl = `${getImage(
-      initialProfileData?.profilePhoto
-    )}&v=${Date.now()}`;
-    setPreviewImage(photoUrl);
+    if (initialProfileData?.profilePhoto) {
+      const photoUrl = `${getImage(
+        initialProfileData?.profilePhoto
+      )}&v=${Date.now()}`;
+      setPreviewImage(photoUrl);
+    }
   }, [initialProfileData]);
 
   if (!initialProfileData) {
@@ -118,17 +122,19 @@ export default function CompanyProfileForm({
       <div className="px-4 space-y-6 sm:px-6">
         <header className="space-y-2">
           <div className="flex items-center space-x-3">
-            {previewImage ? (
+            {imageIsLoading && <Spinner className="w-16 h-16 text-brand-500" />}
+            {previewImage && (
               <Image
                 src={previewImage}
                 alt={`${name} || Avatar`}
                 width={96}
                 height={96}
-                className="rounded-full"
+                className={`rounded-full ${
+                  imageIsLoading ? "opacity-0" : " opacity-100"
+                }`}
                 style={{ aspectRatio: "96/96", objectFit: "cover" }}
+                onLoadingComplete={() => setImageIsLoading(false)}
               />
-            ) : (
-              <Spinner className="h-20 w-20 text-gray-500" />
             )}
 
             <div className="space-y-1">
@@ -210,7 +216,7 @@ export default function CompanyProfileForm({
                   <Input
                     id="phone"
                     placeholder="e.g. +90 555 555 55 55"
-                    defaultValue={phone}
+                    defaultValue={phone!}
                     name="phone"
                   />
                 </div>

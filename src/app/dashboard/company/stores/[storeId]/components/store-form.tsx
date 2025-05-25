@@ -1,10 +1,3 @@
-import {
-  PackageCheck,
-  Shapes,
-  ShoppingCart,
-  TicketPercent,
-} from "lucide-react";
-import CardItem from "./card-item";
 import { Card } from "@/components/ui/card";
 import UploadImage from "@/components/ui/upload-image";
 import Spinner from "@/components/ui/spinner";
@@ -17,9 +10,7 @@ import toast from "react-hot-toast";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
-
-const defaultStoreImg =
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGCoSdQ0NQ39Z9OJrVGVj8PJag4ikVUgYYzw&s";
+import { defaultStoreImg } from "@/lib/constants";
 
 const fields = [
   "name",
@@ -33,14 +24,16 @@ const fields = [
 
 const entityDefaults = {
   socialMedia: {},
-  addressId: "",
+  addressId: null,
 };
 
 export default function StoreForm({ store, token }: StoreCardProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    defaultStoreImg || null
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -208,7 +201,7 @@ export default function StoreForm({ store, token }: StoreCardProps) {
                   placeholder="Address Id"
                   aria-label="addressId"
                   name="addressId"
-                  defaultValue={addressId}
+                  defaultValue={addressId ?? "no adress yet"}
                   readOnly={true}
                 />
                 <Link
@@ -216,7 +209,7 @@ export default function StoreForm({ store, token }: StoreCardProps) {
                   className="col-span-1 flex w-full"
                 >
                   <Button variant="outline" className="w-full">{`${
-                    addressId === "" ? "Add Adress" : "Edit Adress"
+                    addressId === null ? "Add Adress" : "Edit Adress"
                   }`}</Button>
                 </Link>
               </div>

@@ -6,7 +6,6 @@ export const storeFields = {
   phoneNumber: { title: "Phone Number", name: "phoneNumber" },
   website: { title: "Website", name: "website" },
   status: { title: "Status", name: "status" },
-  addressId: { title: "Address ID", name: "addressId" },
 };
 
 export const initialStoreState = {
@@ -18,7 +17,7 @@ export const initialStoreState = {
   phoneNumber: "",
   website: "",
   status: "",
-  addressId: "",
+  addressId: null,
   success: false,
   message: "",
 };

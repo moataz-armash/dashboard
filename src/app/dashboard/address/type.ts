@@ -1,4 +1,4 @@
-type addressInfo = {
+type AddressInfo = {
   countryName: string;
   state: string;
   county: string;
@@ -40,4 +40,4 @@ interface Iaddress {
   };
 }
 
-export type { addressInfo, Iaddress, Idata };
+export type { AddressInfo, Iaddress, Idata };

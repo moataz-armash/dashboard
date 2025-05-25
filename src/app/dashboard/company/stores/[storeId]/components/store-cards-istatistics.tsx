@@ -7,8 +7,12 @@ import {
 import CardItem from "./card-item";
 import { Statistics } from "./type";
 
-export default function StoreCardsIstatistics(statistics: Statistics) {
-  const { allProducts, inReorderLevel, outOfStock, inDiscount } = statistics;
+export default function StoreCardsIstatistics({
+  allProducts,
+  inReorderLevel,
+  outOfStock,
+  inDiscount,
+}: Statistics) {
   return (
     <div className="grid grid-cols-4 gap-4 px-4 py-2">
       <CardItem

@@ -7,6 +7,7 @@ import {
   Box,
   DollarSign,
   FileText,
+  LogOut,
 } from "lucide-react";
 
 import {
@@ -21,6 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 // Menu items.
 const items = [
@@ -49,6 +51,7 @@ const items = [
     url: "/dashboard/company/workers",
     icon: HardHat,
   },
+
   // {
   //   title: "Financials",
   //   url: "/dashboard/company/financials",
@@ -63,6 +66,11 @@ const items = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { logout } = useAuth();
+
+  const hanldeLogout = () => {
+    logout();
+  };
   return (
     <Sidebar>
       <SidebarContent>
@@ -91,6 +99,20 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link
+                    onClick={hanldeLogout}
+                    href="/login"
+                    className="flex items-center gap-2 px-3 py-2 rounded transition duration-200 hover:bg-red-100"
+                  >
+                    <LogOut className="transition hover:text-red-700 text-gray-700" />
+                    <span className="transition hover:text-red-700">
+                      Logout
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

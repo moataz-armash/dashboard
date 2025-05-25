@@ -121,11 +121,14 @@ export default async function getStores({ params }: PageParams) {
 
   return (
     <>
-      <StoreCard store={resStore.data} token={token}  statistics={resInventroy.statistics} />
+      <StoreCard
+        store={resStore.data}
+        token={token}
+        statistics={resInventroy.statistics}
+      />
       <ProductsTable
         products={resInventroy.data}
         storeName={resStore.data.name}
-       
       />
     </>
   );

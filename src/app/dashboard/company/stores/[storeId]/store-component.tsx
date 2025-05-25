@@ -73,8 +73,8 @@ const StoreCard = ({ store, token, statistics }: StoreCardProps) => {
           </div>
         </div>
       </main>
-      <StoreCardsIstatistics statistics={statistics} />
-      {/* <StoreForm store={store} token={token} /> */}
+      <StoreCardsIstatistics {...statistics} />
+      <StoreForm store={store} token={token} />
     </>
   );
 };
