@@ -1,3 +1,5 @@
+import { CategoriesFormatter } from "@/lib/helpers";
+
 const categories = [
   "ELECTRONICS",
   "FASHION",
@@ -13,10 +15,4 @@ const categories = [
   "OTHERS",
 ];
 
-export const ProductCategories = categories.map((cat) => ({
-  label: cat
-    .replace(/_/, " ")
-    .toLowerCase()
-    .replace(/\b\w/g, (c) => c.toUpperCase()),
-  value: cat,
-}));
+export const ProductCategories = CategoriesFormatter(categories);

@@ -1,0 +1,86 @@
+"use server";
+import axios from "axios";
+import { addressSchema } from "./schema";
+
+export interface AddressData {
+  lat: number;
+  lng: number;
+  addressDetails: string;
+  addressTags: string[];
+}
+
+export async function CreateAddressByCoordinate(
+  addressData: AddressData | null
+) {
+  const res = await axios.post(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS}/address/management/create/coordinates`,
+    addressData
+  );
+  return res.data;
+}
+
+export async function updateAddressInfo(prevState: any, formData: FormData) {
+  const addressData = {
+    countryName: formData.get("countryName"),
+    state: formData.get("state"),
+    county: formData.get("county"),
+    district: formData.get("district"),
+    street: formData.get("street"),
+    houseNumber: formData.get("houseNumber"),
+    postalCode: formData.get("postalCode"),
+    addressDetails: formData.get("addressDetails"),
+    addressTags: formData.getAll("addressTags"),
+  };
+
+  const result = addressSchema.safeParse(addressData);
+
+  if (!result.success) {
+    return {
+      success: false,
+      errors: result.error.flatten().fieldErrors,
+      countryName: formData.get("countryName"),
+      state: formData.get("state"),
+      county: formData.get("county"),
+      district: formData.get("district"),
+      street: formData.get("street"),
+      houseNumber: formData.get("houseNumber"),
+      postalCode: formData.get("postalCode"),
+      addressDetails: formData.get("addressDetails"),
+      addressTags: formData.getAll("addressTags"),
+    };
+  }
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS}/address/management/create/info}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(result.data),
+    }
+  );
+
+  if (!res.ok) {
+    const errorJson = await res.json();
+    return {
+      success: false,
+      errors: {},
+      countryName: formData.get("countryName"),
+      state: formData.get("state"),
+      county: formData.get("county"),
+      district: formData.get("district"),
+      street: formData.get("street"),
+      houseNumber: formData.get("houseNumber"),
+      postalCode: formData.get("postalCode"),
+      addressDetails: formData.get("addressDetails"),
+      addressTags: formData.getAll("addressTags"),
+      message: errorJson.message || "Address creation failed",
+    };
+  }
+
+  return {
+    success: true,
+    data: await res.json(),
+  };
+}

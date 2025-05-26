@@ -1,87 +1,113 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import Select from "react-select";
 
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { AddressInfo } from "./type";
-import createAddressInfo from "./api";
-import CreateAddressByCoordinate, { AddressData } from "./actions";
+import { AddressInfo } from "./components/type";
+import createAddressInfo from "./components/api";
+import {
+  AddressData,
+  CreateAddressByCoordinate,
+  updateAddressInfo,
+} from "./components/actions";
 import Spinner from "@/components/ui/spinner";
 import toast from "react-hot-toast";
 import BackLink from "@/components/ui/back-link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { MoveRight, Zap } from "lucide-react";
+import { addressSchema } from "./components/schema";
+import DropdownProduct from "../company/products/[productId]/components/dropDown-product";
+import { addressTags } from "./components/dropdown";
 
-// 📌 Address validation schema
-const addressSchema = z.object({
-  countryName: z.string().min(2, "Country is required"),
-  state: z.string().min(2, "State is required"),
-  county: z.string().optional(),
-  district: z.string().min(2, "District is required"),
-  street: z.string().min(2, "Street is required"),
-  houseNumber: z.string().min(1, "House Number is required"),
-  postalCode: z.string().min(2, "Postal Code is required"),
-  latitude: z.number(),
-  longitude: z.number(),
-});
+const initialState = {
+  errors: {},
+  message: "",
+  success: false,
+  countryName: "",
+  state: "",
+  county: "",
+  district: "",
+  street: "",
+  houseNumber: "",
+  postalCode: "",
+  addressDetails: "",
+  addressTags: "",
+};
 
-const AddressForm = () => {
+export default function AddressForm() {
   const searchParams = useSearchParams();
   const storeId = searchParams.get("storeId") || "";
   const storeName = searchParams.get("storeName") || "";
   const [message, setMessage] = useState<string | null>(null);
   const [addressData, setAddressData] = useState<AddressData | null>(null);
   const [addressInfo, setAddressInfo] = useState<AddressInfo | null>(null);
-  //
+  const [selectedTags, setSelectedTags] = useState<any[]>([]);
+
   const [loadingAddress, setLoadingAddress] = useState(false);
-  const { register, handleSubmit, setValue } = useForm({
-    resolver: zodResolver(addressSchema),
-    defaultValues: {
-      countryName: "",
-      state: "",
-      county: "",
-      district: "",
-      street: "",
-      houseNumber: "",
-      postalCode: "",
-      latitude: 48.8566, // Default Paris
-      longitude: 2.3522,
-    },
-  });
+  const router = useRouter();
 
-  const onSubmit = (data: AddressInfo) => {
-    createAddressInfo({
-      countryName: data.countryName,
-      state: data.state,
-      county: data.county,
-      district: data.district,
-      street: data.street,
-      houseNumber: data.houseNumber,
-      postalCode: data.postalCode,
-      addressDetails: " ",
-      addressTags: [""],
-    });
+  const [state, formAction, pending] = useActionState(
+    updateAddressInfo,
+    initialState
+  );
 
-    console.log("Submitted Address Data:", {
-      countryNmae: data.countryName,
-      state: data.state,
-      county: data.county,
-      district: data.district,
-      street: data.street,
-      houseNumber: data.houseNumber,
-      postalCode: data.postalCode,
-      addressDetails: "",
-      addressTags: [""],
-    });
-    console.log("success");
-  };
+  useEffect(() => {
+    if (state?.success) {
+      toast.success(state?.message || "Address created successfully");
+      router.push(`/dashboard/company/stores/${storeId}`);
+    } else if (state?.message) {
+      toast.error(state?.message);
+    } else if (state?.errors && Object.keys(state.errors).length > 0) {
+      toast.error("Please fix the highlighted errors.");
+    }
+  }, [state, router, storeId]);
+
+  // const { register, handleSubmit, setValue } = useForm({
+  //   resolver: zodResolver(addressSchema),
+  //   defaultValues: {
+  //     countryName: "",
+  //     state: "",
+  //     county: "",
+  //     district: "",
+  //     street: "",
+  //     houseNumber: "",
+  //     postalCode: "",
+  //     addressDetails: "",
+  //     addressTags: "BAKERY",
+  //   },
+  // });
+
+  // const onSubmit = (data: AddressInfo) => {
+  //   createAddressInfo({
+  //     countryName: data.countryName,
+  //     state: data.state,
+  //     county: data.county,
+  //     district: data.district,
+  //     street: data.street,
+  //     houseNumber: data.houseNumber,
+  //     postalCode: data.postalCode,
+  //     addressDetails: " ",
+  //     addressTags: [""],
+  //   });
+
+  //   console.log("Submitted Address Data:", {
+  //     countryNmae: data.countryName,
+  //     state: data.state,
+  //     county: data.county,
+  //     district: data.district,
+  //     street: data.street,
+  //     houseNumber: data.houseNumber,
+  //     postalCode: data.postalCode,
+  //     addressDetails: "",
+  //     addressTags: [""],
+  //   });
+  //   console.log("success");
+  // };
 
   const handleLocation = () => {
     if (!navigator.geolocation) {
@@ -103,8 +129,8 @@ const AddressForm = () => {
         });
 
         // Example: update state or form values
-        setValue("latitude", latitude);
-        setValue("longitude", longitude);
+        // setValue("latitude", latitude);
+        // setValue("longitude", longitude);
         // setMapCenter({ lat: latitude, lng: longitude });
       },
       (error) => {
@@ -124,47 +150,6 @@ const AddressForm = () => {
     setLoadingAddress(false);
   };
 
-  // useEffect(() => {
-  //   if (!navigator.geolocation) {
-  //     setMessage("Geolocation is not supported by your browser.");
-  //     return;
-  //   }
-
-  //   setLoadingAddress(true);
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //       const { latitude, longitude } = position.coords;
-  //       console.log("User location:", latitude, longitude);
-
-  //       setAddressData({
-  //         lat: latitude,
-  //         lng: longitude,
-  //         addressDetails: "",
-  //         addressTags: [],
-  //       });
-
-  //       // Example: update state or form values
-  //       setValue("latitude", latitude);
-  //       setValue("longitude", longitude);
-  //       // setMapCenter({ lat: latitude, lng: longitude });
-  //     },
-  //     (error) => {
-  //       // console.error("Error getting location:", error);
-  //       setMessage(
-  //         "Could not get location. Please enable GPS, to get location dynamically"
-  //       );
-
-  //       return;
-  //       // alert("Could not get location. Please enable GPS.");
-  //     },
-  //     {
-  //       enableHighAccuracy: true, // use GPS if available
-  //       timeout: 10000,
-  //     }
-  //   );
-  //   setLoadingAddress(false);
-  // }, [setValue, setAddressData]);
-
   useEffect(() => {
     if (message) {
       setTimeout(() => {
@@ -178,13 +163,25 @@ const AddressForm = () => {
       async function createAddress() {
         const data = await CreateAddressByCoordinate(addressData);
         setAddressInfo(data.data);
-        console.log(data);
+        console.log(data.data);
         setLoadingAddress(false);
         toast.success("We get your address successfully");
       }
       createAddress();
     }
-  }, [addressData, setLoadingAddress]);
+  }, [addressData]);
+
+  // useEffect(() => {
+  //   if (addressInfo) {
+  //     setValue("countryName", addressInfo.countryName || "");
+  //     setValue("state", addressInfo.state || "");
+  //     setValue("county", addressInfo.county || "");
+  //     setValue("district", addressInfo.district || "");
+  //     setValue("street", addressInfo.street || "");
+  //     setValue("houseNumber", addressInfo.houseNumber || "");
+  //     setValue("postalCode", addressInfo.postalCode || "");
+  //   }
+  // }, [addressInfo, setValue]);
 
   return (
     <>
@@ -215,51 +212,87 @@ const AddressForm = () => {
             fill form auto <Zap />
           </Button>
         </div>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="grid grid-cols-2 gap-6"
-        >
+        <form action={formAction} className="grid grid-cols-2 gap-6">
           <div>
             {/* Manual Address Fields */}
-            <Label>Country</Label>
+            <Label htmlFor="countryName">Country</Label>
             <Input
-              {...register("countryName")}
+              name="countryName"
               defaultValue={addressInfo?.countryName}
+              className="text-black"
             />
-            <Label>State</Label>
-            <Input {...register("state")} defaultValue={addressInfo?.state} />
-            <Label>County</Label>
-            <Input {...register("county")} defaultValue={addressInfo?.county} />
+            {state?.errors?.countryName && (
+              <p className="text-red-500 text-sm">{state.errors.countryName}</p>
+            )}
+            <Label htmlFor="state">State</Label>
+            <Input name="state" defaultValue={addressInfo?.state} />
+            {state?.errors?.state && (
+              <p className="text-red-500 text-sm">{state.errors.state}</p>
+            )}
+            <Label htmlFor="county">County</Label>
+            <Input name="county" defaultValue={addressInfo?.county} />
+            {state?.errors?.county && (
+              <p className="text-red-500 text-sm">{state.errors.county}</p>
+            )}
+            <Label htmlFor="county">Address Tags</Label>
+            <Select
+              isMulti
+              options={addressTags}
+              onChange={(value) => {
+                setSelectedTags(value.map((tag) => tag.value));
+              }}
+            />
+             {state?.errors?.addressTags && (
+              <p className="text-red-500 text-sm">{state.errors.addressTags}</p>
+            )}
+            <input
+              name="addressTags"
+              value={selectedTags.map((tag) => tag.value).join(",")}
+              hidden
+            />
           </div>
           <div>
-            <Label>District</Label>
+            <Label htmlFor="district">District</Label>
+            <Input name="district" defaultValue={addressInfo?.district} />
+            {state?.errors?.district && (
+              <p className="text-red-500 text-sm">{state.errors.district}</p>
+            )}
+            <Label htmlFor="street">Street</Label>
+            <Input name="street" defaultValue={addressInfo?.street} />
+            {state?.errors?.street && (
+              <p className="text-red-500 text-sm">{state.errors.street}</p>
+            )}
+            <Label htmlFor="houseNumber">House Number</Label>
             <Input
-              {...register("district")}
-              defaultValue={addressInfo?.district}
-            />
-            <Label>Street</Label>
-            <Input {...register("street")} defaultValue={addressInfo?.street} />
-            <Label>House Number</Label>
-            <Input
-              {...register("houseNumber")}
+              name="houseNumber"
+              type="number"
+              inputMode="numeric"
               defaultValue={addressInfo?.houseNumber}
             />
+             {state?.errors?.houseNumber && (
+              <p className="text-red-500 text-sm">{state.errors.houseNumber}</p>
+            )}
             <Label>Postal Code</Label>
             <Input
-              {...register("postalCode")}
+              name="postalCode"
+              type="number"
+              inputMode="numeric"
               defaultValue={addressInfo?.postalCode}
             />
+             {state?.errors?.postalCode && (
+              <p className="text-red-500 text-sm">{state.errors.postalCode}</p>
+            )}
           </div>
+
           <Button
             type="submit"
             className="col-span-2 bg-brand-500 hover:bg-brand-600"
+            disabled={pending}
           >
-            Submit <MoveRight />
+            Submit {pending ? <Spinner /> : <MoveRight />}
           </Button>
         </form>
       </Card>
     </>
   );
-};
-
-export default AddressForm;
+}

@@ -119,4 +119,20 @@ const SubmitEntityUpdate = async ({
   }
 };
 
-export { handleFileChange, getImage, handleImageClick, SubmitEntityUpdate };
+function CategoriesFormatter(categories: string[]) {
+  return categories.map((cat) => ({
+    label: cat
+      .replace(/_/, " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (c) => c.toUpperCase()),
+    value: cat,
+  }));
+}
+
+export {
+  handleFileChange,
+  getImage,
+  handleImageClick,
+  SubmitEntityUpdate,
+  CategoriesFormatter,
+};
