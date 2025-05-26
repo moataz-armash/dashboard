@@ -10,7 +10,12 @@ export const addressSchema = z.object({
   houseNumber: z.string().min(1, "House Number is required"),
   postalCode: z.string().min(2, "Postal Code is required"),
   addressDetails: z.string().optional(),
-  addressTags: z.array(z.enum(addressOptions), {
-    required_error: "Address Tag is required",
-  }),
+  addressTags: 
+  z
+    .array(z.enum(addressOptions), {
+      required_error: "Address Tag is required",
+    })
+    .min(1, "At least one address tag is required"),
 });
+
+export type addressInput = z.infer<typeof addressSchema>;

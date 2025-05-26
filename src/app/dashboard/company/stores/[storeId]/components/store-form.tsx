@@ -205,7 +205,7 @@ export default function StoreForm({ store, token }: StoreCardProps) {
                   readOnly={true}
                 />
                 <Link
-                  href={`/dashboard/address?storeId=${store.id}&storeName=${storeName}`}
+                  href={`/dashboard/${store.addressId}?storeId=${store.id}&storeName=${storeName}`}
                   className="col-span-1 flex w-full"
                 >
                   <Button variant="outline" className="w-full">{`${

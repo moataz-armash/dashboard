@@ -36,7 +36,7 @@ const initialState = {
   houseNumber: "",
   postalCode: "",
   addressDetails: "",
-  addressTags: "",
+  addressTags: [],
 };
 
 export default function AddressForm() {
@@ -56,6 +56,8 @@ export default function AddressForm() {
     initialState
   );
 
+  console.log(state);
+
   useEffect(() => {
     if (state?.success) {
       toast.success(state?.message || "Address created successfully");
@@ -66,48 +68,6 @@ export default function AddressForm() {
       toast.error("Please fix the highlighted errors.");
     }
   }, [state, router, storeId]);
-
-  // const { register, handleSubmit, setValue } = useForm({
-  //   resolver: zodResolver(addressSchema),
-  //   defaultValues: {
-  //     countryName: "",
-  //     state: "",
-  //     county: "",
-  //     district: "",
-  //     street: "",
-  //     houseNumber: "",
-  //     postalCode: "",
-  //     addressDetails: "",
-  //     addressTags: "BAKERY",
-  //   },
-  // });
-
-  // const onSubmit = (data: AddressInfo) => {
-  //   createAddressInfo({
-  //     countryName: data.countryName,
-  //     state: data.state,
-  //     county: data.county,
-  //     district: data.district,
-  //     street: data.street,
-  //     houseNumber: data.houseNumber,
-  //     postalCode: data.postalCode,
-  //     addressDetails: " ",
-  //     addressTags: [""],
-  //   });
-
-  //   console.log("Submitted Address Data:", {
-  //     countryNmae: data.countryName,
-  //     state: data.state,
-  //     county: data.county,
-  //     district: data.district,
-  //     street: data.street,
-  //     houseNumber: data.houseNumber,
-  //     postalCode: data.postalCode,
-  //     addressDetails: "",
-  //     addressTags: [""],
-  //   });
-  //   console.log("success");
-  // };
 
   const handleLocation = () => {
     if (!navigator.geolocation) {
@@ -218,47 +178,51 @@ export default function AddressForm() {
             <Label htmlFor="countryName">Country</Label>
             <Input
               name="countryName"
-              defaultValue={addressInfo?.countryName}
+              defaultValue={state?.countryName}
               className="text-black"
             />
             {state?.errors?.countryName && (
               <p className="text-red-500 text-sm">{state.errors.countryName}</p>
             )}
             <Label htmlFor="state">State</Label>
-            <Input name="state" defaultValue={addressInfo?.state} />
+            <Input name="state" defaultValue={state?.state} />
             {state?.errors?.state && (
               <p className="text-red-500 text-sm">{state.errors.state}</p>
             )}
             <Label htmlFor="county">County</Label>
-            <Input name="county" defaultValue={addressInfo?.county} />
+            <Input name="county" defaultValue={state?.county} />
             {state?.errors?.county && (
               <p className="text-red-500 text-sm">{state.errors.county}</p>
             )}
-            <Label htmlFor="county">Address Tags</Label>
+            <Label htmlFor="addressTags">Address Tags</Label>
             <Select
               isMulti
               options={addressTags}
-              onChange={(value) => {
-                setSelectedTags(value.map((tag) => tag.value));
+              onChange={(values) => {
+                setSelectedTags(values);
               }}
             />
-             {state?.errors?.addressTags && (
-              <p className="text-red-500 text-sm">{state.errors.addressTags}</p>
+            {state?.errors?.addressTags && (
+              <p className="text-red-500 text-sm">
+                At least one address tag is required
+              </p>
             )}
             <input
               name="addressTags"
-              value={selectedTags.map((tag) => tag.value).join(",")}
+              defaultValue={selectedTags
+                .map((tag: { label: string; value: string }) => tag.value)
+                .join(",")}
               hidden
             />
           </div>
           <div>
             <Label htmlFor="district">District</Label>
-            <Input name="district" defaultValue={addressInfo?.district} />
+            <Input name="district" defaultValue={state?.district} />
             {state?.errors?.district && (
               <p className="text-red-500 text-sm">{state.errors.district}</p>
             )}
             <Label htmlFor="street">Street</Label>
-            <Input name="street" defaultValue={addressInfo?.street} />
+            <Input name="street" defaultValue={state?.street} />
             {state?.errors?.street && (
               <p className="text-red-500 text-sm">{state.errors.street}</p>
             )}
@@ -267,9 +231,9 @@ export default function AddressForm() {
               name="houseNumber"
               type="number"
               inputMode="numeric"
-              defaultValue={addressInfo?.houseNumber}
+              defaultValue={state?.houseNumber}
             />
-             {state?.errors?.houseNumber && (
+            {state?.errors?.houseNumber && (
               <p className="text-red-500 text-sm">{state.errors.houseNumber}</p>
             )}
             <Label>Postal Code</Label>
@@ -277,12 +241,22 @@ export default function AddressForm() {
               name="postalCode"
               type="number"
               inputMode="numeric"
-              defaultValue={addressInfo?.postalCode}
+              defaultValue={state?.postalCode}
             />
-             {state?.errors?.postalCode && (
+            {state?.errors?.postalCode && (
               <p className="text-red-500 text-sm">{state.errors.postalCode}</p>
             )}
           </div>
+
+          <Label className="col-span-2 w-full">Address Details</Label>
+          <textarea
+            name="addressDetails"
+            type="text"
+            inputMode="text"
+            placeholder="this is my company address...."
+            className="col-span-2 text-gray-700 bg-gray-100 px-2 py-3 rounded-xl placeholder:text-gray-400"
+            defaultValue={state?.addressDetails}
+          />
 
           <Button
             type="submit"

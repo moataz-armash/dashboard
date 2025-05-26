@@ -20,6 +20,8 @@ export async function CreateAddressByCoordinate(
 }
 
 export async function updateAddressInfo(prevState: any, formData: FormData) {
+  const rawOptions = formData.get("addressTags");
+
   const addressData = {
     countryName: formData.get("countryName"),
     state: formData.get("state"),
@@ -29,7 +31,7 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
     houseNumber: formData.get("houseNumber"),
     postalCode: formData.get("postalCode"),
     addressDetails: formData.get("addressDetails"),
-    addressTags: formData.getAll("addressTags"),
+    addressTags: typeof rawOptions === "string" ? rawOptions.split(",") : [],
   };
 
   const result = addressSchema.safeParse(addressData);
@@ -45,13 +47,17 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
       street: formData.get("street"),
       houseNumber: formData.get("houseNumber"),
       postalCode: formData.get("postalCode"),
-      addressDetails: formData.get("addressDetails"),
+      addressDetails: formData.get("addressDetails") || "",
       addressTags: formData.getAll("addressTags"),
+      // formData.getAll("addressTags").length === 1 &&
+      // formData.getAll("addressTags")[0] === ""
+      //   ? undefined
+      //   : formData.getAll("addressTags"),
     };
   }
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS}/address/management/create/info}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS}/address/management/create/info`,
     {
       method: "POST",
       headers: {
@@ -61,20 +67,21 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
     }
   );
 
+
   if (!res.ok) {
     const errorJson = await res.json();
     return {
       success: false,
       errors: {},
-      countryName: formData.get("countryName"),
-      state: formData.get("state"),
-      county: formData.get("county"),
-      district: formData.get("district"),
-      street: formData.get("street"),
-      houseNumber: formData.get("houseNumber"),
-      postalCode: formData.get("postalCode"),
-      addressDetails: formData.get("addressDetails"),
-      addressTags: formData.getAll("addressTags"),
+      countryName: addressData.countryName,
+      state: addressData.state,
+      county: addressData.county,
+      district: addressData.district,
+      street: addressData.street,
+      houseNumber: addressData.houseNumber,
+      postalCode: addressData.postalCode,
+      addressDetails: addressData.addressDetails,
+      addressTags: addressData.addressTags,
       message: errorJson.message || "Address creation failed",
     };
   }
@@ -84,3 +91,5 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
     data: await res.json(),
   };
 }
+
+
