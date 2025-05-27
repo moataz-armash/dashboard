@@ -42,6 +42,12 @@ export default {
           800: "#1e40af",
           900: "#1e3a8a",
         },
+        graybrand: {
+          DEFAULT: "#9e9da3",
+        },
+        purblebrand: {
+          DEFAULT: "#5b3eb6",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
