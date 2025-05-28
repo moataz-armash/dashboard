@@ -47,31 +47,31 @@ export default function HomePage() {
 
   return (
     <div className="flex justify-center items-center shadow-xl h-screen p-8 bg-[#e9e9f5]">
-      <div className="w-full h-[95%] m-auto top-0 left-0 z-50 flex rounded-lg border bg-white">
+      <div className="w-full h-[95%] m-auto top-0 left-0 z-50 flex rounded-2xl border bg-white">
         {/* leftside */}
-        <div className="flex-1 rounded-tl-lg h-full">
+        <div className="flex-1 rounded-tl-2xl h-full">
           {/* dashboard sidebar */}
-          <div className="w-[25%] bg-green-400 h-full rounded-l-lg flex justify-center items-center px-6 py-4">
+          <div className="w-[25%] h-full rounded-l-2xl flex justify-center items-center px-8 py-8">
             {/* List */}
-            <div className="bg-blue-500 w-full h-full flex flex-col justify-between">
+            <div className="w-full h-full flex flex-col justify-between">
               {/* up box */}
-              <div className="flex flex-col gap-4 h-[70%]">
+              <div className="flex flex-col gap-8 h-[70%]">
                 {GeneralLinks.map((link) => (
                   <Link
                     href={link.href}
                     key={link.id}
-                    className="flex justify-start items-center gap-8"
+                    className="flex justify-start items-center gap-2 group"
                   >
                     <link.icon
                       size={16}
-                      className={`${
+                      className={`group-hover:text-purblebrand ${
                         pathname === link.href
                           ? "text-purblebrand"
                           : "text-graybrand"
                       }`}
                     />{" "}
                     <span
-                      className={`text-xs font-semibold ${
+                      className={`group-hover:text-purblebrand text-xs font-semibold ${
                         pathname === link.href
                           ? "text-purblebrand"
                           : "text-graybrand"
@@ -84,23 +84,23 @@ export default function HomePage() {
                 ))}
               </div>
               {/* down box */}
-              <div className="flex flex-col gap-4 h-[30%]">
+              <div className="flex flex-col gap-4 h-[30%] justify-end">
                 {settingsLinks.map((link) => (
                   <Link
                     href={link.href}
                     key={link.id}
-                    className="flex justify-start items-center gap-8"
+                    className="flex justify-start items-center gap-2 group"
                   >
                     <link.icon
                       size={16}
-                      className={`${
+                      className={`group-hover:text-purblebrand ${
                         pathname === link.href
                           ? "text-purblebrand"
                           : "text-graybrand"
                       }`}
                     />{" "}
                     <span
-                      className={`text-xs font-semibold ${
+                      className={`group-hover:text-purblebrand text-xs font-semibold ${
                         pathname === link.href
                           ? "text-purblebrand"
                           : "text-graybrand"
