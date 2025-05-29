@@ -48,6 +48,9 @@ export default {
         purblebrand: {
           DEFAULT: "#5b3eb6",
         },
+        greenbutton: {
+          DEFAULT: "#2e7844",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
