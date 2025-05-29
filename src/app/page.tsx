@@ -1,18 +1,22 @@
 // import { redirect } from "next/navigation";
-
+import logo from "@/assets/logo.png";
+import Image from "next/image";
 export default function HomePage() {
   return (
-    <div className="relative min-h-screen p-12 flex items-center justify-center bg-gray-100">
-      <div
-        className="bg-green-900 min-h-screen text-white p-10 w-full max-w-7xl rounded-t-3xl"
-        style={{
-          clipPath:
-            "polygon(0% 0%, 100% 0%, 100% 92%, 95% 100%, 5% 100%, 0% 92%)",
-        }}
-      >
-        anything asdfsdf asdfasf safsdfa asdfsadf asfdasfdasdf sadfasdfsd
+    <header className="py-2 bg-white w-full h-screen flex justify-center">
+      {/* hero section */}
+      <div className="bg-[url('@/assets/background.png')] bg-no-repeat bg-contain bg-center h-screen w-[1000px] py-12 px-12">
+        <nav className="h-12 bg-white rounded-full px-2 flex items-center">
+          <Image
+            width={36}
+            height={36}
+            src={logo}
+            alt="ataya logo"
+            className=""
+          />
+        </nav>
       </div>
-    </div>
+    </header>
   );
   // Redirect to the default dashboard (Company in this case)
   // redirect("/dashboard/company/home");
