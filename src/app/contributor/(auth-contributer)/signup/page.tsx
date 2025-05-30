@@ -32,12 +32,7 @@ export default function Signup() {
               Login
             </span>
           </p>
-          <Input
-            name="name"
-            type="text"
-            className="border-2 border-brand-500 rounded-2xl py-6"
-            placeholder="Name"
-          />
+
           <Input
             name="emailAddress"
             type="email"
@@ -55,7 +50,7 @@ export default function Signup() {
           </Button>
         </div>
         {/* right side */}
-        <div className="bg-[#eef2e3] w-full max-w-xl  flex flex-col items-center justify-center">
+        <div className="bg-[#eef2e3] w-full max-w-xl  flex flex-col items-center justify-center pt-16">
           <div className="flex gap-2 justify-center items-center">
             <Image
               width={52}
@@ -75,8 +70,8 @@ export default function Signup() {
           <Image
             src={signupImage}
             alt="signup image"
-            width={400}
-            height={400}
+            width={450}
+            height={450}
             className="p-16"
           />
         </div>
