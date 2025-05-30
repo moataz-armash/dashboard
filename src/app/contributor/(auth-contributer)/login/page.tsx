@@ -9,6 +9,7 @@ import logo from "@/assets/logo.png";
 
 export default function LoginPage() {
   const router = useRouter();
+
   return (
     // Screen
     <div className="bg-green-900 h-screen w-full flex justify-center items-center p-8">
