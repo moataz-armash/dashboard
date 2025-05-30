@@ -4,7 +4,7 @@ import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const navLinks = [
   { id: 1, title: "Home", href: "/" },
@@ -15,6 +15,7 @@ const navLinks = [
 
 export default function HomePage() {
   const pathname = usePathname();
+  const router = useRouter();
   return (
     <header className="py-2 bg-white w-full h-screen flex justify-center">
       {/* hero section section */}
@@ -47,7 +48,12 @@ export default function HomePage() {
               </Link>
             ))}
           </ul>
-          <Button className="bg-greenbutton text-white font-normal rounded-full hover:bg-green-800">
+          <Button
+            className="bg-greenbutton text-white font-normal rounded-full hover:bg-green-800"
+            onClick={() => {
+              router.push("/contributor/signup");
+            }}
+          >
             Donate Now
           </Button>
         </nav>
