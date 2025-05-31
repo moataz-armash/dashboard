@@ -14,7 +14,7 @@ export default async function registerContributor(
   if (!result.success) {
     return {
       success: false,
-      errors: result.error.flatten().fieldErrors,
+      errors: result.error.format(),
       email: registerData.email,
       password: registerData.password,
     };
@@ -22,7 +22,11 @@ export default async function registerContributor(
 
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/auth/register`,
-    { method: "POST" }
+    {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(registerData),
+    }
   );
 
   if (!response.ok) {
@@ -35,6 +39,8 @@ export default async function registerContributor(
       password: registerData.password,
     };
   }
+
+  console.log(response);
 
   return {
     success: true,

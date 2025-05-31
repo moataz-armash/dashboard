@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import InputForm from "@/components/ui/input-form";
 import { useRouter } from "next/navigation";
 import signupImage from "@/assets/undraw_access-account_aydp.svg";
 import Image from "next/image";
@@ -16,6 +15,7 @@ const initialState = {
   success: false,
   email: "",
   password: "",
+  message: "",
 };
 
 export default function Signup() {
@@ -28,12 +28,13 @@ export default function Signup() {
   useEffect(() => {
     if (state.success) {
       toast.success(state.data.message || "Register Success");
+      router.push("/contributor");
     } else if (state.message) {
       toast.error(state.message);
     } else if (state.errors && Object.keys(state.errors).length > 0) {
       toast.error("Please fix the highlighted errors");
     }
-  }, [state]);
+  }, [state, router]);
   return (
     // Screen
     <div className="bg-green-900 h-screen w-full flex justify-center items-center p-8">
@@ -59,28 +60,34 @@ export default function Signup() {
             </span>
           </p>
 
-          <Input
-            name="email"
-            type="email"
-            className="border-2 border-brand-500 rounded-2xl py-6"
-            placeholder="Email Address"
-          />
-          {state?.errors?.email && (
-            <p className="text-red-500 text-sm">
-              {state.errors?.email._errors?.[0]}
-            </p>
-          )}
-          <Input
-            name="password"
-            type="password"
-            className="border-2 border-brand-500 rounded-2xl py-6"
-            placeholder="Password"
-          />
-          {state?.errors?.password && (
-            <p className="text-red-500 text-sm">
-              {state.errors.password._errors?.[0]}
-            </p>
-          )}
+          <div className="w-full">
+            <Input
+              name="email"
+              type="email"
+              className="border-2 border-brand-500 rounded-2xl py-6"
+              placeholder="Email Address"
+              defaultValue={state?.email}
+            />
+            {state?.errors?.email && (
+              <p className="text-red-500 text-sm text-left w-full px-4 pt-2">
+                {state.errors?.email._errors?.[0]}
+              </p>
+            )}
+          </div>
+          <div className="w-full">
+            <Input
+              name="password"
+              type="password"
+              className="border-2 border-brand-500 rounded-2xl py-6"
+              placeholder="Password"
+              defaultValue={state?.password}
+            />
+            {state?.errors?.password && (
+              <p className="text-red-500 text-sm text-left w-full px-4 pt-2">
+                {state.errors.password._errors?.[0]}
+              </p>
+            )}
+          </div>
           <Button
             className="text-xl font-sans font-medium w-full rounded-2xl py-6 bg-green-900 hover:bg-green-800"
             disabled={pending}

@@ -1,20 +1,46 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import InputForm from "@/components/ui/input-form";
 import { useRouter } from "next/navigation";
 import signupImage from "@/assets/undraw_access-account_aydp.svg";
 import Image from "next/image";
 import logo from "@/assets/logo.png";
+import { useActionState, useEffect } from "react";
+import loginContributor from "./actions";
+import toast from "react-hot-toast";
+import Spinner from "@/components/ui/spinner";
+
+const initialState = {
+  message: "",
+  errors: {},
+  email: "",
+  password: "",
+  success: false,
+};
 
 export default function LoginPage() {
   const router = useRouter();
+  const [state, formAction, pending] = useActionState(
+    loginContributor,
+    initialState
+  );
+
+  useEffect(() => {
+    if (state.success) {
+      toast.success(state.data.message || "Login Success");
+      router.push("/contributor");
+    } else if (state.errors) {
+      toast.error(state.message);
+    } else if (state.errors && Object.keys(state.errors).length > 0) {
+      toast.error("Please fix the highlighted errors");
+    }
+  }, [state, router]);
 
   return (
     // Screen
     <div className="bg-green-900 h-screen w-full flex justify-center items-center p-8">
       {/* Card */}
-      <div className="w-[95%] flex h-full justify-center">
+      <form className="w-[95%] flex h-full justify-center" action={formAction}>
         {/* left side */}
         <div className="bg-white w-full max-w-xl flex flex-col gap-20 py-28 px-16 items-center">
           <div className="flex flex-col gap-2">
@@ -31,21 +57,34 @@ export default function LoginPage() {
               type="email"
               className="border-2 border-brand-500 rounded-2xl py-6"
               placeholder="Email Address"
+              defaultValue={state?.email}
             />
+            {state?.errors?.email && (
+              <p className="text-red-500">{state.errors?.email._errors?.[0]}</p>
+            )}
             <Input
               name="password"
               type="password"
               className="border-2 border-brand-500 rounded-2xl py-6"
               placeholder="Password"
+              defaultValue={state?.password}
             />
-            <Button className="text-xl font-sans font-medium w-full rounded-2xl py-6 bg-green-900 hover:bg-green-800">
-              Sign Up
+            {state?.errors?.password && (
+              <p className="text-red-500">
+                {state.errors?.password._errors?.[0]}
+              </p>
+            )}
+            <Button
+              className="text-xl font-sans font-medium w-full rounded-2xl py-6 bg-green-900 hover:bg-green-800"
+              type="submit"
+            >
+              Login {pending && <Spinner />}
             </Button>
             <p className="text-center text-sm w-full font-normal text-gray-500">
               Don&apos;t have an account?{" "}
               <span
                 className="font-semibold text-yellow-400 cursor-pointer border-b border-yellow-400 hover:text-yellow-500"
-                onClick={() => router.push("/contributor/login")}
+                onClick={() => router.push("/contributor/signup")}
               >
                 Register Now.
               </span>
@@ -75,7 +114,7 @@ export default function LoginPage() {
             className="p-16"
           />
         </div>
-      </div>
+      </form>
     </div>
   );
 }
