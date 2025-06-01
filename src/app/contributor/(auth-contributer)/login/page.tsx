@@ -29,7 +29,7 @@ export default function LoginPage() {
     if (state.success) {
       toast.success(state.data.message || "Login Success");
       router.push("/contributor");
-    } else if (state.errors) {
+    } else if (state.message) {
       toast.error(state.message);
     } else if (state.errors && Object.keys(state.errors).length > 0) {
       toast.error("Please fix the highlighted errors");
@@ -52,28 +52,34 @@ export default function LoginPage() {
             </p>
           </div>
           <div className="flex flex-col gap-8 w-[90%]">
-            <Input
-              name="emailAddress"
-              type="email"
-              className="border-2 border-brand-500 rounded-2xl py-6"
-              placeholder="Email Address"
-              defaultValue={state?.email}
-            />
-            {state?.errors?.email && (
-              <p className="text-red-500">{state.errors?.email._errors?.[0]}</p>
-            )}
-            <Input
-              name="password"
-              type="password"
-              className="border-2 border-brand-500 rounded-2xl py-6"
-              placeholder="Password"
-              defaultValue={state?.password}
-            />
-            {state?.errors?.password && (
-              <p className="text-red-500">
-                {state.errors?.password._errors?.[0]}
-              </p>
-            )}
+            <div className="w-full">
+              <Input
+                name="email"
+                type="email"
+                className="border-2 border-brand-500 rounded-2xl py-6"
+                placeholder="Email Address"
+                defaultValue={state?.email}
+              />
+              {state?.errors?.email && (
+                <p className="text-red-500 pt-2 pl-2">
+                  {state.errors?.email._errors?.[0]}
+                </p>
+              )}
+            </div>
+            <div className="w-full">
+              <Input
+                name="password"
+                type="password"
+                className="border-2 border-brand-500 rounded-2xl py-6"
+                placeholder="Password"
+                defaultValue={state?.password}
+              />
+              {state?.errors?.password && (
+                <p className="text-red-500 pt-2 pl-2">
+                  {state.errors?.password._errors?.[0]}
+                </p>
+              )}
+            </div>
             <Button
               className="text-xl font-sans font-medium w-full rounded-2xl py-6 bg-green-900 hover:bg-green-800"
               type="submit"

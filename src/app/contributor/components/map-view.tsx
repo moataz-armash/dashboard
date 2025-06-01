@@ -1,7 +1,7 @@
 "use client";
 
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { locations } from "./lib/locations";
+import { locations } from "../lib/locations";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 

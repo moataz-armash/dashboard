@@ -1,129 +1,50 @@
-"use client";
+import { Search } from "lucide-react";
+import Image from "next/image";
+import A101 from "@/assets/a101.jpg";
 
-import { useState } from "react";
-import Sidebar from "./side-bar";
-import dynamic from "next/dynamic";
-import {
-  Bell,
-  Bookmark,
-  Compass,
-  LayoutDashboard,
-  LogOut,
-  Settings,
-  UserRoundPlus,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-const MapView = dynamic(() => import("./map-view"), { ssr: false });
-
-const GeneralLinks = [
-  { id: 1, title: "Dashboard", href: "/contributor", icon: LayoutDashboard },
-  { id: 2, title: "Notifs", href: "/notification", icon: Bell },
-  { id: 3, title: "Discover", href: "/discover", icon: Compass },
-  { id: 4, title: "Bookmarks", href: "/bookmarks", icon: Bookmark },
-  { id: 5, title: "Add friend", href: "/add-friend", icon: UserRoundPlus },
+const addresses = [
+  { id: 1, name: "A101", country: "Sakarya", district: "serdivan", img: A101 },
+  {
+    id: 2,
+    name: "Bim",
+    country: "İstanbul",
+    district: "zeytinburnu",
+    img: A101,
+  },
+  { id: 3, name: "Şok", country: "Kocaeli", district: "araplar", img: A101 },
 ];
 
-const settingsLinks = [
-  { id: 6, title: "Settings", href: "/settings", icon: Settings },
-  { id: 7, title: "Logout", href: "/logout", icon: LogOut },
-];
-
-export default function HomePage() {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const pathname = usePathname();
-
-  const handleSelectLocation = (id: number) => {
-    setSelectedId(id);
-    setIsSidebarOpen(true);
-  };
-
-  const handleCloseSidebar = () => {
-    setIsSidebarOpen(false);
-    setSelectedId(null);
-  };
-
+export default async function HomePage() {
   return (
-    <div className="flex justify-center items-center shadow-xl h-screen p-8 bg-[#e9e9f5]">
-      <div className="w-full h-[95%] m-auto top-0 left-0 z-50 flex rounded-2xl border bg-white">
-        {/* leftside */}
-        <div className="flex-1 rounded-tl-2xl h-full">
-          {/* dashboard sidebar */}
-          <div className="w-[25%] h-full rounded-l-2xl flex justify-center items-center px-8 py-8">
-            {/* List */}
-            <div className="w-full h-full flex flex-col justify-between">
-              {/* up box */}
-              <div className="flex flex-col gap-8 h-[70%]">
-                {GeneralLinks.map((link) => (
-                  <Link
-                    href={link.href}
-                    key={link.id}
-                    className="flex justify-start items-center gap-2 group"
-                  >
-                    <link.icon
-                      size={16}
-                      className={`group-hover:text-purblebrand ${
-                        pathname === link.href
-                          ? "text-purblebrand"
-                          : "text-graybrand"
-                      }`}
-                    />{" "}
-                    <span
-                      className={`group-hover:text-purblebrand text-xs font-semibold ${
-                        pathname === link.href
-                          ? "text-purblebrand"
-                          : "text-graybrand"
-                      }`}
-                    >
-                      {" "}
-                      {link.title}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-              {/* down box */}
-              <div className="flex flex-col gap-4 h-[30%] justify-end">
-                {settingsLinks.map((link) => (
-                  <Link
-                    href={link.href}
-                    key={link.id}
-                    className="flex justify-start items-center gap-2 group"
-                  >
-                    <link.icon
-                      size={16}
-                      className={`group-hover:text-purblebrand ${
-                        pathname === link.href
-                          ? "text-purblebrand"
-                          : "text-graybrand"
-                      }`}
-                    />{" "}
-                    <span
-                      className={`group-hover:text-purblebrand text-xs font-semibold ${
-                        pathname === link.href
-                          ? "text-purblebrand"
-                          : "text-graybrand"
-                      }`}
-                    >
-                      {" "}
-                      {link.title}
-                    </span>
-                  </Link>
-                ))}
-              </div>
+    <div className="flex flex-col p-6 gap-4">
+      <div className="relative w-full">
+        <input
+          type="text"
+          placeholder="Enter the name of Store ex: A101"
+          className="w-full bg-slate-100 rounded-sm px-2 py-2 placeholder:text-gray-400 focus:outline-purblebrand"
+        />
+        <Search
+          className="absolute top-1/2 right-0
+         transform -translate-y-1/2 bg-purblebrand text-white h-10 w-10 p-2 rounded-sm text-xl cursor-pointer"
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-4 p-4">
+        {addresses.map((address) => (
+          <div key={address.id} className="flex rounded-xl flex-col gap-2">
+            <Image
+              src={address.img}
+              alt={address.name}
+              className="rounded-xl object-cover w-full h-24"
+            />
+            <div>
+              <h1 className="font-semibold">{address.name}</h1>
+              <p className="text-gray-600 text-xs">
+                {address.country}, {address.district}
+              </p>
             </div>
           </div>
-        </div>
-
-        <MapView onSelect={handleSelectLocation} />
+        ))}
       </div>
-
-      <Sidebar
-        open={isSidebarOpen}
-        onClose={handleCloseSidebar}
-        selectedId={selectedId}
-      />
     </div>
   );
 }

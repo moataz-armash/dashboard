@@ -1,7 +1,7 @@
 "use client";
 
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
-import { locations } from "./lib/locations";
+import { locations } from "../lib/locations";
 
 type Props = {
   open: boolean;
