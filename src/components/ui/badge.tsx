@@ -1,6 +1,7 @@
 interface BadgeProps {
   text: string;
   status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "DELETED";
+  className?: string;
 }
 
 const statusStyles: Record<BadgeProps["status"], string> = {
@@ -13,10 +14,10 @@ const statusStyles: Record<BadgeProps["status"], string> = {
   DELETED:
     "bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-gray-600/20",
 };
-export default function Badge({ text, status }: BadgeProps) {
+export default function Badge({ text, status, className }: BadgeProps) {
   return (
     <span
-      className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${statusStyles[status]}`}
+      className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${statusStyles[status]} ${className}`}
     >
       {text}
     </span>
