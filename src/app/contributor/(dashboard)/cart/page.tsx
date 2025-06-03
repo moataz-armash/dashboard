@@ -1,17 +1,17 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import {
   CircleCheckBig,
   CreditCard,
-  Minus,
-  Plus,
+  MoveLeft,
+  MoveRight,
   ShoppingBag,
 } from "lucide-react";
-import A101 from "@/assets/a101.jpg";
-import Bim from "@/assets/Bim_(company)_logo.svg.png";
-import Sok from "@/assets/sok_market.png";
-import Image from "next/image";
+
 import { useState } from "react";
+import CartProgress from "./components/cart-progress";
+import { Button } from "@/components/ui/button";
+import PaymentMethod from "./components/payment-methods";
+import Successfull from "./components/successfull";
 
 const progressBar = [
   { id: 1, name: "Cart", icon: ShoppingBag, step: 1, active: true },
@@ -19,26 +19,18 @@ const progressBar = [
   { id: 3, name: "Success", icon: CircleCheckBig, step: 3, active: false },
 ];
 
-const items = [
-  { id: 1, name: "product 1", img: A101, price: 2150, quantity: 1 },
-  { id: 2, name: "product 2", img: Bim, price: 2150, quantity: 1 },
-  { id: 3, name: "product 3", img: Sok, price: 2150, quantity: 1 },
-];
-
-const steps = ["Cart", "Payment", "Success"];
-
 export default function CartPage() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const goNext = () =>
-    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+    setCurrentStep((prev) => Math.min(prev + 1, progressBar.length - 1));
 
   const goBack = () => setCurrentStep((prev) => Math.max(prev - 1, 0));
 
   return (
     <div className="flex flex-col">
       <div className="flex justify-center gap-2 pt-6">
-        {progressBar.map((item) => (
+        {progressBar.map((item, index) => (
           <span key={item.id} className="flex gap-1 items-center">
             <>
               <span
@@ -51,7 +43,7 @@ export default function CartPage() {
               <item.icon
                 size={36}
                 className={`rounded-full p-1 ${
-                  item.active === true
+                  index <= currentStep
                     ? "text-white bg-orangebrand"
                     : "text-gray-300"
                 }`}
@@ -61,78 +53,31 @@ export default function CartPage() {
           </span>
         ))}
       </div>
-      <div className="grid grid-cols-6 space-x-4 p-8">
-        <div className="col-span-4">
-          <div className="flex justify-between p-4">
-            <h1 className="font-semibold">My Cart (3)</h1>
-
-            <h4>Total: 2150$</h4>
-          </div>
-          <div className="bg-gray-100 w-full h-auto p-4 rounded-lg gap-8">
-            {items.map((item) => (
-              <div key={item.id} className="p-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-4">
-                    <Image
-                      src={item.img}
-                      alt={item.name}
-                      className="object-contain rounded-full"
-                      width={24}
-                      height={24}
-                    />
-                    <span className="font-semibold text-sm">{item.name}</span>
-                  </div>
-                  <div className="border-2 p-1 border-bg-gray-300 flex gap-6 items-center">
-                    <Minus
-                      size={12}
-                      className="cursor-pointer hover:bg-gray-300 hover:rounded-full text-black"
-                    />
-                    <span>{item.quantity}</span>
-                    <Plus
-                      size={12}
-                      className="cursor-pointer hover:bg-gray-300 hover:rounded-full text-black"
-                    />
-                  </div>
-                  <p className="font-bold">{item.price}$</p>
-                </div>
-                <hr className="bg-gray-800 mt-2" />
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="col-span-2 bg-gray-100 h-auto flex flex-col rounded-lg p-4">
-          <h1 className="font-semibold">Payment Summery</h1>
-          <div className="flex justify-between p-2">
-            <span>Total MRP</span>
-            <span>2150.00$</span>
-          </div>
-          <hr className="bg-gray-800" />
-          <div className="flex justify-between p-2">
-            <span>Total MRP</span>
-            <span>2150.00$</span>
-          </div>
-          <hr className="bg-gray-800" />
-          <div className="flex justify-between p-2">
-            <span>Total MRP</span>
-            <span>2150.00$</span>
-          </div>
-          <hr className="bg-gray-800" />
-          <div className="flex justify-between p-2">
-            <span>Total MRP</span>
-            <span>2150.00$</span>
-          </div>
-          <hr className="bg-gray-800" />
-          <div className="flex justify-between p-2">
-            <span className="font-bold">Total</span>
-            <span className="font-bold">2150.00$</span>
-          </div>
+      {currentStep === 0 && <CartProgress goNext={goNext} />}
+      {currentStep === 1 && <PaymentMethod goNext={goNext} />}
+      {currentStep === 2 && <Successfull />}
+      <div className="flex justify-between px-8">
+        {currentStep < 2 && currentStep > 0 && (
           <Button
-            className="bg-orangebrand rounded-xl w-full uppercase"
-            onClick={goNext}
+            variant="outline"
+            className={`hover:bg-purblebrand hover:text-white ${
+              currentStep === 0 && "cursor-not-allowed"
+            }`}
+            onClick={goBack}
+            disabled={currentStep === 0}
           >
-            Place order
+            <MoveLeft className="hover:text-white" />
+            Back
           </Button>
-        </div>
+        )}
+
+        {/* <Button
+        variant="outline"
+        className="hover:bg-purblebrand hover:text-white"
+      >
+        Next
+        <MoveRight className="hover:text-white" />
+      </Button> */}
       </div>
     </div>
   );
