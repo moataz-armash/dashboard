@@ -51,6 +51,9 @@ export default {
         greenbutton: {
           DEFAULT: "#2e7844",
         },
+        orangebrand: {
+          DEFAULT: "#fc9076",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",

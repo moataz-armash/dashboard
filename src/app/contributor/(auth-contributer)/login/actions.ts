@@ -1,3 +1,5 @@
+"use server";
+import { cookies } from "next/headers";
 import { ContributorSchema } from "../signup/schema";
 
 export default async function loginContributor(
@@ -42,5 +44,18 @@ export default async function loginContributor(
     };
   }
 
-  return { data: await res.json(), success: true };
+  const data = await res.json();
+
+  const { token } = data.data;
+
+  if (token) {
+    cookies().set("contToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+  }
+
+  return { data, success: true };
 }

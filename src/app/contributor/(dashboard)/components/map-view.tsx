@@ -28,7 +28,7 @@ export default function MapView({ onSelect }: Props) {
     <MapContainer
       center={[51.505, -0.09]}
       zoom={13}
-      className="h-full w-full z-0 rounded-r-2xl flex-1"
+      className="h-full z-0 rounded-r-2xl flex-1"
       style={{ position: "block" }}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
