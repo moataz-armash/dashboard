@@ -2,21 +2,40 @@
 
 import { Button } from "@/components/ui/button";
 import {
+  DeleteIcon,
+  LucideDelete,
   MoveLeft,
   MoveRight,
   ShoppingBag,
   ShoppingCart,
   SidebarCloseIcon,
   SidebarOpenIcon,
+  Trash,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+
+import A101 from "@/assets/a101.jpg";
+import Bim from "@/assets/Bim_(company)_logo.svg.png";
+import Sok from "@/assets/sok_market.png";
+import Image from "next/image";
+import { Input } from "@/components/ui/input";
+
+const items = [
+  { id: 1, name: "product 1", img: A101, price: 2150, quantity: 1 },
+  { id: 2, name: "product 2", img: Bim, price: 2150, quantity: 1 },
+  { id: 3, name: "product 3", img: Sok, price: 2150, quantity: 1 },
+  { id: 4, name: "product 3", img: Sok, price: 2150, quantity: 1 },
+  { id: 5, name: "product 3", img: Sok, price: 2150, quantity: 1 },
+];
 
 // type Props = {
 //   open: boolean;
 //   onClose: () => void;
 //   selectedId: number | null;
 // };
+
+const quantityArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 export default function Sidebar() {
   // const location = locations.find((loc) => loc.id === selectedId);
@@ -41,7 +60,7 @@ export default function Sidebar() {
             className="text-gray-800 group-hover:text-white relative"
             size={18}
           />
-          <div className="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-1  dark:border-gray-900">
+          <div className="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-orangebrand border-2 border-white rounded-full -top-1  dark:border-gray-900">
             8
           </div>
         </button>
@@ -64,20 +83,60 @@ export default function Sidebar() {
             }`}
       >
         <div className="p-2 py-12 flex flex-col justify-between h-screen">
-          <Link
-            href="/contributor/cart"
-            onClick={() => setIsOpen(false)}
-            className="bg-orangebrand flex flex-col items-center rounded-xl p-2"
-          >
-            <p className="text-[12px] text-white font-semibold">Go to Cart </p>
-            <p className="text-[10px] text-white"> (1 product)</p>
-          </Link>
-
-          <div className="bg-gray-200 justify-evenly items-center rounded-xl flex p-2">
-            <button
-              onClick={toggleDrawer}
-              className="text-xs font-semibold text-gray-700 outline-none focus:outline-none"
+          <div className="flex flex-col gap-2 justify-center items-center">
+            <Link
+              href="/contributor/cart"
+              onClick={() => setIsOpen(false)}
+              className="bg-orangebrand flex flex-col items-center rounded-xl p-2"
             >
+              <p className="text-[12px] text-white font-semibold">
+                Go to Cart{" "}
+              </p>
+              <p className="text-[10px] text-white"> (1 product)</p>
+            </Link>
+            <h4 className="font-semibold text-sm">Subtotal</h4>
+            <span className="inline-flex items-center w-fit rounded-md bg-orange-50 px-2 py-1 text-xs font-medium text-orange-600 ring-1 ring-orangebrand ring-inset">
+              130 $
+            </span>
+            <hr className="w-[80%] h-6" />
+          </div>
+          <div className="overflow-y-auto custom-scrollbar">
+            {items.map((item) => (
+              <div className="p-2" key={item.id}>
+                <div className="flex flex-col justify-center items-center">
+                  <Image
+                    src={item.img}
+                    alt={item.name}
+                    width={48}
+                    height={48}
+                    className="object-contain rounded-md"
+                  />
+                  <p className="text-orange-600 font-semibold text-xs mt-1">
+                    {item.price} $
+                  </p>
+                </div>
+                <div className="flex justify-center items-center gap-1">
+                  <form className="max-w-sm mx-auto">
+                    <select
+                      id="quantity"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-orangebrand focus:border-orangebrand block w-full px-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-orangebrand dark:focus:border-orangebrand"
+                    >
+                      {quantityArray.map((opt, index) => (
+                        <option key={index}>{opt}</option>
+                      ))}
+                    </select>
+                  </form>
+                  <Trash className="text-gray-900" size={16} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div
+            className="bg-gray-200 justify-evenly items-center rounded-xl flex p-2 cursor-pointer"
+            onClick={toggleDrawer}
+          >
+            <button className="text-xs font-semibold text-gray-700 outline-none focus:outline-none">
               Close
             </button>
             <SidebarOpenIcon size={16} />
