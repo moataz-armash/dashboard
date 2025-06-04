@@ -6,6 +6,17 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GeneralLinks, settingsLinks } from "./components/nav-links";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
 
 interface ContribDashProps {
   children: React.ReactNode;
@@ -16,13 +27,8 @@ export default function ContributorDashboardLayout({
 }: ContribDashProps) {
   const pathname = usePathname();
 
-  // const handleCloseSidebar = () => {
-  //   setIsSidebarOpen(false);
-  //   setSelectedId(null);
-  // };
-
   return (
-    <div className="flex justify-center items-center shadow-xl h-screen p-8 bg-[#e9e9f5]">
+    <div className="flex justify-center items-center shadow-xl h-screen px-24 py-8 bg-[#e9e9f5]">
       <div className="w-full h-[95%] m-auto top-0 left-0 z-50 flex rounded-2xl border bg-white">
         {/* dashboard sidebar */}
         <div className="w-[15%] h-full rounded-l-2xl flex justify-center items-center px-8 py-8">
@@ -91,11 +97,7 @@ export default function ContributorDashboardLayout({
         <div className="w-full h-full">{children}</div>
       </div>
 
-      {/* <Sidebar
-        open={isSidebarOpen}
-        onClose={handleCloseSidebar}
-        selectedId={selectedId}
-      /> */}
+      <Sidebar />
     </div>
   );
 }
