@@ -7,11 +7,10 @@ export const addressSchema = z.object({
   county: z.string().min(2, "County is required"),
   district: z.string().min(2, "District is required"),
   street: z.string().min(2, "Street is required"),
-  houseNumber: z.string().min(1, "House Number is required"),
+  houseNumber: z.string().optional(),
   postalCode: z.string().min(2, "Postal Code is required"),
   addressDetails: z.string().optional(),
-  addressTags: 
-  z
+  addressTags: z
     .array(z.enum(addressOptions), {
       required_error: "Address Tag is required",
     })

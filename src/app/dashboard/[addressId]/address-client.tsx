@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 
 import Select from "react-select";
 
@@ -40,7 +40,12 @@ const initialState = {
   addressTags: [],
 };
 
-export default function AddressForm(address: AddressInfo, addressId: string) {
+interface AddressFormProps {
+  address: AddressInfo;
+  addressId: string;
+}
+
+export default function AddressForm({ address, addressId }: AddressFormProps) {
   const searchParams = useSearchParams();
   const storeId = searchParams.get("storeId") || "";
   const storeName = searchParams.get("storeName") || "";
@@ -61,14 +66,18 @@ export default function AddressForm(address: AddressInfo, addressId: string) {
 
   useEffect(() => {
     if (state?.success) {
-      toast.success(state?.message || "Address created successfully");
+      toast.success(
+        state?.message || addressInfo
+          ? "Address updated successfully"
+          : "Address created successfully"
+      );
       router.push(`/dashboard/company/stores/${storeId}`);
     } else if (state?.message) {
       toast.error(state?.message);
     } else if (state?.errors && Object.keys(state.errors).length > 0) {
       toast.error("Please fix the highlighted errors.");
     }
-  }, [state, router, storeId]);
+  }, [state, router, storeId, addressInfo]);
 
   const handleLocation = () => {
     if (!navigator.geolocation) {
@@ -88,23 +97,16 @@ export default function AddressForm(address: AddressInfo, addressId: string) {
           addressDetails: "",
           addressTags: [],
         });
-
-        // Example: update state or form values
-        // setValue("latitude", latitude);
-        // setValue("longitude", longitude);
-        // setMapCenter({ lat: latitude, lng: longitude });
       },
       (error) => {
-        // console.error("Error getting location:", error);
         setMessage(
           "Could not get location. Please enable GPS, to get location dynamically"
         );
 
         return;
-        // alert("Could not get location. Please enable GPS.");
       },
       {
-        enableHighAccuracy: true, // use GPS if available
+        enableHighAccuracy: true,
         timeout: 10000,
       }
     );
@@ -117,7 +119,7 @@ export default function AddressForm(address: AddressInfo, addressId: string) {
       !state?.success &&
       Object.keys(state?.errors || {}).length === 0
     ) {
-      setAddressInfo(address.address); // for your reference if needed elsewhere
+      setAddressInfo(address); // for your reference if needed elsewhere
     }
   }, [address, state]);
 
@@ -142,17 +144,24 @@ export default function AddressForm(address: AddressInfo, addressId: string) {
     }
   }, [addressData]);
 
-  // useEffect(() => {
-  //   if (addressInfo) {
-  //     setValue("countryName", addressInfo.countryName || "");
-  //     setValue("state", addressInfo.state || "");
-  //     setValue("county", addressInfo.county || "");
-  //     setValue("district", addressInfo.district || "");
-  //     setValue("street", addressInfo.street || "");
-  //     setValue("houseNumber", addressInfo.houseNumber || "");
-  //     setValue("postalCode", addressInfo.postalCode || "");
-  //   }
-  // }, [addressInfo, setValue]);
+  const getFieldVal = (field: keyof AddressInfo) =>
+    (state as any)?.[field] || addressInfo?.[field] || "";
+
+  const errorMessage = (field: keyof AddressInfo) =>
+    (state?.errors as Record<keyof AddressInfo, string[]>)?.[field] && (
+      <p className="text-red-500 text-sm">
+        {(state?.errors as Record<keyof AddressInfo, string[]>)?.[field]}
+      </p>
+    );
+
+  useEffect(() => {
+    if (addressInfo?.addressTags) {
+      const matchedTags = addressTags.filter((tag) =>
+        addressInfo.addressTags.includes(tag.value)
+      );
+      setSelectedTags(matchedTags);
+    }
+  }, [addressInfo]);
 
   return (
     <>
@@ -166,15 +175,6 @@ export default function AddressForm(address: AddressInfo, addressId: string) {
       <Card className="p-6 mt-4 rounded-lg shadow-md w-[90%] max-w-6xl mx-auto">
         <div className="flex justify-between">
           <h2 className="text-xl font-semibold mb-4">Add Address</h2>
-          {/* {message && (
-            <p className="text-yellow-500 text-xs">{`${message} ,or you can use form below`}</p>
-          )}
-          {loadingAddress && (
-            <p className="text-yellow-500">
-              we trying to get your address now ....
-            </p>
-          )} */}
-
           <Button
             onClick={handleLocation}
             className="bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-700"
@@ -189,44 +189,27 @@ export default function AddressForm(address: AddressInfo, addressId: string) {
             <Label htmlFor="countryName">Country</Label>
             <Input
               name="countryName"
-              defaultValue={state?.countryName || addressInfo?.countryName}
+              defaultValue={getFieldVal("countryName")}
               className="text-black"
             />
-            {state?.errors?.countryName && (
-              <p className="text-red-500 text-sm">{state.errors.countryName}</p>
-            )}
+            {errorMessage("countryName")}
             <input name="addressId" defaultValue={addressId} hidden />
+            <input name="storeId" defaultValue={storeId} hidden />
             <Label htmlFor="state">State</Label>
-            <Input
-              name="state"
-              defaultValue={state?.state || addressInfo?.city}
-            />
-            {state?.errors?.state && (
-              <p className="text-red-500 text-sm">{state.errors.state}</p>
-            )}
+            <Input name="state" defaultValue={getFieldVal("city")} />
+            {errorMessage("state")}
             <Label htmlFor="county">County</Label>
-            <Input
-              name="county"
-              defaultValue={state?.county || addressInfo?.county}
-            />
-            {state?.errors?.county && (
-              <p className="text-red-500 text-sm">{state.errors.county}</p>
-            )}
+            <Input name="county" defaultValue={getFieldVal("county")} />
+            {errorMessage("county")}
             <Label htmlFor="addressTags">Address Tags</Label>
             <Select
               isMulti
+              instanceId="address-select"
               options={addressTags}
-              defaultValue={
-                address?.addressTags
-                  ? addressTags.filter((tag) =>
-                      address.addressTags.includes(tag)
-                    )
-                  : []
-              }
-              onChange={(values) => {
-                setSelectedTags(values);
-              }}
+              value={selectedTags}
+              onChange={setSelectedTags}
             />
+
             {state?.errors?.addressTags && (
               <p className="text-red-500 text-sm">
                 At least one address tag is required
@@ -251,41 +234,27 @@ export default function AddressForm(address: AddressInfo, addressId: string) {
           </div>
           <div>
             <Label htmlFor="district">District</Label>
-            <Input
-              name="district"
-              defaultValue={state?.district || addressInfo?.district}
-            />
-            {state?.errors?.district && (
-              <p className="text-red-500 text-sm">{state.errors.district}</p>
-            )}
+            <Input name="district" defaultValue={getFieldVal("district")} />
+            {errorMessage("district")}
             <Label htmlFor="street">Street</Label>
-            <Input
-              name="street"
-              defaultValue={state?.street || addressInfo?.street}
-            />
-            {state?.errors?.street && (
-              <p className="text-red-500 text-sm">{state.errors.street}</p>
-            )}
+            <Input name="street" defaultValue={getFieldVal("street")} />
+            {errorMessage("street")}
             <Label htmlFor="houseNumber">House Number</Label>
             <Input
               name="houseNumber"
               type="number"
               inputMode="numeric"
-              defaultValue={state?.houseNumber || addressInfo?.houseNumber}
+              defaultValue={getFieldVal("houseNumber")}
             />
-            {state?.errors?.houseNumber && (
-              <p className="text-red-500 text-sm">{state.errors.houseNumber}</p>
-            )}
+            {/* {errorMessage("houseNumber")} */}
             <Label>Postal Code</Label>
             <Input
               name="postalCode"
               type="number"
               inputMode="numeric"
-              defaultValue={state?.postalCode || addressInfo?.postalCode}
+              defaultValue={getFieldVal("postalCode")}
             />
-            {state?.errors?.postalCode && (
-              <p className="text-red-500 text-sm">{state.errors.postalCode}</p>
-            )}
+            {errorMessage("postalCode")}
           </div>
 
           <Label className="col-span-2 w-full">Address Details</Label>
@@ -295,7 +264,7 @@ export default function AddressForm(address: AddressInfo, addressId: string) {
             inputMode="text"
             placeholder="this is my company address...."
             className="col-span-2 text-gray-700 bg-gray-100 px-2 py-3 rounded-xl placeholder:text-gray-400"
-            defaultValue={state?.addressDetails || addressInfo?.addressDetails}
+            defaultValue={getFieldVal("addressDetails")}
           />
 
           <Button

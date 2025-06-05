@@ -1,3 +1,5 @@
+"use server";
+import { cookies } from "next/headers";
 import AddressForm from "./address-client";
 
 interface AddressPageProps {
@@ -14,6 +16,6 @@ export default async function AddressPage({ params }: AddressPageProps) {
     }
   );
   const data = await res.json();
-  console.log(data.data);
-  return <AddressForm address={data.data} addressId={addressId}/>;
+console.log(data.data)
+  return <AddressForm address={data.data} addressId={addressId} />;
 }

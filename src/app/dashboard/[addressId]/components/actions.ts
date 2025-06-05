@@ -1,6 +1,7 @@
 "use server";
 import axios from "axios";
 import { addressSchema } from "./schema";
+import { cookies } from "next/headers";
 
 export interface AddressData {
   lat: number;
@@ -32,6 +33,7 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
     postalCode: formData.get("postalCode"),
     addressDetails: formData.get("addressDetails"),
     addressTags: typeof rawOptions === "string" ? rawOptions.split(",") : [],
+    belongsTo: formData.get("storeId"),
   };
 
   const result = addressSchema.safeParse(addressData);
@@ -49,6 +51,7 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
       postalCode: formData.get("postalCode"),
       addressDetails: formData.get("addressDetails") || "",
       addressTags: formData.getAll("addressTags"),
+      belongsTo: formData.get("storeId"),
       // formData.getAll("addressTags").length === 1 &&
       // formData.getAll("addressTags")[0] === ""
       //   ? undefined
@@ -56,8 +59,10 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
     };
   }
 
+  const addressId = formData.get("addressId");
+
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS}/address/management/update/${formData.get("addressId")}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS}/address/management/update/${addressId}`,
     {
       method: "PUT",
       headers: {
@@ -67,6 +72,7 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
     }
   );
 
+  console.log(res);
 
   if (!res.ok) {
     const errorJson = await res.json();
@@ -82,7 +88,7 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
       postalCode: addressData.postalCode,
       addressDetails: addressData.addressDetails,
       addressTags: addressData.addressTags,
-      message: errorJson.message || "Address creation failed",
+      message: errorJson.message || "Address update failed",
     };
   }
 
@@ -105,6 +111,7 @@ export async function createaddressByInfo(prevState: any, formData: FormData) {
     postalCode: formData.get("postalCode"),
     addressDetails: formData.get("addressDetails"),
     addressTags: typeof rawOptions === "string" ? rawOptions.split(",") : [],
+    belongsTo: formData.get("storeId"),
   };
 
   const result = addressSchema.safeParse(addressData);
@@ -122,6 +129,7 @@ export async function createaddressByInfo(prevState: any, formData: FormData) {
       postalCode: formData.get("postalCode"),
       addressDetails: formData.get("addressDetails") || "",
       addressTags: formData.getAll("addressTags"),
+      belongsTo: formData.get("storeId"),
       // formData.getAll("addressTags").length === 1 &&
       // formData.getAll("addressTags")[0] === ""
       //   ? undefined
@@ -139,7 +147,6 @@ export async function createaddressByInfo(prevState: any, formData: FormData) {
       body: JSON.stringify(result.data),
     }
   );
-
 
   if (!res.ok) {
     const errorJson = await res.json();
@@ -164,5 +171,3 @@ export async function createaddressByInfo(prevState: any, formData: FormData) {
     data: await res.json(),
   };
 }
-
-
