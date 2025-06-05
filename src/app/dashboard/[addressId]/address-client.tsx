@@ -13,6 +13,7 @@ import createAddressInfo from "./components/api";
 import {
   AddressData,
   CreateAddressByCoordinate,
+  createaddressByInfo,
   updateAddressInfo,
 } from "./components/actions";
 import Spinner from "@/components/ui/spinner";
@@ -39,7 +40,7 @@ const initialState = {
   addressTags: [],
 };
 
-export default function AddressForm() {
+export default function AddressForm(address: AddressInfo, addressId: string) {
   const searchParams = useSearchParams();
   const storeId = searchParams.get("storeId") || "";
   const storeName = searchParams.get("storeName") || "";
@@ -52,7 +53,7 @@ export default function AddressForm() {
   const router = useRouter();
 
   const [state, formAction, pending] = useActionState(
-    updateAddressInfo,
+    addressInfo ? updateAddressInfo : createaddressByInfo,
     initialState
   );
 
@@ -109,6 +110,16 @@ export default function AddressForm() {
     );
     setLoadingAddress(false);
   };
+
+  useEffect(() => {
+    if (
+      address &&
+      !state?.success &&
+      Object.keys(state?.errors || {}).length === 0
+    ) {
+      setAddressInfo(address.address); // for your reference if needed elsewhere
+    }
+  }, [address, state]);
 
   useEffect(() => {
     if (message) {
@@ -178,19 +189,26 @@ export default function AddressForm() {
             <Label htmlFor="countryName">Country</Label>
             <Input
               name="countryName"
-              defaultValue={state?.countryName}
+              defaultValue={state?.countryName || addressInfo?.countryName}
               className="text-black"
             />
             {state?.errors?.countryName && (
               <p className="text-red-500 text-sm">{state.errors.countryName}</p>
             )}
+            <input name="addressId" defaultValue={addressId} hidden />
             <Label htmlFor="state">State</Label>
-            <Input name="state" defaultValue={state?.state} />
+            <Input
+              name="state"
+              defaultValue={state?.state || addressInfo?.city}
+            />
             {state?.errors?.state && (
               <p className="text-red-500 text-sm">{state.errors.state}</p>
             )}
             <Label htmlFor="county">County</Label>
-            <Input name="county" defaultValue={state?.county} />
+            <Input
+              name="county"
+              defaultValue={state?.county || addressInfo?.county}
+            />
             {state?.errors?.county && (
               <p className="text-red-500 text-sm">{state.errors.county}</p>
             )}
@@ -198,6 +216,13 @@ export default function AddressForm() {
             <Select
               isMulti
               options={addressTags}
+              defaultValue={
+                address?.addressTags
+                  ? addressTags.filter((tag) =>
+                      address.addressTags.includes(tag)
+                    )
+                  : []
+              }
               onChange={(values) => {
                 setSelectedTags(values);
               }}
@@ -209,20 +234,35 @@ export default function AddressForm() {
             )}
             <input
               name="addressTags"
-              defaultValue={selectedTags
-                .map((tag: { label: string; value: string }) => tag.value)
-                .join(",")}
+              defaultValue={
+                selectedTags.length
+                  ? selectedTags.map((tag) => tag.value).join(",")
+                  : (address?.addressTags || []).join(",")
+                // selectedTags
+                //   .map((tag: { label: string; value: string }) => tag.value)
+                //   .join(",") ||
+                // (addressInfo?.addressTags?.length > 0 &&
+                //   addressInfo?.addressTags
+                //     .map((tag: { label: string; value: string }) => tag.value)
+                //     .join(","))
+              }
               hidden
             />
           </div>
           <div>
             <Label htmlFor="district">District</Label>
-            <Input name="district" defaultValue={state?.district} />
+            <Input
+              name="district"
+              defaultValue={state?.district || addressInfo?.district}
+            />
             {state?.errors?.district && (
               <p className="text-red-500 text-sm">{state.errors.district}</p>
             )}
             <Label htmlFor="street">Street</Label>
-            <Input name="street" defaultValue={state?.street} />
+            <Input
+              name="street"
+              defaultValue={state?.street || addressInfo?.street}
+            />
             {state?.errors?.street && (
               <p className="text-red-500 text-sm">{state.errors.street}</p>
             )}
@@ -231,7 +271,7 @@ export default function AddressForm() {
               name="houseNumber"
               type="number"
               inputMode="numeric"
-              defaultValue={state?.houseNumber}
+              defaultValue={state?.houseNumber || addressInfo?.houseNumber}
             />
             {state?.errors?.houseNumber && (
               <p className="text-red-500 text-sm">{state.errors.houseNumber}</p>
@@ -241,7 +281,7 @@ export default function AddressForm() {
               name="postalCode"
               type="number"
               inputMode="numeric"
-              defaultValue={state?.postalCode}
+              defaultValue={state?.postalCode || addressInfo?.postalCode}
             />
             {state?.errors?.postalCode && (
               <p className="text-red-500 text-sm">{state.errors.postalCode}</p>
@@ -255,7 +295,7 @@ export default function AddressForm() {
             inputMode="text"
             placeholder="this is my company address...."
             className="col-span-2 text-gray-700 bg-gray-100 px-2 py-3 rounded-xl placeholder:text-gray-400"
-            defaultValue={state?.addressDetails}
+            defaultValue={state?.addressDetails || addressInfo?.addressDetails}
           />
 
           <Button
@@ -263,7 +303,8 @@ export default function AddressForm() {
             className="col-span-2 bg-brand-500 hover:bg-brand-600"
             disabled={pending}
           >
-            Submit {pending ? <Spinner /> : <MoveRight />}
+            {addressInfo ? "Update" : "Create"}{" "}
+            {pending ? <Spinner /> : <MoveRight />}
           </Button>
         </form>
       </Card>

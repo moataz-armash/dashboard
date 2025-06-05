@@ -7,7 +7,8 @@ type AddressInfo = {
   houseNumber: string;
   postalCode: string;
   addressDetails?: string;
-  addressTags: [string];
+  city?: string;
+  addressTags: [any];
 };
 
 interface Idata {
