@@ -5,7 +5,7 @@ import A101 from "@/assets/a101.jpg";
 import Bim from "@/assets/Bim_(company)_logo.svg.png";
 import Sok from "@/assets/sok_market.png";
 import Badge from "@/components/ui/badge";
-import { Stores } from "./type";
+import { ClientHomePageProps, Stores } from "./type";
 import { getImage } from "@/lib/helpers";
 import dynamic from "next/dynamic";
 import { useState } from "react";
@@ -39,7 +39,10 @@ const storesAddress = [
   },
 ];
 
-export default function ClientHomePage({ stores }: Stores) {
+export default function ClientHomePage({
+  stores,
+  addresses,
+}: ClientHomePageProps) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -91,7 +94,7 @@ export default function ClientHomePage({ stores }: Stores) {
         </div>
       </div>
 
-      <MapView onSelect={handleSelectLocation} />
+      <MapView onSelect={handleSelectLocation} addresses={addresses} />
     </div>
   );
 }

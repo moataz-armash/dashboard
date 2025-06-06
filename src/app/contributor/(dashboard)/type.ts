@@ -12,4 +12,42 @@ type Stores = {
   stores: Store[];
 };
 
-export type { Stores };
+interface Location {
+  x: number;
+  y: number;
+  type: string; // usually "Point"
+  coordinates: [number, number];
+}
+
+interface Address {
+  id: string;
+  addressId: string;
+  label: string;
+  countryCode: string;
+  countryName: string;
+  stateCode: string | null;
+  state: string | null;
+  county: string;
+  city: string;
+  district: string;
+  street: string;
+  postalCode: string;
+  houseNumber: string | null;
+  addressTags: string[];
+  addressDetails: string;
+  lat: number;
+  lng: number;
+  location: Location;
+  belongsTo: string | null;
+}
+
+interface Addresses {
+  addresses: Address[];
+}
+
+interface ClientHomePageProps {
+  stores: Store[];
+  addresses: Address[];
+}
+
+export type { Stores, Address, ClientHomePageProps };

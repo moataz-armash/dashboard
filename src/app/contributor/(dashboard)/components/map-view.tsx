@@ -9,6 +9,7 @@ import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { Address } from "../type";
 
 // Fix for default icon path issue with bundlers
 // @ts-ignore
@@ -21,27 +22,28 @@ L.Icon.Default.mergeOptions({
 
 type Props = {
   onSelect: (id: number) => void;
+  addresses: Address[];
 };
 
-export default function MapView({ onSelect }: Props) {
+export default function MapView({ onSelect, addresses }: Props) {
   return (
     <MapContainer
-      center={[51.505, -0.09]}
-      zoom={13}
+      center={[40.8, 30.4]}
+      zoom={11}
       className="h-full z-0 rounded-r-2xl flex-1"
       style={{ position: "block" }}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-      {locations.map((loc) => (
+      {addresses.map((loc) => (
         <Marker
           key={loc.id}
-          position={[loc.lat, loc.lon]}
+          position={[loc.lat, loc.lng]}
           eventHandlers={{
-            click: () => onSelect(loc.id),
+            click: () => onSelect(+loc.id),
           }}
         >
-          <Popup>{loc.name}</Popup>
+          <Popup>{loc.district}</Popup>
         </Marker>
       ))}
     </MapContainer>

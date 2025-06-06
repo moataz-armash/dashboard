@@ -11,9 +11,32 @@ export default async function HomePage() {
 
   if (!contToken) redirect("/contributor/login");
 
-  const res = await apiRequest("/shopping/stores", contToken, "GET", process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR);
+  const res = await apiRequest(
+    "/shopping/stores",
+    contToken,
+    "GET",
+    process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR
+  );
 
-  if(res.status !== "OK") redirect("/contributor/login?size=6");
+  const resAllAddress = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS}/address/find/all`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
-  return <ClientHomePage stores={res.data}/>;
+  const resAddress = await resAllAddress.json();
+
+  const uniqueAddresses = resAddress.data.filter(
+    (address, index, self) =>
+      index ===
+      self.findIndex((a) => a.lat === address.lat && a.lng === address.lng)
+  );
+
+  if (res.status !== "OK") redirect("/contributor/login?size=6");
+
+  return <ClientHomePage stores={res.data} addresses={uniqueAddresses} />;
 }
