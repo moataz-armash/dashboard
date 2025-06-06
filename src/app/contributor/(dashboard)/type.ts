@@ -48,6 +48,7 @@ interface Addresses {
 interface ClientHomePageProps {
   stores: Store[];
   addresses: Address[];
+  currentPage: number;
 }
 
 export type { Stores, Address, ClientHomePageProps };

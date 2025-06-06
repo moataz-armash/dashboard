@@ -3,16 +3,20 @@ import ClientHomePage from "./client-home-page";
 import { redirect } from "next/navigation";
 import { apiRequest } from "@/utils/api";
 
-export default async function HomePage() {
+interface HomepageProps {
+  searchParams: { page?: string };
+}
+
+export default async function HomePage({ searchParams }: HomepageProps) {
   const contCookies = await cookies();
   const contToken = contCookies.get("contToken")?.value;
 
-  console.log(contToken);
+  const page = Number(searchParams.page) || 0;
 
   if (!contToken) redirect("/contributor/login");
 
   const res = await apiRequest(
-    "/shopping/stores",
+    `/shopping/stores?page${page}&size=4`,
     contToken,
     "GET",
     process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR
@@ -38,5 +42,5 @@ export default async function HomePage() {
 
   if (res.status !== "OK") redirect("/contributor/login?size=6");
 
-  return <ClientHomePage stores={res.data} addresses={uniqueAddresses} />;
+  return <ClientHomePage stores={res.data} addresses={uniqueAddresses} currentPage={page} />;
 }

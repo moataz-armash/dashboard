@@ -9,6 +9,7 @@ import { ClientHomePageProps, Stores } from "./type";
 import { getImage } from "@/lib/helpers";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { defaultStoreImg } from "@/lib/constants";
 
 const MapView = dynamic(() => import("./components/map-view"), { ssr: false });
 
@@ -46,6 +47,8 @@ export default function ClientHomePage({
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const totalPages = Math.ceil(addresses?.total / addresses?.size) || 1;
+
   const handleSelectLocation = (id: number) => {
     setSelectedId(id);
     setIsSidebarOpen(true);
@@ -65,23 +68,21 @@ export default function ClientHomePage({
           />
         </div>
         <div className="grid grid-cols-2 gap-4 p-4">
-          {storesAddress.map((store) => (
+          {stores.map((store) => (
             <div
               key={store.id}
               className="flex rounded-2xl shadow-md bg-gray-100/50 flex-col gap-2 p-4"
             >
               <Image
-                src={store.img}
+                src={getImage(store.profilePicture) || defaultStoreImg}
                 alt={store.name}
                 className="rounded-2xl object-cover w-full h-16"
-                // width={24}
-                // height={24}
+                width={300}
+                height={64}
+                priority
               />
               <div className="flex flex-col gap-1 pl-1">
                 <h1 className="font-semibold font-mono">{store.name}</h1>
-                <p className="text-gray-600 text-xs">
-                  {store.country}, {store.district}
-                </p>
 
                 <Badge
                   status={store.status}
