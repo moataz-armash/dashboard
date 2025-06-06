@@ -62,8 +62,6 @@ export default function AddressForm({ address, addressId }: AddressFormProps) {
     initialState
   );
 
-  console.log(state);
-
   useEffect(() => {
     if (state?.success) {
       toast.success(
@@ -207,7 +205,7 @@ export default function AddressForm({ address, addressId }: AddressFormProps) {
               instanceId="address-select"
               options={addressTags}
               value={selectedTags}
-              onChange={setSelectedTags}
+              onChange={(newValue) => setSelectedTags(newValue as any[])}
             />
 
             {state?.errors?.addressTags && (
@@ -217,19 +215,9 @@ export default function AddressForm({ address, addressId }: AddressFormProps) {
             )}
             <input
               name="addressTags"
-              defaultValue={
-                selectedTags.length
-                  ? selectedTags.map((tag) => tag.value).join(",")
-                  : (address?.addressTags || []).join(",")
-                // selectedTags
-                //   .map((tag: { label: string; value: string }) => tag.value)
-                //   .join(",") ||
-                // (addressInfo?.addressTags?.length > 0 &&
-                //   addressInfo?.addressTags
-                //     .map((tag: { label: string; value: string }) => tag.value)
-                //     .join(","))
-              }
+              value={selectedTags.map((tag) => tag.value).join(",")}
               hidden
+              readOnly
             />
           </div>
           <div>

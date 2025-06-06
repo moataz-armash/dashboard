@@ -38,6 +38,8 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
 
   const result = addressSchema.safeParse(addressData);
 
+  console.log("result.data", result.data);
+
   if (!result.success) {
     return {
       success: false,
@@ -71,8 +73,6 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
       body: JSON.stringify(result.data),
     }
   );
-
-  console.log(res);
 
   if (!res.ok) {
     const errorJson = await res.json();
@@ -113,7 +113,6 @@ export async function createaddressByInfo(prevState: any, formData: FormData) {
     addressTags: typeof rawOptions === "string" ? rawOptions.split(",") : [],
     belongsTo: formData.get("storeId"),
   };
-
   const result = addressSchema.safeParse(addressData);
 
   if (!result.success) {

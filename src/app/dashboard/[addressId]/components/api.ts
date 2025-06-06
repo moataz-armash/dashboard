@@ -1,6 +1,6 @@
 import axiosInstance from "@/utils/axiosInstance";
-import { addressInfo } from "./type";
-const createAddressInfo = async (addressInfo: addressInfo) => {
+import { AddressInfo } from "./type";
+const createAddressInfo = async (addressInfo: AddressInfo) => {
   try {
     const response = await axiosInstance.post(
       "/address/management/create/info",

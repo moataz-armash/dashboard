@@ -15,6 +15,7 @@ export const addressSchema = z.object({
       required_error: "Address Tag is required",
     })
     .min(1, "At least one address tag is required"),
+    belongsTo: z.string().optional(),
 });
 
 export type addressInput = z.infer<typeof addressSchema>;
