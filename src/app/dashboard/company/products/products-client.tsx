@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import CompanyHeader from "@/components/ui/company-header";
 import { Button } from "@/components/ui/button";
 import { ListFilter, Plus } from "lucide-react";
@@ -20,7 +20,7 @@ import { Product, initialProductState } from "./components/type";
 import { productFields } from "./components/product-fields";
 import { createProduct } from "./components/actions";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { getImage } from "@/lib/helpers";
+import { getImage, handlePageChange } from "@/lib/helpers";
 import Pagination from "@/components/ui/pagination";
 
 interface ProductsClientProps {
@@ -36,23 +36,21 @@ export default function ProductsClient({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const res = use(productsPromise);
   const products: Product[] = res?.data || [];
+  const router = useRouter();
 
   const totalPages = Math.ceil(res?.total / res?.size) || 1;
 
-  const handlePageChange = (newPage: number) => {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set("page", String(newPage));
-    router.push(`?${searchParams.toString()}`);
-  };
+  handlePageChange(currentPage, router);
 
   console.log(products);
-
-  const router = useRouter();
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );
-  // console.log(products);
+
+  useEffect(() => {
+    handlePageChange(currentPage, router);
+  }, [currentPage, router]);
 
   return (
     <>

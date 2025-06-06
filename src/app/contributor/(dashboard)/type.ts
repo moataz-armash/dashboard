@@ -47,7 +47,7 @@ interface Addresses {
 
 interface ClientHomePageProps {
   stores: Store[];
-  addresses: Address[];
+  response: Promise<any>;
   currentPage: number;
 }
 

@@ -1,3 +1,4 @@
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import React from "react";
 import toast from "react-hot-toast";
 
@@ -38,6 +39,12 @@ const getImage = (photo: string | null | undefined) => {
     ? `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/image?in=${photo}`
     : null;
   return profilePhotoUrl;
+};
+
+const handlePageChange = (newPage: number,router:AppRouterInstance) => {
+  const searchParams = new URLSearchParams(window.location.search);
+  searchParams.set("page", String(newPage));
+  router.push(`?${searchParams.toString()}`);
 };
 
 const handleImageClick = (
@@ -135,4 +142,5 @@ export {
   handleImageClick,
   SubmitEntityUpdate,
   CategoriesFormatter,
+  handlePageChange,
 };

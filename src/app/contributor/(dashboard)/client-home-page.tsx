@@ -6,10 +6,12 @@ import Bim from "@/assets/Bim_(company)_logo.svg.png";
 import Sok from "@/assets/sok_market.png";
 import Badge from "@/components/ui/badge";
 import { ClientHomePageProps, Stores } from "./type";
-import { getImage } from "@/lib/helpers";
+import { getImage, handlePageChange } from "@/lib/helpers";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { defaultStoreImg } from "@/lib/constants";
+import Pagination from "@/components/ui/pagination";
+import { useRouter } from "next/navigation";
 
 const MapView = dynamic(() => import("./components/map-view"), { ssr: false });
 
@@ -42,17 +44,31 @@ const storesAddress = [
 
 export default function ClientHomePage({
   stores,
-  addresses,
+  response,
+  currentPage,
 }: ClientHomePageProps) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const totalPages = Math.ceil(addresses?.total / addresses?.size) || 1;
+  const router = useRouter();
+
+  const totalPages = Math.ceil(response?.total / response?.size) || 1;
+
+  const uniqueAddresses = response?.data.filter(
+    (address, index, self) =>
+      index ===
+      self.findIndex((a) => a.lat === address.lat && a.lng === address.lng)
+  );
 
   const handleSelectLocation = (id: number) => {
     setSelectedId(id);
     setIsSidebarOpen(true);
   };
+
+  useEffect(() => {
+    handlePageChange(currentPage, router);
+  }, [currentPage, router]);
+
   return (
     <div className="flex h-full">
       <div className="flex flex-1 flex-col p-6 gap-4">
@@ -92,10 +108,15 @@ export default function ClientHomePage({
               </div>
             </div>
           ))}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
 
-      <MapView onSelect={handleSelectLocation} addresses={addresses} />
+      <MapView onSelect={handleSelectLocation} addresses={uniqueAddresses} />
     </div>
   );
 }

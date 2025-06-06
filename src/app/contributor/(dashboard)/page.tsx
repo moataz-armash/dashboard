@@ -34,13 +34,9 @@ export default async function HomePage({ searchParams }: HomepageProps) {
 
   const resAddress = await resAllAddress.json();
 
-  const uniqueAddresses = resAddress.data.filter(
-    (address, index, self) =>
-      index ===
-      self.findIndex((a) => a.lat === address.lat && a.lng === address.lng)
-  );
+
 
   if (res.status !== "OK") redirect("/contributor/login?size=6");
 
-  return <ClientHomePage stores={res.data} addresses={uniqueAddresses} currentPage={page} />;
+  return <ClientHomePage stores={res.data} addresses={resAddress} currentPage={page} />;
 }
