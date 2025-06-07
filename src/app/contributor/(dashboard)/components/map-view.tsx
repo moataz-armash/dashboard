@@ -35,7 +35,7 @@ export default function MapView({ onSelect, addresses }: Props) {
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-      {addresses.map((loc) => (
+      {addresses?.map((loc) => (
         <Marker
           key={loc.id}
           position={[loc.lat, loc.lng]}

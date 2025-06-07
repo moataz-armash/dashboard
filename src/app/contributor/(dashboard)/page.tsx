@@ -34,9 +34,13 @@ export default async function HomePage({ searchParams }: HomepageProps) {
 
   const resAddress = await resAllAddress.json();
 
+  if (res.status !== "OK") redirect("/contributor/login");
 
-
-  if (res.status !== "OK") redirect("/contributor/login?size=6");
-
-  return <ClientHomePage stores={res.data} addresses={resAddress} currentPage={page} />;
+  return (
+    <ClientHomePage
+      stores={res.data}
+      response={resAddress}
+      currentPage={page}
+    />
+  );
 }

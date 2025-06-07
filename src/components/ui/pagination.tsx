@@ -36,7 +36,7 @@ export default function Pagination({
         Previous
       </Button>
 
-      {pages?.map((page) => (
+      {pages.map((page) => (
         <Button
           key={page}
           variant={page === currentPage ? "default" : "outline"}
