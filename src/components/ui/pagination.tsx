@@ -26,7 +26,7 @@ export default function Pagination({
   };
 
   return (
-    <div className="flex items-center justify-center space-x-2">
+    <div className="flex items-center justify-center space-x-2 col-span-2 mt-2">
       <Button
         variant="outline"
         size="sm"

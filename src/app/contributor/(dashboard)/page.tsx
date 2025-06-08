@@ -16,7 +16,7 @@ export default async function HomePage({ searchParams }: HomepageProps) {
   if (!contToken) redirect("/contributor/login");
 
   const res = await apiRequest(
-    `/shopping/stores?page${page}&size=4`,
+    `/shopping/stores?page=${page}&size=4`,
     contToken,
     "GET",
     process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR
