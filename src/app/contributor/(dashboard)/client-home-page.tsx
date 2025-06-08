@@ -54,6 +54,8 @@ export default function ClientHomePage({
 
   const totalPages = Math.ceil(response?.total / response?.size) || 1;
 
+  console.log(response);
+
   const uniqueAddresses = response?.data.filter(
     (address, index, self) =>
       index ===
