@@ -89,7 +89,8 @@ export default function ClientHomePage({
           {stores.map((store) => (
             <div
               key={store.id}
-              className="flex rounded-2xl shadow-md bg-gray-100/50 flex-col gap-2 p-4"
+              className="flex rounded-2xl shadow-md bg-gray-100/50 flex-col gap-2 p-4 cursor-pointer"
+              onClick={()=> router.push(`/contributor/${store.id}`)}
             >
               <Image
                 src={getImage(store.profilePicture) || defaultStoreImg}
