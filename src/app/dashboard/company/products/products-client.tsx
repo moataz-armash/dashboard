@@ -20,7 +20,7 @@ import { Product, initialProductState } from "./components/type";
 import { productFields } from "./components/product-fields";
 import { createProduct } from "./components/actions";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { getImage, handlePageChange } from "@/lib/helpers";
+import { getImage } from "@/lib/helpers";
 import Pagination from "@/components/ui/pagination";
 
 interface ProductsClientProps {
@@ -40,17 +40,17 @@ export default function ProductsClient({
 
   const totalPages = Math.ceil(res?.total / res?.size) || 1;
 
-  handlePageChange(currentPage, router);
+  const handlePageChange = (newPage: number) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("page", String(newPage));
+    router.push(`?${searchParams.toString()}`);
+  };
 
   console.log(products);
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );
-
-  useEffect(() => {
-    handlePageChange(currentPage, router);
-  }, [currentPage, router]);
 
   return (
     <>

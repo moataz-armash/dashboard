@@ -52,9 +52,7 @@ export default function ClientHomePage({
 
   const router = useRouter();
 
-  const totalPages = Math.ceil(response?.total / response?.size) || 1;
-
-  console.log(response);
+  const totalPages = Math.ceil(stores?.total / stores?.size) || 1;
 
   const uniqueAddresses = response?.data.filter(
     (address, index, self) =>
@@ -67,9 +65,11 @@ export default function ClientHomePage({
     setIsSidebarOpen(true);
   };
 
-  useEffect(() => {
-    handlePageChange(currentPage, router);
-  }, [currentPage, router]);
+  const handlePageChange = (newPage: number) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("page", String(newPage));
+    router.push(`?${searchParams.toString()}`);
+  };
 
   return (
     <div className="flex h-full">
@@ -86,11 +86,11 @@ export default function ClientHomePage({
           />
         </div>
         <div className="grid grid-cols-2 gap-4 p-4">
-          {stores.map((store) => (
+          {stores.data.map((store) => (
             <div
               key={store.id}
               className="flex rounded-2xl shadow-md bg-gray-100/50 flex-col gap-2 p-4 cursor-pointer"
-              onClick={()=> router.push(`/contributor/${store.id}`)}
+              onClick={() => router.push(`/contributor/${store.id}`)}
             >
               <Image
                 src={getImage(store.profilePicture) || defaultStoreImg}

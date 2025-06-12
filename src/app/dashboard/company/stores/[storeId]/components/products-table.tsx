@@ -11,12 +11,15 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/ui/pagination";
-import { Plus } from "lucide-react";
+import { Plus, Router } from "lucide-react";
+import { redirect } from "next/dist/server/api-utils";
+import { useRouter } from "next/navigation";
 
 export default function ProductsTable({
   products,
   storeName,
 }: ProductsTableProps) {
+  const router = useRouter();
   return (
     <div className="px-4 py-2">
       {products.length > 0 ? (
@@ -24,7 +27,14 @@ export default function ProductsTable({
           <Card className="p-4 rounded-2xl shadow-md w-full">
             <div className="flex justify-between p-2">
               <h1 className="font-medium">{storeName}&apos;s Products</h1>
-              <Button className="bg-brand-500 hover:bg-brand-600">
+              <Button
+                className="bg-brand-500 hover:bg-brand-600"
+                onClick={() =>
+                  router.push(
+                    "/dashboard/company/stores/681f5e22e355c22e3401730e/supplyMore"
+                  )
+                }
+              >
                 Supply More <Plus />
               </Button>
             </div>

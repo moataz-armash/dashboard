@@ -22,6 +22,8 @@ export default async function HomePage({ searchParams }: HomepageProps) {
     process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR
   );
 
+  console.log(res);
+
   const resAllAddress = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS}/address/find/all`,
     {
@@ -38,7 +40,7 @@ export default async function HomePage({ searchParams }: HomepageProps) {
 
   return (
     <ClientHomePage
-      stores={res.data}
+      stores={res}
       response={resAddress}
       currentPage={page}
     />
