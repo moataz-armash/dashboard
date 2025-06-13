@@ -23,5 +23,5 @@ export default async function StoreDetails({ params }: StoreClientDetails) {
     process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR
   );
   console.log(res.data);
-  return <StoreClientDetails products={res.data} />;
+  return <StoreClientDetails products={res.data} contToken={contToken} />;
 }

@@ -6,10 +6,12 @@ import { getImage } from "@/lib/helpers";
 
 interface StoreClientDetailsProps {
   products: Product[];
+  contToken: string;
 }
 
 export default function StoreClientDetails({
   products,
+  contToken,
 }: StoreClientDetailsProps) {
   return (
     <div className="flex flex-col">
@@ -17,11 +19,12 @@ export default function StoreClientDetails({
       <div className="grid grid-cols-4">
         {products.map((product) => (
           <ProductsCard
-            key={product.itemId}
-            id={+product.itemId}
+            key={product.productId}
+            id={+product.productId}
             price={product.price}
             name={product.productName}
             image={getImage(product.imageUrl) || defaultProductImg}
+            contToken={contToken}
           />
         ))}
       </div>

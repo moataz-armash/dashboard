@@ -86,7 +86,7 @@ export async function loginUser(prevState: any, formData: FormData) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24, // 7 days
     });
 
     if (token) {
@@ -94,7 +94,7 @@ export async function loginUser(prevState: any, formData: FormData) {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         path: "/",
-        maxAge: 60 * 60 * 24 * 7, // 7 days
+        maxAge: 60 * 60 * 24, // 7 days
       });
     }
   } catch (e) {

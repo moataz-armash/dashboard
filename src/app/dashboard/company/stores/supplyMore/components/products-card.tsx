@@ -4,15 +4,16 @@ import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useSearchParams } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface ProductCardProps {
-  id: number; // productId
+  id: string; // productId
   name: string;
-  price?: number;
   image: string;
   buttonTitle?: string;
   storeId: string; // <- required to send the request
-  contToken: string;
+  token: string;
 }
 
 export default function ProductsCard({
@@ -20,10 +21,11 @@ export default function ProductsCard({
   name,
   image,
   buttonTitle = "Supply",
-  storeId,
-  contToken,
+  token,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(0);
+  const searchParams = useSearchParams();
+  const storeId = searchParams.get("storeId");
 
   const increaseQty = () => setQuantity((q) => q + 1);
   const decreaseQty = () => setQuantity((q) => (q > 0 ? q - 1 : 0));
@@ -50,7 +52,7 @@ export default function ProductsCard({
           headers: {
             "Content-Type": "application/json",
 
-            Authorization: `Bearer ${contToken}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(body),
         }
@@ -58,6 +60,7 @@ export default function ProductsCard({
 
       if (!response.ok) {
         console.error("Supply request failed");
+        toast.error(response.message || "Supply request failed");
         return;
       }
 
@@ -66,6 +69,7 @@ export default function ProductsCard({
 
       // Optional: reset quantity
       setQuantity(0);
+      toast.success(`${name} Supplied successfully`)
     } catch (error) {
       console.error("Error sending supply request:", error);
     }
