@@ -13,14 +13,15 @@ export default function StoreClientDetails({
   products,
   contToken,
 }: StoreClientDetailsProps) {
+  console.log(products);
   return (
     <div className="flex flex-col">
       <BackLink title="All Stores" link="/contributor" />
       <div className="grid grid-cols-4">
         {products.map((product) => (
           <ProductsCard
-            key={product.productId}
-            id={+product.productId}
+            key={product.itemId}
+            id={product.itemId}
             price={product.price}
             name={product.productName}
             image={getImage(product.imageUrl) || defaultProductImg}

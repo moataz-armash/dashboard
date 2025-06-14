@@ -13,13 +13,14 @@ import {
   Trash,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import A101 from "@/assets/a101.jpg";
 import Bim from "@/assets/Bim_(company)_logo.svg.png";
 import Sok from "@/assets/sok_market.png";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
+import { useCartStore } from "../[storeId]/components/cart-stores";
 
 const items = [
   { id: 1, name: "product 1", img: A101, price: 2150, quantity: 1 },
@@ -38,12 +39,20 @@ const items = [
 const quantityArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 export default function Sidebar() {
+  const cart = useCartStore((state) => state.cart);
+  const [totalQty, setTotalQty] = useState(0);
+
   // const location = locations.find((loc) => loc.id === selectedId);
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+    setTotalQty(total);
+  }, [cart]);
 
   return (
     <div
@@ -60,9 +69,11 @@ export default function Sidebar() {
             className="text-gray-800 group-hover:text-white relative"
             size={18}
           />
-          <div className="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-orangebrand border-2 border-white rounded-full -top-1  dark:border-gray-900">
-            8
-          </div>
+          {totalQty && (
+            <div className="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-orangebrand border-2 border-white rounded-full -top-1  dark:border-gray-900">
+              {totalQty}
+            </div>
+          )}
         </button>
         <button
           onClick={toggleDrawer}

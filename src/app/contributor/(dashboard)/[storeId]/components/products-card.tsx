@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useCartStore } from "./cart-stores";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   id: number; // productId
@@ -19,60 +23,20 @@ export default function ProductsCard({
   id,
   name,
   image,
-  buttonTitle = "Supply",
   storeId,
   contToken,
 }: ProductCardProps) {
-  const [quantity, setQuantity] = useState(0);
+  const router = useRouter();
 
-  const increaseQty = () => setQuantity((q) => q + 1);
-  const decreaseQty = () => setQuantity((q) => (q > 0 ? q - 1 : 0));
-
-  console.log(id);
-
-  const handleSupply = async () => {
-    if (quantity === 0) return;
-
-    const body = {
-      storeId,
-      product_quantity: {
-        [id]: quantity, // productId as key
-      },
-      note: "string", // you can make this dynamic later
-      reason: "i need them immediatly", // also can be dynamic
-    };
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL_INVENTORY}/inventory/supply`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-
-            Authorization: `Bearer ${contToken}`,
-          },
-          body: JSON.stringify(body),
-        }
-      );
-
-      if (!response.ok) {
-        console.error("Supply request failed");
-        return;
-      }
-
-      const result = await response.json();
-      console.log("Supply success:", result);
-
-      // Optional: reset quantity
-      setQuantity(0);
-    } catch (error) {
-      console.error("Error sending supply request:", error);
-    }
+  const handleProductClick = () => {
+    // Redirect to the product details page with itemId as query parameter
+    router.push(`/product?itemId=${id}`);
   };
-
   return (
-    <Card className="w-full max-w-sm shadow-lg rounded-2xl overflow-hidden">
+    <Card
+      className="w-full max-w-sm shadow-lg rounded-2xl overflow-hidden"
+      onClick={handleProductClick}
+    >
       <CardHeader className="p-0">
         <Image
           src={image}
@@ -84,31 +48,7 @@ export default function ProductsCard({
       </CardHeader>
       <CardContent className="flex flex-col gap-4 p-4">
         <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold">{name}</h2>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={decreaseQty}
-              disabled={quantity === 0}
-            >
-              -
-            </Button>
-            <span className="px-2">{quantity}</span>
-            <Button variant="outline" onClick={increaseQty}>
-              +
-            </Button>
-          </div>
-          {quantity > 0 && (
-            <Button
-              onClick={handleSupply}
-              className="bg-brand hover:bg-brand-700"
-            >
-              {buttonTitle}
-            </Button>
-          )}
+          <h2 className="text-lg text-center font-semibold">{name}</h2>
         </div>
       </CardContent>
     </Card>

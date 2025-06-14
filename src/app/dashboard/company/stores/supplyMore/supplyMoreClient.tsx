@@ -8,6 +8,7 @@ interface SupplyMoreClientProps {
   currentPage: number;
   token: string;
 }
+
 export default function SupplyMoreClient({
   products,
   token,
