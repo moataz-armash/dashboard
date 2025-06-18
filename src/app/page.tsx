@@ -58,15 +58,15 @@ export default function HomePage() {
           </Button>
         </nav>
 
-        <h1 className="text-4xl text-white font-normal font-sans w-[70%] leading-[1.5] pt-12">
-          Ataya - Empowering <br />
-          Generosity
+        <h1 className="text-4xl text-white font-normal font-sans w-[90%] leading-[1.5] pt-12">
+          Ataya – Empowering Everyday <br /> Acts of Kindness and Generosity
         </h1>
-        <p className="text-white w-[60%] text-xs font-thin">
+        <p className="text-white w-[60%] text-xs font-thin mt-4 leading-6 tracking-wider">
           Ataya fosters community support by enabling acts of kindness across
           grocery <br /> markets and restaurants, inspired by &quot;askıda
           ekmek.&quot;
         </p>
+        <Button className="bg-greenbutton rounded-full mt-6">Donate Now</Button>
       </div>
     </header>
   );
