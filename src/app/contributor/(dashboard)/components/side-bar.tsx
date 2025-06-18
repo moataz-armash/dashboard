@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 import A101 from "@/assets/a101.jpg";
 import Bim from "@/assets/Bim_(company)_logo.svg.png";
@@ -21,6 +22,7 @@ import Sok from "@/assets/sok_market.png";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { useCartStore } from "../[storeId]/components/cart-stores";
+import axios from "axios";
 
 const items = [
   { id: 1, name: "product 1", img: A101, price: 2150, quantity: 1 },
@@ -29,12 +31,6 @@ const items = [
   { id: 4, name: "product 3", img: Sok, price: 2150, quantity: 1 },
   { id: 5, name: "product 3", img: Sok, price: 2150, quantity: 1 },
 ];
-
-// type Props = {
-//   open: boolean;
-//   onClose: () => void;
-//   selectedId: number | null;
-// };
 
 const quantityArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
@@ -48,6 +44,21 @@ export default function Sidebar() {
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
   };
+
+  const contToken = Cookies.get("contToken");
+
+  console.log(contToken);
+
+  useEffect(() => {
+    const getCartInfo = async () => {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/shopping/cart`,
+        { headers: { Authorization: `Bearer ${contToken}` } }
+      );
+      console.log(res.data.data.items);
+    };
+    getCartInfo();
+  }, [contToken]);
 
   useEffect(() => {
     const total = cart.reduce((sum, item) => sum + item.quantity, 0);

@@ -15,9 +15,9 @@ export default function StoreClientDetails({
 }: StoreClientDetailsProps) {
   console.log(products);
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mt-4">
       <BackLink title="All Stores" link="/contributor" />
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-4 gap-4 mt-4">
         {products.map((product) => (
           <ProductsCard
             key={product.itemId}

@@ -50,7 +50,7 @@ export default async function loginContributor(
 
   if (token) {
     cookies().set("contToken", token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       path: "/",
       maxAge: 60 * 60 * 24, // 7 days
