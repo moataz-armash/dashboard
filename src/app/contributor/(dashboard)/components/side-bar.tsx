@@ -14,6 +14,7 @@ import Image from "next/image";
 import { useCartStore } from "../[storeId]/components/cart-stores";
 import { getImage } from "@/lib/helpers";
 import { defaultProductImg } from "@/lib/constants";
+import toast from "react-hot-toast";
 
 // const items = [
 //   { id: 1, name: "product 1", img: A101, price: 2150, quantity: 1 },
@@ -27,7 +28,8 @@ const quantityArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 export default function Sidebar() {
   const cart = useCartStore((state) => state.cart);
-  const { getCartInfo, getSubtotal, updateItem, removeItem } = useCartStore();
+  const { getCartInfo, getSubtotal, changeQuantity, deleteItem } =
+    useCartStore();
   const [totalQty, setTotalQty] = useState(0);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -46,6 +48,8 @@ export default function Sidebar() {
     const total = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalQty(total);
   }, [cart]);
+
+  console.log(cart);
 
   return (
     <div
@@ -124,16 +128,9 @@ export default function Sidebar() {
                     <select
                       id="quantity"
                       value={item.quantity}
-                      onChange={(e) => {
-                        const newQnt = parseInt(e.target.value);
-                        updateItem(
-                          item.itemId,
-                          newQnt,
-                          item.imageUrl,
-                          item.price,
-                          item.productName,
-                          contToken
-                        );
+                      onChange={async (e) => {
+                        const newQty = parseInt(e.target.value);
+                        changeQuantity(item, newQty, contToken);
                       }}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-orangebrand focus:border-orangebrand block w-full px-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-orangebrand dark:focus:border-orangebrand"
                     >
@@ -148,7 +145,7 @@ export default function Sidebar() {
                     className="text-gray-900 cursor-pointer"
                     size={16}
                     onClick={() =>
-                      removeItem(item.itemId, item.quantity, contToken)
+                      deleteItem(item.itemId, item.quantity, contToken)
                     }
                   />
                 </div>

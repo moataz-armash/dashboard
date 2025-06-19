@@ -25,39 +25,14 @@ export default function ProductsCard({
   price,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(0);
-  const { updateItem, addToCartWithLimit } = useCartStore();
+  const { updateItem } = useCartStore();
 
   const increaseQty = () => setQuantity((q) => q + 1);
   const decreaseQty = () => setQuantity((q) => (q > 0 ? q - 1 : 0));
 
-  // const handleSupply = async () => {
-  //   try {
-  //     const res = await axios.put(
-  //       `http://localhost:8093/shopping/cart?itemId=${id}&quantity=${quantity}`,
-  //       {},
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${contToken}`,
-  //           "X-Store-Id": storeId,
-  //         },
-  //       }
-  //     );
-  //     setQuantity(0)
-  //     toast.success(`${quantity} ${res.data.message}` || "Item added/updated successfully");
-
-  //     useCartStore.getState().updateItem(id, quantity); // Sync Zustand store
-  //   } catch (error: any) {
-  //     const message =
-  //       error?.response?.data?.message ||
-  //       error?.response?.data ||
-  //       "Something went wrong";
-  //     toast.error(message);
-  //   }
-  // };
-
   const handleAddToCart = () => {
     if (quantity > 0) {
-      addToCartWithLimit(id, quantity, image, price, name, contToken);
+      updateItem(id, quantity, image, price, name, contToken);
       setQuantity(0);
     }
   };

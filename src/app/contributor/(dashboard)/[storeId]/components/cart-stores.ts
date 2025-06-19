@@ -31,6 +31,19 @@ interface CartStore {
   removeItem: (
     itemId: string,
     quantity: number,
+    imageUrl: string,
+    price: number,
+    productName: string,
+    token: string
+  ) => Promise<void>;
+  deleteItem: (
+    itemId: string,
+    quantity: number,
+    token: string
+  ) => Promise<void>;
+  changeQuantity: (
+    item: CartItem,
+    newQty: number,
     token: string
   ) => Promise<void>;
   resetCart: () => void;
@@ -66,8 +79,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
       productName,
       token
     );
+
+    await get().getCartInfo(token);
   },
-  
+
   updateItem: async (itemId, quantity, imageUrl, price, productName, token) => {
     try {
       const res = await axios.put(
@@ -105,11 +120,66 @@ export const useCartStore = create<CartStore>((set, get) => ({
       });
     } catch (error) {
       console.error("Failed to update cart item:", error);
-      toast.error("Error updating cart item");
+
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message ||
+          error.response?.data ||
+          "Error updating cart item";
+        toast.error(message);
+      } else {
+        toast.error("Unexpected error occurred");
+      }
+    }
+    await get().getCartInfo(token);
+  },
+
+  removeItem: async (
+    itemId: string,
+    quantity: number,
+    imageUrl: string,
+    price: number,
+    productName: string,
+    token: string
+  ) => {
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/shopping/cart?itemId=${itemId}&quantity=${quantity}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      set((state) => {
+        const exists = state.cart.find((item) => item.itemId === itemId);
+        if (exists) {
+          // Update quantity only
+          return {
+            cart: state.cart.map((item) =>
+              item.itemId === itemId ? { ...item, quantity } : item
+            ),
+          };
+        } else {
+          // Add new item with all details
+          return {
+            cart: [
+              ...state.cart,
+              { itemId, quantity, imageUrl, price, productName },
+            ],
+          };
+        }
+      });
+
+      toast.success(`${quantity} ${productName} extracted from cart.`);
+    } catch (error) {
+      console.error("Failed to remove item from cart:", error);
+      toast.error("Failed to remove item.");
     }
   },
 
-  removeItem: async (itemId: string, quantity: number, token: string) => {
+  deleteItem: async (itemId: string, quantity: number, token: string) => {
     try {
       await axios.delete(
         `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/shopping/cart?itemId=${itemId}&quantity=${quantity}`,
@@ -125,11 +195,40 @@ export const useCartStore = create<CartStore>((set, get) => ({
         cart: state.cart.filter((item) => item.itemId !== itemId),
       }));
 
-      toast.success("Item removed from cart.");
+      toast.success("Selected item removed from cart.");
     } catch (error) {
       console.error("Failed to remove item from cart:", error);
       toast.error("Failed to remove item.");
     }
+  },
+
+  changeQuantity: async (item: CartItem, newQty: number, token: string) => {
+    const prevQty = item.quantity;
+    const diff = newQty - prevQty;
+
+    if (diff === 0) return;
+
+    if (diff > 0) {
+      await get().updateItem(
+        item.itemId,
+        diff,
+        item.imageUrl,
+        item.price,
+        item.productName,
+        token
+      );
+    } else {
+      await get().removeItem(
+        item.itemId,
+        Math.abs(diff),
+        item.imageUrl,
+        item.price,
+        item.productName,
+        token
+      );
+    }
+
+    await get().getCartInfo(token); // sync UI after update
   },
 
   resetCart: () => set({ cart: [] }),
@@ -155,6 +254,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
         quantity: item.quantity,
         imageUrl: item.imageUrl || "",
         price: item.price,
+        productName: item.productName,
       }));
 
       set({ cart: mappedItems });
