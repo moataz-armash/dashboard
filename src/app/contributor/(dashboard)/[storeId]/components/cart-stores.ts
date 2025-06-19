@@ -12,6 +12,14 @@ interface CartItem {
 
 interface CartStore {
   cart: CartItem[];
+  addToCartWithLimit: (
+    itemId: string,
+    quantityToAdd: number,
+    imageUrl: string,
+    price: number,
+    productName: string,
+    token: string
+  ) => Promise<void>;
   updateItem: (
     itemId: string,
     quantity: number,
@@ -33,6 +41,33 @@ interface CartStore {
 
 export const useCartStore = create<CartStore>((set, get) => ({
   cart: [],
+  addToCartWithLimit: async (
+    itemId: string,
+    quantityToAdd: number,
+    imageUrl: string,
+    price: number,
+    productName: string,
+    token: string
+  ) => {
+    const existingItem = get().cart.find((item) => item.itemId === itemId);
+    const currentQuantity = existingItem ? existingItem.quantity : 0;
+    const newTotal = currentQuantity + quantityToAdd;
+
+    if (newTotal > 10) {
+      toast.error("You can't add more than 10 of this product.");
+      return;
+    }
+
+    await get().updateItem(
+      itemId,
+      newTotal,
+      imageUrl,
+      price,
+      productName,
+      token
+    );
+  },
+  
   updateItem: async (itemId, quantity, imageUrl, price, productName, token) => {
     try {
       const res = await axios.put(

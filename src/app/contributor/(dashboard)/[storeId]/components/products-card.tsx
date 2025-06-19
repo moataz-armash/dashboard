@@ -25,7 +25,7 @@ export default function ProductsCard({
   price,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(0);
-  const { updateItem } = useCartStore();
+  const { updateItem, addToCartWithLimit } = useCartStore();
 
   const increaseQty = () => setQuantity((q) => q + 1);
   const decreaseQty = () => setQuantity((q) => (q > 0 ? q - 1 : 0));
@@ -56,9 +56,10 @@ export default function ProductsCard({
   // };
 
   const handleAddToCart = () => {
-    updateItem(id, quantity, image, price, name, contToken);
-
-    setQuantity(0);
+    if (quantity > 0) {
+      addToCartWithLimit(id, quantity, image, price, name, contToken);
+      setQuantity(0);
+    }
   };
   return (
     <Card className="w-full max-w-sm shadow-lg rounded-2xl overflow-hidden">
@@ -87,7 +88,11 @@ export default function ProductsCard({
               -
             </Button>
             <span className="px-2">{quantity}</span>
-            <Button variant="outline" onClick={increaseQty}>
+            <Button
+              variant="outline"
+              onClick={increaseQty}
+              disabled={quantity >= 10}
+            >
               +
             </Button>
           </div>
