@@ -16,9 +16,9 @@ export default async function SupplyMorePage({ searchParams }: Props) {
 
   const page = Number(searchParams.page) || 0;
 
-  const res = await apiRequest(`/product/products?page=${page}&size=6`, token);
+  const res = await apiRequest(`/product/products?page=${page}&size=8`, token);
   console.log(res.data);
   return (
-    <SupplyMoreClient products={res.data} currentPage={page} token={token} />
+    <SupplyMoreClient products={res.data} currentPage={page} token={token} res={res} />
   );
 }

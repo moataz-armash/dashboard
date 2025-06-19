@@ -2,16 +2,14 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import axios from "axios";
-import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useCartStore } from "./cart-stores";
 
 interface ProductCardProps {
-  id: number; // productId
+  id: string; // productId
   name: string;
-  price?: number;
+  price: number;
   image: string;
   buttonTitle?: string;
   storeId: string; // <- required to send the request
@@ -24,37 +22,44 @@ export default function ProductsCard({
   image,
   storeId,
   contToken,
+  price,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(0);
+  const { updateItem } = useCartStore();
 
   const increaseQty = () => setQuantity((q) => q + 1);
   const decreaseQty = () => setQuantity((q) => (q > 0 ? q - 1 : 0));
 
-  const handleSupply = async () => {
-    try {
-      const res = await axios.put(
-        `http://localhost:8093/shopping/cart?itemId=${id}&quantity=${quantity}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${contToken}`,
-            "X-Store-Id": storeId,
-          },
-        }
-      );
-      setQuantity(0)
-      toast.success(`${quantity} ${res.data.message}` || "Item added/updated successfully");
+  // const handleSupply = async () => {
+  //   try {
+  //     const res = await axios.put(
+  //       `http://localhost:8093/shopping/cart?itemId=${id}&quantity=${quantity}`,
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${contToken}`,
+  //           "X-Store-Id": storeId,
+  //         },
+  //       }
+  //     );
+  //     setQuantity(0)
+  //     toast.success(`${quantity} ${res.data.message}` || "Item added/updated successfully");
 
-      useCartStore.getState().updateItem(id, quantity); // Sync Zustand store
-    } catch (error: any) {
-      const message =
-        error?.response?.data?.message ||
-        error?.response?.data ||
-        "Something went wrong";
-      toast.error(message);
-    }
+  //     useCartStore.getState().updateItem(id, quantity); // Sync Zustand store
+  //   } catch (error: any) {
+  //     const message =
+  //       error?.response?.data?.message ||
+  //       error?.response?.data ||
+  //       "Something went wrong";
+  //     toast.error(message);
+  //   }
+  // };
+
+  const handleAddToCart = () => {
+    updateItem(id, quantity, image, price, name, contToken);
+
+    setQuantity(0);
   };
-
   return (
     <Card className="w-full max-w-sm shadow-lg rounded-2xl overflow-hidden">
       <CardHeader className="p-0">
@@ -64,6 +69,7 @@ export default function ProductsCard({
           width={400}
           height={250}
           className="object-contain w-full h-36"
+          priority
         />
       </CardHeader>
       <CardContent className="flex flex-col gap-4 p-4">
@@ -87,7 +93,7 @@ export default function ProductsCard({
           </div>
           {quantity > 0 && (
             <Button
-              onClick={handleSupply}
+              onClick={handleAddToCart}
               className="bg-brand hover:bg-brand-700"
             >
               Add

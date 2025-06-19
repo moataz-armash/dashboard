@@ -43,10 +43,9 @@ export default function ProductsTable({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Is Discounted</TableHead>
+                  <TableHead>Product Name</TableHead>
                   <TableHead>Quantity</TableHead>
                   <TableHead>Price</TableHead>
-                  <TableHead>Unit</TableHead>
                   <TableHead>ReorderLevel</TableHead>
                 </TableRow>
               </TableHeader>
@@ -60,12 +59,9 @@ export default function ProductsTable({
                       //     router.push(`/dashboard/company/products/${product.id}`)
                       //   }
                     >
-                      <TableCell>
-                        {product.isDiscounted ? "Yes" : "No"}
-                      </TableCell>
+                      <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.quantity}</TableCell>
                       <TableCell>{product.price}</TableCell>
-                      <TableCell>{product.unit}</TableCell>
                       <TableCell>{product.reorderLevel}</TableCell>
                       <TableCell>
                         <Button variant="outline">Edit</Button>
@@ -96,9 +92,21 @@ export default function ProductsTable({
           </div>
         </>
       ) : (
-        <p className="text-yellow-500 w-full pl-1 font-medium">
-          There is no Products, Add one Now!
-        </p>
+        <div className="flex justify-between">
+          <p className="text-yellow-500 w-full pl-1 font-medium">
+            There is no Products, Supply one Now!
+          </p>
+          <Button
+            className="bg-brand-500 hover:bg-brand-600"
+            onClick={() =>
+              router.push(
+                `/dashboard/company/stores/supplyMore?storeId=${storeId}`
+              )
+            }
+          >
+            Supply More <Plus />
+          </Button>
+        </div>
       )}
     </div>
   );

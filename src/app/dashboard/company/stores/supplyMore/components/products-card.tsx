@@ -83,7 +83,7 @@ export default function ProductsCard({
           alt={name}
           width={400}
           height={250}
-          className="object-cover w-full h-36"
+          className="object-contain w-full h-36"
         />
       </CardHeader>
       <CardContent className="flex flex-col gap-4 p-4">

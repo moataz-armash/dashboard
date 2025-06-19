@@ -10,7 +10,7 @@ export interface InventoryProduct {
   discount: number;
   discountRate: number;
   discountedPrice: number;
-  isDiscounted: boolean;
+  productName: string;
   updatedAt: string;
   updatedBy: string;
 }
@@ -26,5 +26,4 @@ export interface Statistics {
 export interface ProductsTableProps {
   products: InventoryProduct[];
   storeName: string;
-  
 }
