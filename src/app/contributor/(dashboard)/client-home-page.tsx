@@ -1,55 +1,21 @@
 "use client";
 import { Search } from "lucide-react";
 import Image from "next/image";
-import A101 from "@/assets/a101.jpg";
-import Bim from "@/assets/Bim_(company)_logo.svg.png";
-import Sok from "@/assets/sok_market.png";
 import Badge from "@/components/ui/badge";
-import { ClientHomePageProps, Stores } from "./type";
-import { getImage, handlePageChange } from "@/lib/helpers";
+import { ClientHomePageProps } from "./type";
+import { getImage } from "@/lib/helpers";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 import { defaultStoreImg } from "@/lib/constants";
 import Pagination from "@/components/ui/pagination";
 import { useRouter } from "next/navigation";
 
 const MapView = dynamic(() => import("./components/map-view"), { ssr: false });
 
-const storesAddress = [
-  {
-    id: 1,
-    name: "A101",
-    country: "Sakarya",
-    district: "serdivan",
-    img: A101,
-    status: "ACTIVE",
-  },
-  {
-    id: 2,
-    name: "Bim",
-    country: "İstanbul",
-    district: "zeytinburnu",
-    img: Bim,
-    status: "DELETED",
-  },
-  {
-    id: 3,
-    name: "Şok",
-    country: "Kocaeli",
-    district: "izmit",
-    img: Sok,
-    status: "INACTIVE",
-  },
-];
-
 export default function ClientHomePage({
   stores,
   response,
   currentPage,
 }: ClientHomePageProps) {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   const router = useRouter();
 
   const totalPages = Math.ceil(stores?.total / stores?.size) || 1;
@@ -59,11 +25,6 @@ export default function ClientHomePage({
       index ===
       self.findIndex((a) => a.lat === address.lat && a.lng === address.lng)
   );
-
-  const handleSelectLocation = (id: number) => {
-    setSelectedId(id);
-    setIsSidebarOpen(true);
-  };
 
   const handlePageChange = (newPage: number) => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -78,7 +39,7 @@ export default function ClientHomePage({
           <input
             type="text"
             placeholder="Enter the name of Store ex: A101"
-            className="w-full bg-slate-100 rounded-sm px-4 py-2 placeholder:text-gray-400 placeholder:text-sm focus:outline-purblebrand shadow-lg"
+            className="w-full bg-slate-100 rounded-md px-4 py-2 placeholder:text-gray-400 placeholder:text-sm focus:outline-orangebrand shadow-lg"
           />
           <Search
             className="absolute top-1/2 right-0
@@ -119,7 +80,7 @@ export default function ClientHomePage({
         </div>
       </div>
 
-      <MapView onSelect={handleSelectLocation} addresses={uniqueAddresses} />
+      <MapView addresses={uniqueAddresses} />
     </div>
   );
 }

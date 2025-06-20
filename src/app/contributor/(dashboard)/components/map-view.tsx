@@ -21,11 +21,10 @@ L.Icon.Default.mergeOptions({
 });
 
 type Props = {
-  onSelect: (id: number) => void;
   addresses: Address[];
 };
 
-export default function MapView({ onSelect, addresses }: Props) {
+export default function MapView({ addresses }: Props) {
   return (
     <MapContainer
       center={[40.8, 30.4]}
@@ -39,9 +38,9 @@ export default function MapView({ onSelect, addresses }: Props) {
         <Marker
           key={loc.id}
           position={[loc.lat, loc.lng]}
-          eventHandlers={{
-            click: () => onSelect(+loc.id),
-          }}
+          // eventHandlers={{
+          //   click: () => onSelect(+loc.id),
+          // }}
         >
           <Popup>{loc.district}</Popup>
         </Marker>

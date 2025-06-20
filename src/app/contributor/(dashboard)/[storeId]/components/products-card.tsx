@@ -37,14 +37,14 @@ export default function ProductsCard({
     }
   };
   return (
-    <Card className="w-full max-w-sm shadow-lg rounded-2xl overflow-hidden">
+    <Card className="w-full shadow-lg rounded-2xl overflow-hidden">
       <CardHeader className="p-0">
         <Image
           src={image}
           alt={name}
           width={400}
           height={250}
-          className="object-contain w-full h-36"
+          className="object-contain w-full h-24"
           priority
         />
       </CardHeader>

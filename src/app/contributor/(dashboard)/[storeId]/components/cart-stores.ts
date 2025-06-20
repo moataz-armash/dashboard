@@ -50,6 +50,9 @@ interface CartStore {
   getCartSummary: () => { itemId: string; quantity: number }[];
   getCartInfo: (token: string) => Promise<void>;
   getSubtotal: () => number;
+  getTax: () => number;
+  getDiscount: () => number;
+  getTotal: () => number;
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
@@ -268,5 +271,22 @@ export const useCartStore = create<CartStore>((set, get) => ({
       (sum, item) => sum + item.quantity * item.price,
       0
     );
+  },
+  getTax: () => {
+    const subtotal = get().getSubtotal();
+    const TAX_RATE = 0.18; // 18%
+    return parseFloat((subtotal * TAX_RATE).toFixed(2));
+  },
+
+  getDiscount: () => {
+    // You can later enhance this to be dynamic
+    return 0;
+  },
+
+  getTotal: () => {
+    const subtotal = get().getSubtotal();
+    const tax = get().getTax();
+    const discount = get().getDiscount();
+    return parseFloat((subtotal + tax - discount).toFixed(2));
   },
 }));
