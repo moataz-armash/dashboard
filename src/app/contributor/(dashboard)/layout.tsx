@@ -1,22 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import Sidebar from "./components/side-bar";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GeneralLinks, settingsLinks } from "./components/nav-links";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
 
 interface ContribDashProps {
   children: React.ReactNode;
@@ -38,9 +25,16 @@ export default function ContributorDashboardLayout({
             <div className="flex flex-col gap-8 h-[70%]">
               {GeneralLinks.map((link) => (
                 <Link
-                  href={link.href}
+                  href={link.disabled ? "#" : link.href}
                   key={link.id}
-                  className="flex justify-start items-center gap-2 group"
+                  className={`
+                    flex justify-start items-center gap-2 group
+                    ${
+                      link.disabled
+                        ? "pointer-events-none opacity-50 cursor-not-allowed"
+                        : ""
+                    }
+                  `}
                 >
                   <link.icon
                     size={16}
@@ -67,22 +61,29 @@ export default function ContributorDashboardLayout({
             <div className="flex flex-col gap-4 h-[30%] justify-end">
               {settingsLinks.map((link) => (
                 <Link
-                  href={link.href}
+                  href={link.disabled ? "#" : link.href}
                   key={link.id}
-                  className="flex justify-start items-center gap-2 group"
+                  className={`
+                  flex justify-start items-center gap-2 group
+                  ${
+                    link.disabled
+                      ? "pointer-events-none opacity-50 cursor-not-allowed"
+                      : ""
+                  }
+                `}
                 >
                   <link.icon
                     size={16}
-                    className={`group-hover:text-purblebrand ${
+                    className={`group-hover:text-rose-600 ${
                       pathname === link.href
-                        ? "text-purblebrand"
+                        ? "text-rose-600"
                         : "text-graybrand"
                     }`}
                   />{" "}
                   <span
-                    className={`group-hover:text-purblebrand text-xs font-semibold ${
+                    className={`group-hover:text-rose-600 text-xs font-semibold ${
                       pathname === link.href
-                        ? "text-purblebrand"
+                        ? "text-rose-600"
                         : "text-graybrand"
                     }`}
                   >
