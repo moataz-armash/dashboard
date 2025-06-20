@@ -1,28 +1,19 @@
-import A101 from "@/assets/a101.jpg";
-import Bim from "@/assets/Bim_(company)_logo.svg.png";
-import Sok from "@/assets/sok_market.png";
-import { Button } from "@/components/ui/button";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Trash } from "lucide-react";
 import Image from "next/image";
 import PaymentSummery from "./payment-summery";
 import { useCartStore } from "../../[storeId]/components/cart-stores";
 import { getImage } from "@/lib/helpers";
 import { defaultProductImg } from "@/lib/constants";
-
-const items = [
-  { id: 1, name: "product 1", img: A101, price: 2150, quantity: 1 },
-  { id: 2, name: "product 2", img: Bim, price: 2150, quantity: 1 },
-  { id: 3, name: "product 3", img: Sok, price: 2150, quantity: 1 },
-];
+import Cookies from "js-cookie";
 
 interface CartProgressProps {
   goNext: () => void;
 }
 
 export default function CartProgress({ goNext }: CartProgressProps) {
-  const { cart, getTotal } = useCartStore();
+  const { cart, getTotal, removeItem, updateItem, deleteItem } = useCartStore();
   const cartItems = cart.length;
-  console.log(cartItems);
+  const contToken = Cookies.get("contToken");
   return (
     <div className="grid grid-cols-6 space-x-4 p-8">
       <div className="col-span-4">
@@ -47,15 +38,44 @@ export default function CartProgress({ goNext }: CartProgressProps) {
                     {item.productName}
                   </span>
                 </div>
-                <div className="border-2 p-1 border-bg-gray-300 flex gap-6 items-center">
-                  <Minus
-                    size={12}
-                    className="cursor-pointer hover:bg-gray-300 hover:rounded-full text-black"
-                  />
-                  <span>{item.quantity}</span>
-                  <Plus
-                    size={12}
-                    className="cursor-pointer hover:bg-gray-300 hover:rounded-full text-black"
+                <div className="flex items-center gap-4">
+                  <div className="border-2 p-1 border-bg-gray-300 flex gap-6 items-center">
+                    <Minus
+                      size={12}
+                      className="cursor-pointer hover:bg-gray-300 hover:rounded-full text-black"
+                      onClick={async () =>
+                        await removeItem(
+                          item.itemId,
+                          1,
+                          item.imageUrl,
+                          item.price,
+                          item.productName,
+                          contToken
+                        )
+                      }
+                    />
+                    <span>{item.quantity}</span>
+                    <Plus
+                      size={12}
+                      className="cursor-pointer hover:bg-gray-300 hover:rounded-full text-black"
+                      onClick={async () =>
+                        await updateItem(
+                          item.itemId,
+                          1,
+                          item.imageUrl,
+                          item.price,
+                          item.productName,
+                          contToken
+                        )
+                      }
+                    />
+                  </div>
+                  <Trash
+                    className="text-gray-900 cursor-pointer"
+                    size={16}
+                    onClick={() =>
+                      deleteItem(item.itemId, item.quantity, contToken)
+                    }
                   />
                 </div>
                 <p className="font-bold">{item.price}$</p>

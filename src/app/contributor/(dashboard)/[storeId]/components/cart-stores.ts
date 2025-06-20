@@ -180,6 +180,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
       console.error("Failed to remove item from cart:", error);
       toast.error("Failed to remove item.");
     }
+    await get().getCartInfo(token);
   },
 
   deleteItem: async (itemId: string, quantity: number, token: string) => {
