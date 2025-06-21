@@ -22,6 +22,7 @@ export default function ProductsTable({
   const router = useRouter();
   const params = useParams();
   const storeId = params.storeId;
+  console.log(storeName);
   return (
     <div className="px-4 py-2">
       {products.length > 0 ? (
@@ -33,7 +34,7 @@ export default function ProductsTable({
                 className="bg-brand-500 hover:bg-brand-600"
                 onClick={() =>
                   router.push(
-                    `/dashboard/company/stores/supplyMore?storeId=${storeId}`
+                    `/dashboard/company/stores/supplyMore?storeId=${storeId}&storeName=${storeName}`
                   )
                 }
               >
