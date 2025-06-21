@@ -85,7 +85,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
     await get().getCartInfo(token);
   },
-
   updateItem: async (itemId, quantity, imageUrl, price, productName, token) => {
     try {
       const res = await axios.put(
@@ -136,7 +135,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
     await get().getCartInfo(token);
   },
-
   removeItem: async (
     itemId: string,
     quantity: number,
@@ -182,7 +180,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
     await get().getCartInfo(token);
   },
-
   deleteItem: async (itemId: string, quantity: number, token: string) => {
     try {
       await axios.delete(
@@ -205,7 +202,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
       toast.error("Failed to remove item.");
     }
   },
-
   changeQuantity: async (item: CartItem, newQty: number, token: string) => {
     const prevQty = item.quantity;
     const diff = newQty - prevQty;
@@ -234,7 +230,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
     await get().getCartInfo(token); // sync UI after update
   },
-
   resetCart: () => set({ cart: [] }),
   getCartSummary: () => {
     return get().cart.map(({ itemId, quantity }) => ({ itemId, quantity }));
@@ -278,12 +273,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
     const TAX_RATE = 0.18; // 18%
     return parseFloat((subtotal * TAX_RATE).toFixed(2));
   },
-
   getDiscount: () => {
     // You can later enhance this to be dynamic
     return 0;
   },
-
   getTotal: () => {
     const subtotal = get().getSubtotal();
     const tax = get().getTax();

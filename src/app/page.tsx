@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import volunteering from "@/assets/volunteering.jpg";
 
 const navLinks = [
   { id: 1, title: "Home", href: "/" },
@@ -58,15 +59,67 @@ export default function HomePage() {
           </Button>
         </nav>
 
-        <h1 className="text-4xl text-white font-normal font-sans w-[90%] leading-[1.5] pt-12">
+        <h1 className="text-4xl text-white font-normal font-sans w-[90%] leading-[1.5] pt-4">
           Ataya – Empowering Everyday <br /> Acts of Kindness and Generosity
         </h1>
-        <p className="text-white w-[60%] text-xs font-thin mt-4 leading-6 tracking-wider">
-          Ataya fosters community support by enabling acts of kindness across
-          grocery <br /> markets and restaurants, inspired by &quot;askıda
-          ekmek.&quot;
-        </p>
-        <Button className="bg-greenbutton rounded-full mt-6">Donate Now</Button>
+
+        <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-4 items-start mt-4">
+          {/* Left Side Content */}
+          <div className="space-y-6 col-span-2">
+            {/* Features Grid */}
+            <p className="text-white w-full text-xs font-thin leading-6 tracking-wider">
+              Ataya fosters community support by enabling acts of kindness
+              across grocery <br /> markets and restaurants, inspired by
+              &quot;askıda ekmek.&quot;
+            </p>
+            <Button className="bg-greenbutton rounded-full">
+              Donate Now
+            </Button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-white/10 backdrop-blur-md p-4 rounded-lg shadow-md border border-white/20">
+                <h3 className="font-bold text-white mb-1 text-sm">Education for All</h3>
+                <p className="text-xs text-gray-200">
+                  Darul is dedicated to ensuring that every child has access to
+                  quality education.
+                </p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md p-4 rounded-lg shadow-md border border-white/20">
+                <h3 className="font-bold text-white mb-1 text-sm">
+                  Health and Wellness
+                </h3>
+                <p className="text-xs text-gray-200">
+                  Our commitment to health and wellness extends across borders.
+                </p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md p-4 rounded-lg shadow-md border border-white/20">
+                <h3 className="font-bold text-white mb-1 text-sm">Disaster Relief</h3>
+                <p className="text-xs text-gray-200">
+                  In times of crisis, Darul responds swiftly to provide
+                  emergency relief.
+                </p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md p-4 rounded-lg shadow-md border border-white/20">
+                <h3 className="font-bold text-white mb-1 text-sm">
+                  Community
+                </h3>
+                <p className="text-xs text-gray-200">
+                  Darul invests in sustainable community development projects.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side Image */}
+          <div className="col-span-2">
+            <Image
+              src={volunteering}
+              alt="Two happy children"
+              className="rounded-xl shadow-lg object-cover w-full h-96"
+              width={500}
+              height={500}
+            />
+          </div>
+        </div>
       </div>
     </header>
   );
