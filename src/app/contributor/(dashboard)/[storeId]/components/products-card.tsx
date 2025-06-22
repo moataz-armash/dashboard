@@ -49,8 +49,9 @@ export default function ProductsCard({
         />
       </CardHeader>
       <CardContent className="flex flex-col gap-4 p-4">
-        <div className="flex flex-col gap-1">
+        <div className="flex gap-1 justify-between">
           <h2 className="text-lg font-semibold">{name}</h2>
+          <h3 className="text-lg font-medium">{price} $</h3>
         </div>
 
         <div className="flex items-center justify-between">

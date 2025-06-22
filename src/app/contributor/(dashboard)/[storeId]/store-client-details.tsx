@@ -45,11 +45,14 @@ export default function StoreClientDetails({
                 contToken={contToken}
               />
             ))}
+            <div className="col-span-4">
+              
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}
-            />{" "}
+              />{" "}
+              </div>
           </>
         ) : (
           <p className="text-yellow-500 col-span-4 text-center">

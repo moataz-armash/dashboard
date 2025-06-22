@@ -5,6 +5,7 @@ import Image from "next/image";
 import PaymentSummery from "./payment-summery";
 import { Input } from "@/components/ui/input";
 import { useCartStore } from "../../[storeId]/components/cart-stores";
+import Cookies from "js-cookie";
 
 interface PaymentMethodProps {
   goNext: () => void;
@@ -12,6 +13,8 @@ interface PaymentMethodProps {
 
 export default function PaymentMethod({ goNext }: PaymentMethodProps) {
   const { resetCart } = useCartStore();
+  const contToken = Cookies.get("contToken");
+
   const [form, setForm] = useState({
     name: "",
     cardNumber: "",
@@ -64,11 +67,11 @@ export default function PaymentMethod({ goNext }: PaymentMethodProps) {
     return valid;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log(validateForm());
     if (validateForm()) {
       goNext();
-      resetCart();
+      await resetCart(contToken);
     }
   };
 

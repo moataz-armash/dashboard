@@ -22,7 +22,7 @@ export default function CartProgress({ goNext }: CartProgressProps) {
 
           <h4>Total: {getTotal()}$</h4>
         </div>
-        <div className="bg-gray-100 w-full h-auto p-4 rounded-lg gap-8">
+        <div className="bg-gray-100 w-full h-96 p-4 rounded-lg gap-8 overflow-y-auto custom-scrollbar">
           {cart.map((item) => (
             <div key={item.itemId} className="p-4">
               <div className="flex justify-between items-center">

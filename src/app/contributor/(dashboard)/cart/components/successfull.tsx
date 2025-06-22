@@ -1,6 +1,18 @@
 import Link from "next/link";
+import { useEffect } from "react";
+import Cookies from "js-cookie";
+import { useCartStore } from "../../[storeId]/components/cart-stores";
 
 export default function Successfull() {
+  const { resetCart } = useCartStore();
+
+  const contToken = Cookies.get("contToken");
+  // useEffect(() => {
+  //   setTimeout(()=>{
+
+  //   },3000)
+  //   resetCart(contToken);
+  // }, [contToken, resetCart]);
   return (
     <div className="justify-center w-[50%] mx-auto p-6 text-center transition-all transform bg-gray-100 rounded-xl my-8">
       <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-orange-100 rounded-full">

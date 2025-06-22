@@ -30,7 +30,7 @@ export default function CartPage() {
 
   return (
     <div className="flex flex-col">
-      {cart.length > 0 ? (
+      {cart.length > 0 || currentStep === 2 ? (
         <>
           <div className="flex justify-center gap-2 pt-6">
             {progressBar.map((item, index) => (
@@ -76,9 +76,11 @@ export default function CartPage() {
           </div>
         </>
       ) : (
-        <p className="text-yellow-500 text-center p-8">
-          Your cart is Empty 😊, Go to dashboard to add some products
-        </p>
+        currentStep !== 2 && (
+          <p className="text-yellow-500 text-center p-8">
+            Your cart is Empty 😊, Go to dashboard to add some products
+          </p>
+        )
       )}
     </div>
   );

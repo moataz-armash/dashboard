@@ -9,15 +9,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/breadcurmb";
 import { getStoreBreadcrumbs } from "@/lib/breadcrumb-utils";
 
-const crumbs = [
-  { label: "All Stores", href: "/dashboard/company/stores" },
-  {
-    label: "Serdivan",
-    href: "/dashboard/company/stores/681f5e22e355c22e3401730e",
-  },
-  { label: "Supply More", active: true },
-];
-
 interface SupplyMoreClientProps {
   products: Product[];
   currentPage: number;

@@ -46,7 +46,7 @@ interface CartStore {
     newQty: number,
     token: string
   ) => Promise<void>;
-  resetCart: () => void;
+  resetCart: (token: string) => Promise<void>;
   getCartSummary: () => { itemId: string; quantity: number }[];
   getCartInfo: (token: string) => Promise<void>;
   getSubtotal: () => number;
@@ -230,7 +230,25 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
     await get().getCartInfo(token); // sync UI after update
   },
-  resetCart: () => set({ cart: [] }),
+  resetCart: async (token: string) => {
+    try {
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/shopping/cart/empty`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      set({ cart: [] });
+      // toast.success("Cart has been emptied.");
+    } catch (error) {
+      console.error("Failed to reset cart:", error);
+      toast.error("Failed to empty the cart.");
+    }
+  },
   getCartSummary: () => {
     return get().cart.map(({ itemId, quantity }) => ({ itemId, quantity }));
   },

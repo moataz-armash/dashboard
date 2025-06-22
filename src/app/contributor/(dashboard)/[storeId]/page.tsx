@@ -22,7 +22,7 @@ export default async function StoreDetails({
   if (!contToken) redirect("/contributor/login");
 
   const res = await apiRequest(
-    `/shopping/products?strId=${storeId}?page=${page}&size=8`,
+    `/shopping/products?strId=${storeId}&page=${page}&size=8`,
     contToken,
     "GET",
     process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR
