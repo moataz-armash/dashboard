@@ -61,7 +61,7 @@ export async function createStore(prevState: any, formData: FormData) {
   );
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/store/create`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/company/store/create`,
     {
       method: "POST",
       headers: {
@@ -111,10 +111,10 @@ export default async function getStores({ params }: PageParams) {
   const resStore = await apiRequest(`/store/${storeId}`, token);
 
   const resInventroy = await apiRequest(
-    `/inventory/get?strId=${storeId}`,
+    `/inventory/inventory/get?strId=${storeId}`,
     token,
     "GET",
-    String(process.env.NEXT_PUBLIC_API_BASE_URL_INVENTORY)
+    String(process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY)
   );
   console.log(resStore.data);
   console.log(resInventroy);

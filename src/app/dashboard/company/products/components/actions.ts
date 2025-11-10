@@ -71,7 +71,7 @@ export async function createProduct(prevState: any, formData: FormData) {
   console.log(Object.entries(apiFormData));
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/product/create`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/company/product/create`,
     {
       method: "POST",
       headers: {

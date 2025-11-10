@@ -26,7 +26,7 @@ export default function CompanyHeader({
 
   useEffect(() => {
     if (profilePhoto) {
-      const profilePhotoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/image?in=${profilePhoto}`;
+      const profilePhotoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/company/image?in=${profilePhoto}`;
       setPreviewImage(profilePhotoUrl);
     }
   }, [profilePhoto]);

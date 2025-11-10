@@ -23,7 +23,7 @@ export default async function registerContributor(
   }
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/auth/register`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/contributor/auth/register`,
     {
       method: "POST",
       headers: { "Content-type": "application/json" },

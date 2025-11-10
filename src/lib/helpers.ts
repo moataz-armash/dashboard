@@ -36,12 +36,12 @@ const handleFileChange = (
 
 const getImage = (photo: string | null | undefined) => {
   const profilePhotoUrl = photo
-    ? `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/image?in=${photo}`
+    ? `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/company/image?in=${photo}`
     : null;
   return profilePhotoUrl;
 };
 
-const handlePageChange = (newPage: number,router:AppRouterInstance) => {
+const handlePageChange = (newPage: number, router: AppRouterInstance) => {
   const searchParams = new URLSearchParams(window.location.search);
   searchParams.set("page", String(newPage));
   router.push(`?${searchParams.toString()}`);
@@ -100,7 +100,7 @@ const SubmitEntityUpdate = async ({
     );
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}${endpoint}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}${endpoint}`,
       {
         method: "PUT",
         body: formDataToSend,

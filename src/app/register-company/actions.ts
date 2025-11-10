@@ -33,7 +33,7 @@ export async function registerCompany(prevState: any, formData: FormData) {
   console.log(parsed.data);
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/company/create`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/company/company/create`,
     {
       method: "POST",
       headers: {

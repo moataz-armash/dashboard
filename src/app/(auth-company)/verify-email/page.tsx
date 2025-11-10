@@ -17,7 +17,7 @@ export default async function VerifyEmail({ searchParams }: PageProps) {
   }
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/auth/verify-email?token=${token}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/company/auth/verify-email?token=${token}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },

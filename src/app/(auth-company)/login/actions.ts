@@ -46,7 +46,7 @@ export async function loginUser(prevState: any, formData: FormData) {
   };
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/auth/login`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/company/auth/login`,
     {
       method: "POST",
       headers: {

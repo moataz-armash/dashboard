@@ -12,7 +12,7 @@ export default async function CompanyProfilePage() {
 
   let initialProfileData: CompanyProfile | null = null;
 
-  const res = await apiRequest("/company/profile", token);
+  const res = await apiRequest("/company/company/profile", token);
 
   if (res.status !== "OK") {
     if (res.status === 401 || res.status === 403) {

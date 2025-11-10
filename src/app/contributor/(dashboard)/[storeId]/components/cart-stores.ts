@@ -88,7 +88,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   updateItem: async (itemId, quantity, imageUrl, price, productName, token) => {
     try {
       const res = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/shopping/cart?itemId=${itemId}&quantity=${quantity}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/contributor/shopping/cart?itemId=${itemId}&quantity=${quantity}`,
         {},
         {
           headers: {
@@ -145,7 +145,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   ) => {
     try {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/shopping/cart?itemId=${itemId}&quantity=${quantity}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/contributor/shopping/cart?itemId=${itemId}&quantity=${quantity}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -183,7 +183,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   deleteItem: async (itemId: string, quantity: number, token: string) => {
     try {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/shopping/cart?itemId=${itemId}&quantity=${quantity}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/contributor/shopping/cart?itemId=${itemId}&quantity=${quantity}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -233,7 +233,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   resetCart: async (token: string) => {
     try {
       await axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/shopping/cart/empty`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/contributor/shopping/cart/empty`,
         {},
         {
           headers: {
@@ -255,7 +255,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   getCartInfo: async (token) => {
     try {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/shopping/cart`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/contributor/shopping/cart`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

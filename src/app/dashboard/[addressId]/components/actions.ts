@@ -14,7 +14,7 @@ export async function CreateAddressByCoordinate(
   addressData: AddressData | null
 ) {
   const res = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS}/address/management/create/coordinates`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/address/address/management/create/coordinates`,
     addressData
   );
   return res.data;
@@ -64,7 +64,7 @@ export async function updateAddressInfo(prevState: any, formData: FormData) {
   const addressId = formData.get("addressId");
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS}/address/management/update/${addressId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/address/address/management/update/${addressId}`,
     {
       method: "PUT",
       headers: {
@@ -137,7 +137,7 @@ export async function createaddressByInfo(prevState: any, formData: FormData) {
   }
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_ADDRESS}/address/management/create/info`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/address/address/management/create/info`,
     {
       method: "POST",
       headers: {

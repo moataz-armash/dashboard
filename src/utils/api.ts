@@ -1,6 +1,5 @@
 import axios, { AxiosError } from "axios";
 import { getAxiosInstance } from "./axiosInstance";
-import { redirect } from "next/navigation";
 // import { toast } from "react-hot-toast";
 
 export const registerNewUser = async (registerData: {
@@ -10,9 +9,9 @@ export const registerNewUser = async (registerData: {
 }): Promise<Record<string, string>> => {
   try {
     const axiosCompany = getAxiosInstance(
-      process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY
+      process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY
     );
-    const res = await axiosCompany.post(`/auth/register`, registerData);
+    const res = await axiosCompany.post(`company/auth/register`, registerData);
     localStorage.setItem("userInfo", JSON.stringify(res?.data?.data));
     return res.data;
   } catch (error) {
@@ -28,9 +27,9 @@ export const loginUser = async (registerData: {
 }): Promise<{ data: Record<string, string>; message: string }> => {
   try {
     const axiosCompany = getAxiosInstance(
-      process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY
+      process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY
     );
-    const res = await axiosCompany.post(`/auth/login`, registerData);
+    const res = await axiosCompany.post(`company/auth/login`, registerData);
     console.log(res);
     localStorage.setItem("userInfo", JSON.stringify(res?.data.data));
     // console.log(res.data)
@@ -56,9 +55,9 @@ export const createCompany = async (companyData: {
 }): Promise<Record<string, string>> => {
   try {
     const axiosCompany = getAxiosInstance(
-      process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY
+      process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY
     );
-    const res = await axiosCompany.post(`/company/create`, companyData);
+    const res = await axiosCompany.post(`company/company/create`, companyData);
     console.log(res.data.data);
     return res.data;
   } catch (error) {
@@ -72,10 +71,10 @@ export const verifyEmail = async (
   try {
     console.log(token);
     const axiosCompany = getAxiosInstance(
-      process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY
+      process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY
     );
     console.log(axiosCompany);
-    const res = await axios.post(`/auth/verify-email?token=${token}`);
+    const res = await axios.post(`company/auth/verify-email?token=${token}`);
     return res.data;
   } catch (error) {
     throw new Error(`Error while verification email ${error}`);
@@ -88,9 +87,9 @@ export const forgetPassword = async (
   try {
     console.log(email);
     const axiosCompany = getAxiosInstance(
-      process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY
+      process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY
     );
-    const res = await axiosCompany.post(`/auth/forgot-password?email=${email}`);
+    const res = await axiosCompany.post(`company/auth/forgot-password?email=${email}`);
     console.log(res.data);
     localStorage.setItem("resetToken", res.data.data.token);
     return res.data;
@@ -108,11 +107,11 @@ export const resetPassword = async (data: {
   try {
     console.log(data);
     const axiosCompany = getAxiosInstance(
-      process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY
+      process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY
     );
     const { resetToken, email, newPassword, confirmPassword } = data;
     const res = await axiosCompany.put(
-      `/auth/reset-password?token=${resetToken}&email=${email}`,
+      `company/auth/reset-password?token=${resetToken}&email=${email}`,
       {
         newPassword,
         confirmPassword,
@@ -130,7 +129,7 @@ export const apiRequest = async (
   endpoint: string,
   token: string,
   method: string = "GET",
-  host: string = String(process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY)
+  host: string = String(process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY)
 ) => {
   const res = await fetch(`${host}${endpoint}`, {
     method: String(method),

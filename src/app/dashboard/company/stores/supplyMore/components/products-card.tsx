@@ -46,7 +46,7 @@ export default function ProductsCard({
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL_INVENTORY}/inventory/supply`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/inventory/inventory/supply`,
         {
           method: "POST",
           headers: {
@@ -69,7 +69,7 @@ export default function ProductsCard({
 
       // Optional: reset quantity
       setQuantity(0);
-      toast.success(`${name} Supplied successfully`)
+      toast.success(`${name} Supplied successfully`);
     } catch (error) {
       console.error("Error sending supply request:", error);
     }
@@ -96,8 +96,7 @@ export default function ProductsCard({
             <Button
               variant="outline"
               onClick={decreaseQty}
-              disabled={quantity === 0}
-            >
+              disabled={quantity === 0}>
               -
             </Button>
             <span className="px-2">{quantity}</span>
@@ -108,8 +107,7 @@ export default function ProductsCard({
           {quantity > 0 && (
             <Button
               onClick={handleSupply}
-              className="bg-brand hover:bg-brand-700"
-            >
+              className="bg-brand hover:bg-brand-700">
               {buttonTitle}
             </Button>
           )}

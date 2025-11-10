@@ -39,7 +39,7 @@ const entityDefaults = {
   dateOfIncorporation: new Date().toISOString(),
 };
 
-const endpoint: string = "/company/profile";
+const endpoint: string = "company/company/profile";
 
 interface CompanyProfileFormProps {
   initialProfileData: CompanyProfile | null;
@@ -142,8 +142,7 @@ export default function CompanyProfileForm({
               <Button
                 type="button"
                 size="sm"
-                onClick={() => handleImageClick(fileInputRef)}
-              >
+                onClick={() => handleImageClick(fileInputRef)}>
                 Change photo
               </Button>
               <input
@@ -161,8 +160,7 @@ export default function CompanyProfileForm({
         <form
           ref={formRef}
           onSubmit={handleSubmit}
-          encType="multipart/form-data"
-        >
+          encType="multipart/form-data">
           <div className="grid grid-cols-2 gap-8">
             <Card>
               <CardContent className="space-y-4">

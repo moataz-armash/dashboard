@@ -43,7 +43,7 @@ export const useProfileStore = create<ProfileState>()(
         set({ isLoading: true, error: null });
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL_COMPANY}/company/profile}`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/company/company/profile}`,
             {
               method: "GET",
               headers: {

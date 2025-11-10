@@ -23,7 +23,7 @@ export default async function loginContributor(
   }
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_CONTRIBUTOR}/auth/login`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/contributor/auth/login`,
     {
       method: "POST",
       headers: {
