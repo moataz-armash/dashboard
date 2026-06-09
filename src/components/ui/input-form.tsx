@@ -11,6 +11,7 @@ interface InputFormProps {
   index?: number;
   totalItems?: number;
   parentColumns?: number;
+  options?: { label: string; value: string }[];
 }
 
 export default function InputForm({
@@ -23,6 +24,7 @@ export default function InputForm({
   index,
   totalItems,
   parentColumns = 2,
+  options,
 }: InputFormProps) {
   let columnSpanClass = "";
   if (index !== undefined && totalItems !== undefined) {
@@ -45,17 +47,34 @@ export default function InputForm({
         >
           {title}
         </Label>
-        <Input
-          className={`${
-            readOnly && "bg-gray-100 cursor-not-allowed"
-          } col-span-3`}
-          type="text"
-          placeholder={title}
-          aria-label={name}
-          name={name}
-          defaultValue={state ? state[name] : defaultValue}
-          readOnly={readOnly || false}
-        />
+        {options ? (
+          <select
+            name={name}
+            aria-label={name}
+            defaultValue={state?.[name] ?? defaultValue ?? ""}
+            disabled={readOnly}
+            className="col-span-3 border border-gray-200 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          >
+            <option value="" disabled>Select {title}</option>
+            {options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <Input
+            className={`${
+              readOnly && "bg-gray-100 cursor-not-allowed"
+            } col-span-3`}
+            type="text"
+            placeholder={title}
+            aria-label={name}
+            name={name}
+            defaultValue={state ? state[name] : defaultValue}
+            readOnly={readOnly || false}
+          />
+        )}
         {state?.errors?.[name]?._errors?.[0] && (
           <p className="text-red-500 text-sm col-span-full text-right">
             {state.errors[name]._errors[0]}

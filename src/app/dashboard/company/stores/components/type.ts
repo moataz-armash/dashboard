@@ -14,7 +14,7 @@ export interface DialogWindowProps {
     | undefined;
   className?: string;
   fileInputRef?: React.RefObject<HTMLInputElement | null>;
-  fields: Record<string, { name: string; title: string }>;
+  fields: Record<string, { name: string; title: string; options?: { label: string; value: string }[] }>;
   initialState: Record<string, any>;
   method: (prevState: any, formData: FormData) => Promise<any>;
 }

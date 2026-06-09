@@ -25,7 +25,7 @@ export default async function StoreDetails({
     `contributor/shopping/products?strId=${storeId}&page=${page}&size=8`,
     contToken,
     "GET",
-    process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY
+    process.env.API_BASE_URL_GATEWAY
   );
   console.log(res.data);
   return (

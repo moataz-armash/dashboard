@@ -41,8 +41,8 @@ const initialState = {
 };
 
 interface AddressFormProps {
-  address: AddressInfo;
-  addressId: string;
+  address: AddressInfo | null;
+  addressId: string | null;
 }
 
 export default function AddressForm({ address, addressId }: AddressFormProps) {
@@ -57,18 +57,16 @@ export default function AddressForm({ address, addressId }: AddressFormProps) {
   const [loadingAddress, setLoadingAddress] = useState(false);
   const router = useRouter();
 
+  const isEditing = addressId !== null;
+
   const [state, formAction, pending] = useActionState(
-    addressInfo ? updateAddressInfo : createaddressByInfo,
+    isEditing ? updateAddressInfo : createaddressByInfo,
     initialState
   );
 
   useEffect(() => {
     if (state?.success) {
-      toast.success(
-        state?.message || addressInfo
-          ? "Address updated successfully"
-          : "Address created successfully"
-      );
+      toast.success(isEditing ? "Address updated successfully" : "Address created successfully");
       router.push(`/dashboard/company/stores/${storeId}`);
     } else if (state?.message) {
       toast.error(state?.message);
@@ -260,7 +258,7 @@ export default function AddressForm({ address, addressId }: AddressFormProps) {
             className="col-span-2 bg-brand-500 hover:bg-brand-600"
             disabled={pending}
           >
-            {addressInfo ? "Update" : "Create"}{" "}
+            {isEditing ? "Update" : "Create"}{" "}
             {pending ? <Spinner /> : <MoveRight />}
           </Button>
         </form>

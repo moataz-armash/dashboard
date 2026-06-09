@@ -51,7 +51,7 @@ export async function createStore(prevState: any, formData: FormData) {
   );
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/company/store/create`,
+    `${process.env.API_BASE_URL_GATEWAY}/company/store/create`,
     {
       method: "POST",
       headers: {

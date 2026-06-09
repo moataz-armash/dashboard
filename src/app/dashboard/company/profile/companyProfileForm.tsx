@@ -39,7 +39,7 @@ const entityDefaults = {
   dateOfIncorporation: new Date().toISOString(),
 };
 
-const endpoint: string = "company/company/profile";
+const endpoint: string = "/company/company/profile";
 
 interface CompanyProfileFormProps {
   initialProfileData: CompanyProfile | null;
@@ -59,7 +59,7 @@ export default function CompanyProfileForm({
     defaultUserImg || null
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [imageIsLoading, setImageIsLoading] = useState(true);
+  const [imageIsLoading, setImageIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +71,7 @@ export default function CompanyProfileForm({
       entityDefaults,
       endpoint,
       token,
-      fileFallbackUrl: previewImage,
+      fileFallbackUrl: initialProfileData?.profilePhoto ?? null,
       setIsLoading,
       onSuccess: () => {
         toast.success("Company profile updated successful");
@@ -133,7 +133,11 @@ export default function CompanyProfileForm({
                   imageIsLoading ? "opacity-0" : " opacity-100"
                 }`}
                 style={{ aspectRatio: "96/96", objectFit: "cover" }}
-                onLoadingComplete={() => setImageIsLoading(false)}
+                onLoad={() => setImageIsLoading(false)}
+                onError={() => {
+                  setPreviewImage(defaultUserImg);
+                  setImageIsLoading(false);
+                }}
               />
             )}
 

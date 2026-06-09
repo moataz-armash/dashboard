@@ -111,7 +111,8 @@ const SubmitEntityUpdate = async ({
     );
 
     if (!response.ok) {
-      throw new Error("Update failed");
+      const errBody = await response.text().catch(() => "");
+      throw new Error(`Update failed (${response.status}): ${errBody}`);
     }
 
     onSuccess?.();
@@ -120,9 +121,6 @@ const SubmitEntityUpdate = async ({
     onError?.(err);
   } finally {
     setIsLoading(false);
-    setTimeout(() => {
-      document.location.reload();
-    }, 1500);
   }
 };
 

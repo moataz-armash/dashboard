@@ -3,19 +3,24 @@ import { cookies } from "next/headers";
 import AddressForm from "./address-client";
 
 interface AddressPageProps {
-  params: { addressId: string };
+  params: Promise<{ addressId: string }>;
 }
 
 export default async function AddressPage({ params }: AddressPageProps) {
-  const addressId = params.addressId;
+  const { addressId } = await params;
+
+  if (addressId === "new") {
+    return <AddressForm address={null} addressId={null} />;
+  }
+
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/address/address/management/get/${addressId}`,
+    `${process.env.API_BASE_URL_ADDRESS}/address/management/get/${addressId}`,
     {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     }
   );
-  const data = await res.json();
-  console.log(data.data);
-  return <AddressForm address={data.data} addressId={addressId} />;
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
+  return <AddressForm address={data?.data ?? null} addressId={addressId} />;
 }

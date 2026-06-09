@@ -71,7 +71,7 @@ export async function createProduct(prevState: any, formData: FormData) {
   console.log(Object.entries(apiFormData));
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/company/product/create`,
+    `${process.env.API_BASE_URL_GATEWAY}/company/product/create`,
     {
       method: "POST",
       headers: {
@@ -81,8 +81,12 @@ export async function createProduct(prevState: any, formData: FormData) {
     }
   );
 
+  const text = await res.text();
+  const json = text ? JSON.parse(text) : null;
+
+  console.log("[createProduct] status:", res.status, "body:", text.slice(0, 300));
+
   if (!res.ok) {
-    const errorJson = await res.json(); // assuming your API sends a JSON response with `message`
     return {
       errors: {},
       name: raw.name,
@@ -93,9 +97,9 @@ export async function createProduct(prevState: any, formData: FormData) {
       weight: raw.weight,
       color: raw.color,
       success: false,
-      message: errorJson.message || "Create Product failed",
+      message: json?.message || "Create Product failed",
     };
   }
 
-  return { data: await res.json(), success: true };
+  return { data: json, success: true };
 }

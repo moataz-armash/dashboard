@@ -3,7 +3,7 @@
 import { use, useEffect, useRef, useState } from "react";
 import CompanyHeader from "@/components/ui/company-header";
 import { Button } from "@/components/ui/button";
-import { ListFilter, Plus } from "lucide-react";
+import { ListFilter, Plus, PackageSearch } from "lucide-react";
 import { DialogWindow } from "../stores/components/dialog-window";
 import { Card } from "@/components/ui/card";
 import {
@@ -149,9 +149,15 @@ export default function ProductsClient({
           </div>
         </>
       ) : (
-        <p className="text-yellow-500 w-full pl-1 font-medium">
-          There is no Products, Add one Now!
-        </p>
+        <div className="flex flex-col items-center justify-center py-24 text-center text-muted-foreground">
+          <PackageSearch className="w-14 h-14 mb-4 text-gray-400" />
+          <h2 className="text-lg font-semibold text-gray-600">No products yet</h2>
+          <p className="text-sm mt-1 max-w-xs">
+            You haven&apos;t added any products yet. Use the{" "}
+            <span className="font-medium text-brand-500">Add Product</span>{" "}
+            button above to create your first product.
+          </p>
+        </div>
       )}
     </>
   );

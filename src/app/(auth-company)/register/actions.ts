@@ -40,7 +40,7 @@ export async function registerUser(prevState: any, formData: FormData) {
   }
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/company/auth/register`,
+    `${process.env.API_BASE_URL_GATEWAY}/company/auth/register`,
     {
       method: "POST",
       headers: {

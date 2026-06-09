@@ -52,7 +52,7 @@ export default function StoreForm({ store, token }: StoreCardProps) {
     bankAccountId,
   } = store;
 
-  const endpoint = `/store/${store.id}`;
+  const endpoint = `/company/store/${store.id}`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +64,7 @@ export default function StoreForm({ store, token }: StoreCardProps) {
       entityDefaults,
       endpoint,
       token,
-      fileFallbackUrl: previewImage,
+      fileFallbackUrl: storePhoto ?? null,
       setIsLoading,
       onSuccess: () => {
         toast.success("Store profile updated successful");
@@ -186,6 +186,12 @@ export default function StoreForm({ store, token }: StoreCardProps) {
                 state={null}
                 text="text-left"
                 defaultValue={status}
+                options={[
+                  { label: "Active", value: "ACTIVE" },
+                  { label: "Inactive", value: "INACTIVE" },
+                  { label: "Suspended", value: "SUSPENDED" },
+                  { label: "Deleted", value: "DELETED" },
+                ]}
               />
 
               <div className={`grid grid-cols-4 items-center gap-4 col-span-1`}>
@@ -205,7 +211,7 @@ export default function StoreForm({ store, token }: StoreCardProps) {
                   readOnly={true}
                 />
                 <Link
-                  href={`/dashboard/${store.addressId}?storeId=${store.id}&storeName=${storeName}`}
+                  href={`/dashboard/${store.addressId ?? "new"}?storeId=${store.id}&storeName=${storeName}`}
                   className="col-span-1 flex w-full"
                 >
                   <Button variant="outline" className="w-full">{`${

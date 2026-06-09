@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import CompanyHeader from "@/components/ui/company-header";
 import { initialStoreState, storeFields } from "./store-fields";
 import Pagination from "@/components/ui/pagination";
+import { Store as StoreIcon, SearchX } from "lucide-react";
 
 interface Store {
   id: string;
@@ -138,16 +139,34 @@ const StoresCards = ({ data, currentPage }: StoresCardsProps) => {
             </div>
           </>
         ) : (
-          <TableRow>
-            <TableCell colSpan={5}>
-              <div
-                className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4"
-                role="alert"
-              >
-                <p> This store not found Please try again </p>
-              </div>
-            </TableCell>
-          </TableRow>
+          <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
+            {search ? (
+              <>
+                <SearchX className="w-12 h-12 mb-4 text-gray-400" />
+                <h2 className="text-lg font-semibold text-gray-600">No stores match your search</h2>
+                <p className="text-sm mt-1">Try a different name or clear the search field.</p>
+              </>
+            ) : (
+              <>
+                <StoreIcon className="w-12 h-12 mb-4 text-gray-400" />
+                <h2 className="text-lg font-semibold text-gray-600">No stores yet</h2>
+                <p className="text-sm mt-1 max-w-xs">
+                  You haven&apos;t created any stores yet. Click{" "}
+                  <DialogWindow
+                    icon={null}
+                    buttonTitle="Add Store"
+                    dialogTitle="Create Store"
+                    title="store"
+                    className="bg-transparent hover:bg-transparent text-brand-500 hover:text-brand-600 font-medium p-0 h-auto shadow-none cursor-pointer underline-offset-2 hover:underline"
+                    method={createStore}
+                    fields={storeFields}
+                    initialState={initialStoreState}
+                  />{" "}
+                  to get started.
+                </p>
+              </>
+            )}
+          </div>
         )}
       </div>
     </>

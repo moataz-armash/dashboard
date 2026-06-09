@@ -7,18 +7,19 @@ import Spinner from "@/components/ui/spinner";
 import CompanyHeader from "@/components/ui/company-header";
 
 interface Props {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }
 
-export default function ProductsPage({ searchParams }: Props) {
-  const userCookies = cookies();
+export default async function ProductsPage({ searchParams }: Props) {
+  const userCookies = await cookies();
   const token = userCookies.get("token")?.value;
 
   if (!token) redirect("/login");
 
-  const page = Number(searchParams.page) || 0;
+  const { page: pageParam } = await searchParams;
+  const page = Number(pageParam) || 0;
 
-  const productsPromise = apiRequest(`/product/products?page=${page}&size=6`, token);
+  const productsPromise = apiRequest(`/company/product/products?page=${page}&size=6`, token);
 
   // const products = await res;
   return (

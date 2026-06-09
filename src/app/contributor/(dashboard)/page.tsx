@@ -19,13 +19,13 @@ export default async function HomePage({ searchParams }: HomepageProps) {
     `/shopping/stores?page=${page}&size=4`,
     contToken,
     "GET",
-    process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY
+    process.env.API_BASE_URL_GATEWAY
   );
 
   console.log(res);
 
   const resAllAddress = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY}/address/address/find/all`,
+    `${process.env.API_BASE_URL_GATEWAY}/address/address/find/all`,
     {
       method: "GET",
       headers: {

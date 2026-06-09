@@ -129,7 +129,7 @@ export const apiRequest = async (
   endpoint: string,
   token: string,
   method: string = "GET",
-  host: string = String(process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY)
+  host: string = String(process.env.API_BASE_URL_GATEWAY ?? process.env.NEXT_PUBLIC_API_BASE_URL_GATEWAY)
 ) => {
   const res = await fetch(`${host}${endpoint}`, {
     method: String(method),
@@ -139,7 +139,15 @@ export const apiRequest = async (
     },
     cache: "no-store",
   });
-  const data = await res.json();
 
-  return data;
+  const text = await res.text();
+  console.log(`[apiRequest] ${method} ${host}${endpoint} → ${res.status}`, text.slice(0, 300));
+
+  if (!text) return { status: res.status, data: null };
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { status: res.status, data: null, error: text.slice(0, 200) };
+  }
 };

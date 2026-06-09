@@ -11,6 +11,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useProfileStore } from "../profileStore";
 
 const stats = [
   //   { icon: Briefcase, label: "Companies", value: 10, color: "text-blue-600 bg-blue-100" },
@@ -49,9 +50,10 @@ const stats = [
 ];
 
 export default function CompanyHome() {
+  const { profile } = useProfileStore();
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">A101 Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-6">{profile?.name ?? "Company"} Dashboard</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat, index) => (
           <Card

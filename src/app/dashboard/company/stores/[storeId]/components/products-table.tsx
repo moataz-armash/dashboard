@@ -11,8 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/ui/pagination";
-import { Plus, Router } from "lucide-react";
-import { redirect } from "next/dist/server/api-utils";
+import { Plus, PackageOpen } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
 export default function ProductsTable({
@@ -93,19 +92,28 @@ export default function ProductsTable({
           </div>
         </>
       ) : (
-        <div className="flex justify-between">
-          <p className="text-yellow-500 w-full pl-1 font-medium">
-            There is no Products, Supply one Now!
+        <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
+          <PackageOpen className="w-12 h-12 mb-4 text-gray-400" />
+          <h2 className="text-lg font-semibold text-gray-600">No products in this store yet</h2>
+          <p className="text-sm mt-1 mb-4 max-w-xs">
+            This store doesn&apos;t have any inventory. Click{" "}
+            <button
+              onClick={() => router.push(`/dashboard/company/stores/supplyMore?storeId=${storeId}&storeName=${storeName}`)}
+              className="text-brand-500 hover:text-brand-600 font-medium hover:underline cursor-pointer"
+            >
+              Supply More
+            </button>{" "}
+            to add products.
           </p>
           <Button
             className="bg-brand-500 hover:bg-brand-600"
             onClick={() =>
               router.push(
-                `/dashboard/company/stores/supplyMore?storeId=${storeId}`
+                `/dashboard/company/stores/supplyMore?storeId=${storeId}&storeName=${storeName}`
               )
             }
           >
-            Supply More <Plus />
+            <Plus /> Supply More
           </Button>
         </div>
       )}

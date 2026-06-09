@@ -88,6 +88,7 @@ export function DialogWindow({
                 text="text-left"
                 index={index}
                 totalItems={arr.length}
+                options={field.options}
               />
             ))}
           </div>
