@@ -24,7 +24,7 @@ export default function SupplyMoreClient({
   res,
 }: SupplyMoreClientProps) {
   const router = useRouter();
-  const totalPages = Math.ceil((res?.total ?? 0) / (res?.size ?? 8)) || 1;
+  const totalPages = res?.totalPages || 1;
 
   const handlePageChange = (newPage: number) => {
     const searchParams = new URLSearchParams(window.location.search);

@@ -1,9 +1,9 @@
 "use client";
 
-import { use, useEffect, useRef, useState } from "react";
-import CompanyHeader from "@/components/ui/company-header";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ListFilter, Plus, PackageSearch } from "lucide-react";
+import { Plus, PackageSearch } from "lucide-react";
+import FilterPopover, { FilterGroup } from "@/components/ui/filter-popover";
 import { DialogWindow } from "../stores/components/dialog-window";
 import { Card } from "@/components/ui/card";
 import {
@@ -23,22 +23,45 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { getImage } from "@/lib/helpers";
 import Pagination from "@/components/ui/pagination";
 
+const PRODUCT_FILTER_GROUPS: FilterGroup[] = [
+  {
+    key: "category",
+    label: "Category",
+    options: [
+      { label: "Electronics", value: "ELECTRONICS" },
+      { label: "Fashion", value: "FASHION" },
+      { label: "Home Appliances", value: "HOME_APPLIANCES" },
+      { label: "Books", value: "BOOKS" },
+      { label: "Groceries", value: "GROCERIES" },
+      { label: "Sports", value: "SPORTS" },
+      { label: "Toys", value: "TOYS" },
+      { label: "Beauty", value: "BEAUTY" },
+      { label: "Health", value: "HEALTH" },
+      { label: "Automotive", value: "AUTOMOTIVE" },
+      { label: "Tools", value: "TOOLS" },
+      { label: "Others", value: "OTHERS" },
+    ],
+  },
+];
+
 interface ProductsClientProps {
-  productsPromise: Promise<any>;
+  res: any;
   currentPage: number;
+  search?: string;
+  category?: string;
 }
 
 export default function ProductsClient({
-  productsPromise,
+  res,
   currentPage,
+  search = "",
+  category = "",
 }: ProductsClientProps) {
-  const [search, setSearch] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const res = use(productsPromise);
   const products: Product[] = res?.data || [];
   const router = useRouter();
 
-  const totalPages = Math.ceil(res?.total / res?.size) || 1;
+  const totalPages = res?.totalPages || 1;
 
   const handlePageChange = (newPage: number) => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -48,26 +71,20 @@ export default function ProductsClient({
 
   console.log(products);
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const selectedCategories = category ? category.split(",") : [];
+
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory =
+      selectedCategories.length === 0 || selectedCategories.includes(product.category);
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <>
-      <div className="flex justify-between items-center py-2">
-        <input
-          type="text"
-          placeholder="Type the name product..."
-          className="border border-gray-300 rounded-md px-3 py-2 w-[30%] focus:outline-brand-400"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-
+      <div className="flex justify-end items-center py-2">
         <div className="flex space-x-4">
-          <Button variant="outline" className="font-medium">
-            {" "}
-            <ListFilter /> Filter{" "}
-          </Button>
+          <FilterPopover groups={PRODUCT_FILTER_GROUPS} />
 
           <DialogWindow
             icon={<Plus />}

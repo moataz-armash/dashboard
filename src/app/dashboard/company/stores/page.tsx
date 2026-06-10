@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { apiRequest } from "@/utils/api";
 
 interface Props {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; search?: string; status?: string }>;
 }
 
 export default async function getStores({ searchParams }: Props) {
@@ -15,12 +15,13 @@ export default async function getStores({ searchParams }: Props) {
 
   if (!token) redirect("/login");
 
-  const { page: pageParam } = await searchParams;
+  const { page: pageParam, search = "", status = "" } = await searchParams;
   const page = Number(pageParam) || 0;
 
-  const res = await apiRequest(`/company/store/stores?page=${page}&size=6`, token);
+  const query = new URLSearchParams({ page: String(page), size: "6" });
+  if (status) query.set("status", status);
 
-  console.log("Stores API response:", JSON.stringify(res, null, 2));
+  const res = await apiRequest(`/company/store/stores?${query.toString()}`, token);
 
-  return <StoresCards data={res} currentPage={page}/>;
+  return <StoresCards data={res} currentPage={page} search={search} status={status} />;
 }

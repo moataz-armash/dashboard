@@ -111,13 +111,12 @@ export default async function getStores({ params }: PageParams) {
   const resStore = await apiRequest(`/company/store/${storeId}`, token);
 
   const resInventroy = await apiRequest(
-    `/inventory/inventory/get?strId=${storeId}`,
+    `/inventory/get?strId=${storeId}`,
     token,
     "GET",
     String(process.env.API_BASE_URL_GATEWAY)
   );
-  console.log(resStore.data);
-  console.log(resInventroy);
+  console.log("[StoreDetail] inventory raw:", JSON.stringify(resInventroy).slice(0, 500));
 
   if (!resStore.data) {
     redirect("/dashboard/company/stores");
@@ -128,10 +127,10 @@ export default async function getStores({ params }: PageParams) {
       <StoreCard
         store={resStore.data}
         token={token}
-        statistics={resInventroy.statistics}
+        statistics={resInventroy?.statistics ?? { allProducts: 0, inReorderLevel: 0, inStock: 0, outOfStock: 0, inDiscount: 0 }}
       />
       <ProductsTable
-        products={resInventroy.data}
+        products={resInventroy?.data ?? []}
         storeName={resStore.data.name}
       />
     </>

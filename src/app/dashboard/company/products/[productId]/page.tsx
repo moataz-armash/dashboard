@@ -4,24 +4,23 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 interface ProductDetailsPageProps {
-  params: {
-    productId: string;
-  };
+  params: Promise<{ productId: string }>;
 }
 
 export default async function ProductDetailsPage({
   params,
 }: ProductDetailsPageProps) {
-  const { productId } = params;
+  const { productId } = await params;
   const userCookies = await cookies();
   const token = userCookies.get("token")?.value;
 
-  if (!token) {
-    redirect("/login");
-  }
+  if (!token) redirect("/login");
 
-  const res = await apiRequest(`/product/${productId}`, token);
+  const res = await apiRequest(`/company/product/${productId}`, token);
 
-  const product = res.data;
-  return <ProductDetailsClient product={product} token={token}/>;
+  console.log("[ProductDetails] response:", JSON.stringify(res).slice(0, 300));
+
+  if (!res.data) redirect("/dashboard/company/products");
+
+  return <ProductDetailsClient product={res.data} token={token!} />;
 }

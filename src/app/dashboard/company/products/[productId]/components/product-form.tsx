@@ -59,7 +59,7 @@ export default function ProductForm({
 
   // const hasImage = product?.images?.[0] || previewImage;
 
-  const endpoint = `/product/${product.id}`;
+  const endpoint = `/company/product/${product.id}`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +72,7 @@ export default function ProductForm({
       endpoint,
       token,
       fileFieldName: "images",
-      fileFallbackUrl: previewImage,
+      fileFallbackUrl: images?.[0] ?? null,
       setIsLoading,
       onSuccess: () => {
         toast.success(`${product?.name} updated successful"`);

@@ -4,6 +4,9 @@ import { AuthProvider } from "@/context/AuthContext";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { apiRequest } from "@/utils/api";
+import GlobalSearch from "@/components/ui/global-search";
+import HeaderProfile from "@/components/ui/header-profile";
+import { Suspense } from "react";
 
 export default async function DashboardLayout({
   children,
@@ -29,7 +32,15 @@ export default async function DashboardLayout({
       <AuthProvider>
         <AppSidebar />
         <main className="flex-1">
-          <SidebarTrigger />
+          <div className="flex items-center gap-4 px-4 py-2 border-b bg-white sticky top-0 z-10">
+            <SidebarTrigger />
+            <Suspense>
+              <GlobalSearch />
+            </Suspense>
+            <div className="ml-auto">
+              <HeaderProfile />
+            </div>
+          </div>
           {children}
         </main>
       </AuthProvider>

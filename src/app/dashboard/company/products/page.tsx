@@ -7,7 +7,7 @@ import Spinner from "@/components/ui/spinner";
 import CompanyHeader from "@/components/ui/company-header";
 
 interface Props {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; search?: string; category?: string }>;
 }
 
 export default async function ProductsPage({ searchParams }: Props) {
@@ -16,17 +16,20 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   if (!token) redirect("/login");
 
-  const { page: pageParam } = await searchParams;
+  const { page: pageParam, search = "", category = "" } = await searchParams;
   const page = Number(pageParam) || 0;
 
-  const productsPromise = apiRequest(`/company/product/products?page=${page}&size=6`, token);
+  const query = new URLSearchParams({ page: String(page), size: "6" });
+  if (category) query.set("category", category);
 
-  // const products = await res;
+  const res = await apiRequest(`/company/product/products?${query.toString()}`, token);
+  console.log("[Products] full response:", JSON.stringify(res).slice(0, 500));
+
   return (
     <div className="px-6 flex flex-col gap-4">
       <CompanyHeader title="Products Managment" />
       <Suspense fallback={<Spinner className="text-gray-500 h-7 w-7" />}>
-        <ProductsClient productsPromise={productsPromise} currentPage={page} />
+        <ProductsClient res={res} currentPage={page} search={search} category={category} />
       </Suspense>
     </div>
   );

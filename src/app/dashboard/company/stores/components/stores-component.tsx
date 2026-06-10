@@ -1,8 +1,7 @@
 "use client";
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ListFilter, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import {
   Table,
@@ -21,6 +20,7 @@ import CompanyHeader from "@/components/ui/company-header";
 import { initialStoreState, storeFields } from "./store-fields";
 import Pagination from "@/components/ui/pagination";
 import { Store as StoreIcon, SearchX } from "lucide-react";
+import FilterPopover, { FilterGroup } from "@/components/ui/filter-popover";
 
 interface Store {
   id: string;
@@ -35,18 +35,31 @@ interface Store {
   addressId: string;
 }
 
+const STORE_FILTER_GROUPS: FilterGroup[] = [
+  {
+    key: "status",
+    label: "Status",
+    options: [
+      { label: "Active", value: "ACTIVE" },
+      { label: "Inactive", value: "INACTIVE" },
+      { label: "Suspended", value: "SUSPENDED" },
+      { label: "Deleted", value: "DELETED" },
+    ],
+  },
+];
+
 interface StoresCardsProps {
   data: any;
   currentPage: number;
+  search?: string;
+  status?: string;
 }
 
-const StoresCards = ({ data, currentPage }: StoresCardsProps) => {
-  const [search, setSearch] = useState("");
+const StoresCards = ({ data, currentPage, search = "", status = "" }: StoresCardsProps) => {
   const router = useRouter();
 
   const stores: Store[] = data?.data || [];
-
-  const totalPages = Math.ceil(data?.total / data?.size) || 1;
+  const totalPages = data?.totalPages || 1;
 
   const handlePageChange = (newPage: number) => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -54,9 +67,14 @@ const StoresCards = ({ data, currentPage }: StoresCardsProps) => {
     router.push(`?${searchParams.toString()}`);
   };
 
-  const filteredStores = stores.filter((store) =>
-    store.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const selectedStatuses = status ? status.split(",") : [];
+
+  const filteredStores = stores.filter((store) => {
+    const matchesSearch = store.name.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus =
+      selectedStatuses.length === 0 || selectedStatuses.includes(store.status);
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <>
@@ -67,20 +85,9 @@ const StoresCards = ({ data, currentPage }: StoresCardsProps) => {
         />
       </main>
       <div className="grid grid-cols-1 gap-4 p-4">
-        <div className="flex justify-between items-center py-2 px-1">
-          <input
-            type="text"
-            placeholder="Type the name of store..."
-            className="border border-gray-300 rounded-md px-3 py-2 w-[30%] focus:outline-brand-400"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-
+        <div className="flex justify-end items-center py-2 px-1">
           <div className="flex space-x-4">
-            <Button variant="outline" className="font-medium">
-              {" "}
-              <ListFilter /> Filter{" "}
-            </Button>
+            <FilterPopover groups={STORE_FILTER_GROUPS} />
 
             <DialogWindow
               icon={<Plus />}
