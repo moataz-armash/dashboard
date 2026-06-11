@@ -2,15 +2,14 @@ import { redirect } from "next/navigation";
 import VerifyEmailPage from "./VerifyEmailPage";
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     token?: string;
     email?: string;
-  };
+  }>;
 }
 
 export default async function VerifyEmail({ searchParams }: PageProps) {
-  const token = searchParams.token;
-  const email = await searchParams.email;
+  const { token, email } = await searchParams;
 
   if (!token || !email) {
     redirect("/register");
