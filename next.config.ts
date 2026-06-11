@@ -8,10 +8,12 @@ const nextConfig: NextConfig = {
     },
   },
   async rewrites() {
+    const gatewayUrl = process.env.API_BASE_URL_GATEWAY;
+    if (!gatewayUrl) return [];
     return [
       {
         source: "/api/gateway/:path*",
-        destination: `${process.env.API_BASE_URL_GATEWAY}/:path*`,
+        destination: `${gatewayUrl}/:path*`,
       },
     ];
   },
